@@ -1,0 +1,3 @@
+/home/salvo/CLionProjects/progettoPDS/p2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/salvo/CLionProjects/progettoPDS/p2/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/salvo/CLionProjects/progettoPDS/p2/cmake-build-debug/CMakeFiles/p2.dir
