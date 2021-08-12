@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/p2.dir/graph/graph.cpp.o"
   "CMakeFiles/p2.dir/main.cpp.o"
   "p2"
   "p2.pdb"

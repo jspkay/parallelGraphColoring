@@ -129,6 +129,30 @@ p2/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/build
 .PHONY : p2/fast
 
+graph/graph.o: graph/graph.cpp.o
+.PHONY : graph/graph.o
+
+# target to build an object file
+graph/graph.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/graph/graph.cpp.o
+.PHONY : graph/graph.cpp.o
+
+graph/graph.i: graph/graph.cpp.i
+.PHONY : graph/graph.i
+
+# target to preprocess a source file
+graph/graph.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/graph/graph.cpp.i
+.PHONY : graph/graph.cpp.i
+
+graph/graph.s: graph/graph.cpp.s
+.PHONY : graph/graph.s
+
+# target to generate assembly for a file
+graph/graph.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/graph/graph.cpp.s
+.PHONY : graph/graph.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -162,6 +186,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... p2"
+	@echo "... graph/graph.o"
+	@echo "... graph/graph.i"
+	@echo "... graph/graph.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

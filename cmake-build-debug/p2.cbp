@@ -82,6 +82,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/salvo/CLionProjects/progettoPDS/p2/graph/graph.cpp">
+			<Option target="p2"/>
+		</Unit>
+		<Unit filename="/home/salvo/CLionProjects/progettoPDS/p2/graph/graph.h">
+			<Option target="p2"/>
+		</Unit>
 		<Unit filename="/home/salvo/CLionProjects/progettoPDS/p2/main.cpp">
 			<Option target="p2"/>
 		</Unit>

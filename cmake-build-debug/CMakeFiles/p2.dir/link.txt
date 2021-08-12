@@ -1,1 +1,1 @@
-/usr/bin/c++ -g CMakeFiles/p2.dir/main.cpp.o -o p2 
+/usr/bin/c++ -g -O0 CMakeFiles/p2.dir/main.cpp.o CMakeFiles/p2.dir/graph/graph.cpp.o -o p2 
