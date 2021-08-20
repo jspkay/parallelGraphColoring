@@ -19,6 +19,26 @@ Graph::Graph() {
     }
     else
         cout << "V:" << V << ", E:" << E << std::endl;
+
+    /*typedef compressed_sparse_row_graph< bidirectionalS ,VertexProps> Graph;
+    Graph g(boost::edges_are_unsorted_multi_pass, std::begin(es), std::end(es), 3);*/
+
+    for(int i=0; i<V; i++){
+        string line;
+        fin.getline(fin,line);
+        std::string delimiter = " ";
+        size_t pos = 0;
+        std::string token;
+        while ((pos = line.find(delimiter)) != std::string::npos) {
+            token = s.substr(0, pos);
+            std::cout << token << std::endl;
+            s.erase(0, pos + delimiter.length());
+        }
+        /*while() {
+            int neighbour;
+            edges.emplace_back({i,neighbour});
+        }*/
+    }
     fin.close();
 }
 
