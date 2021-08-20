@@ -10,17 +10,19 @@
 #include <stdexcept>
 
 // list implementation
-class graph {
+class Graph {
 private:
-    std::vector<std::forward_list<int>> verteces;
+    int V, E;  //number Verteces and Edges
+
+    /*std::vector<std::forward_list<int>> verteces;
     unsigned long int n;
+    */
 
 public:
-    graph();
-    graph(unsigned long int n); // vertex number
-
+    Graph();
+    /*graph(unsigned long int n); // vertex number
     void addEdge(int a, int b);
-    std::vector<int> getNeighbors(int n);
+    std::vector<int> getNeighbors(int n);*/
 };
 
 

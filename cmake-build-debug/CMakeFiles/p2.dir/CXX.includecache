@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/Graph.cpp
+Graph.h
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/Graph.h
+fstream
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/fstream
+iostream
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/iostream
+
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/Graph.h
+forward_list
+-
+vector
+-
+stdexcept
+-
+
