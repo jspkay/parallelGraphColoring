@@ -5,7 +5,7 @@
 
 int main() {
     Graph mygraph = Graph();
-
+    mygraph.doColoring();
 
 
 

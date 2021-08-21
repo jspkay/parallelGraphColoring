@@ -6,5 +6,5 @@ CXX_FLAGS = -g -O0   -std=gnu++14
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/home/antonio_vespa/Documenti/boost_1_77_0 
 

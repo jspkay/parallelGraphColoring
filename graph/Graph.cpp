@@ -9,7 +9,7 @@ using namespace  std;
 
 Graph::Graph() {
     //constexpr auto mode = ios::in | ios::binary;
-    fstream fin("/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/benchmark/rgg_n_2_15_s0.txt", ios::in);
+    fstream fin("../graph/benchmark/rgg_n_2_15_s0.txt", ios::in);
     if(!fin.is_open()) {
         cout << "errore apertura file fin" << endl;
     }
@@ -17,49 +17,39 @@ Graph::Graph() {
     if(!fin.good()) {
         cout << "errore lettura" << endl;
     }
-    else
-        cout << "V:" << V << ", E:" << E << std::endl;
-
-    /*typedef compressed_sparse_row_graph< bidirectionalS ,VertexProps> Graph;
-    Graph g(boost::edges_are_unsorted_multi_pass, std::begin(es), std::end(es), 3);*/
-
-    for(int i=0; i<V; i++){
-        string line;
-        fin.getline(fin,line);
-        std::string delimiter = " ";
-        size_t pos = 0;
-        std::string token;
-        while ((pos = line.find(delimiter)) != std::string::npos) {
-            token = s.substr(0, pos);
-            std::cout << token << std::endl;
-            s.erase(0, pos + delimiter.length());
-        }
-        /*while() {
+    for(int i=1; i<=V; i++){
+        while(1) {
             int neighbour;
-            edges.emplace_back({i,neighbour});
-        }*/
+            fin >> neighbour;
+            std::pair<int, int> edge(i,neighbour);
+            //cout << edge.first << " " << edge.second << endl;
+            edges.emplace_back(edge);
+            if(fin.get()=='\n' || fin.eof())
+                break;
+        }
     }
     fin.close();
+    this->graphCSR = GraphCSR(boost::edges_are_unsorted_multi_pass, std::begin(edges), edges.end(), V+1); //!!!!
+    int cont = 1;
+    BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {
+            graphCSR[current_vertex].id = cont++;
+            graphCSR[current_vertex].color = UINT8_MAX;
+        }
+    cout << "Fine costruzione grafo in formato CSR!\n";
+    cout << "******************\n";
+    cout << "V:" << V << ", E:" << E;
+    cout << "\n******************" << std::endl;
 }
 
-/*graph::graph(unsigned long int n) {
-    verteces = std::vector<std::forward_list<int>>{n};
-    for(auto &el : verteces) el = std::forward_list<int>{};
-    this->n = n;
-}
+bool Graph::doColoring() {
+    BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {
+        BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR){
+            cout << "u:" << graphCSR[current_vertex].id << " ,v:" << graphCSR[neighbor].id << "\n" << endl;
+        }
+        /*for (auto [neighbor, end] = boost::adjacent_vertices(current_vertex, graphCSR); neighbor != end; ++neighbor) {
 
-void graph::addEdge(int a, int b) {
-    if(a == b){
-        return;
+        }
+         */
     }
-
-    int m = a > b ? a : b + 1;
-    if(m > n){
-        n = m;
-        verteces.resize(m);
-    }
-
-    verteces[a].emplace_front(b);
-    verteces[b].emplace_front(a);
+    return false;
 }
-*/
