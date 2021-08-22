@@ -13,6 +13,8 @@ fstream
 /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/fstream
 iostream
 /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/iostream
+regex
+-
 
 /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/Graph.h
 forward_list
