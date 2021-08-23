@@ -14,7 +14,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_utility.hpp>
 
-struct VertexDescriptor { int id; int8_t color; }; //change from int to int8_t
+struct VertexDescriptor { int id,random,degree; int8_t color; }; //change from int to int8_t
 typedef boost::compressed_sparse_row_graph<boost::bidirectionalS,VertexDescriptor> GraphCSR;
 
 class Graph {
@@ -26,7 +26,8 @@ private:
     void printOutput();
 public:
     Graph();
-    void doColoring();
+    void sequential();
+    void largestDegree();
 };
 
 
