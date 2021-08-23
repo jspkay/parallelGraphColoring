@@ -22,9 +22,11 @@ private:
     int V, E;  //number Verteces and Edges
     std::vector<std::pair<int, int>> edges;
     GraphCSR graphCSR;
+    void readInput();
+    void printOutput();
 public:
     Graph();
-    bool doColoring();
+    void doColoring();
 };
 
 
