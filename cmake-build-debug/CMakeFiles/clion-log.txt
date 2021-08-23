@@ -1,4 +1,4 @@
-/home/antonio_vespa/Pubblici/clion-2020.3.2/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring
+"C:\Program Files\JetBrains\CLion 2020.3.2\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_DEPENDS_USE_COMPILER=FALSE -G "CodeBlocks - NMake Makefiles" C:\Users\Andrea\GitHub\parallelGraphColoring
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug
+-- Build files have been written to: C:/Users/Andrea/GitHub/parallelGraphColoring/cmake-build-debug

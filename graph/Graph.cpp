@@ -19,6 +19,7 @@ void Graph::readInput() {
         cout << "errore lettura" << endl;
     }
     //fstream fout("output.txt", ios::out);
+    /*
     string rigaLetta, parsed;
     smatch m;
     int neighbour, length;
@@ -38,6 +39,16 @@ void Graph::readInput() {
             //fout << edge.first << "->" <<edge.second << "  ";
         }
         //fout << "\n";
+    }*/
+
+    string line;
+    stringstream lineStream;
+    int neighbour;
+    for(int i=0; i<=V; i++){
+        getline(fin, line);
+        lineStream = stringstream(line);
+        while(lineStream >> neighbour)
+            edges.emplace_back(std::pair<int, int>(i,neighbour));
     }
     fin.close();
 }
@@ -57,7 +68,8 @@ Graph::Graph() {
 }
 
 void Graph::doColoring(){
-    int C[256], i, color=-1;
+    int C[256], i;
+    int8_t color=-1;
     for(int i=0; i<256; i++){
         C[i]=0; //colore non usato
     }
@@ -89,10 +101,10 @@ void Graph::printOutput() {
     }
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
         if(graphCSR[current_vertex].id==0)
-            continue;
-        fout << "u:" << graphCSR[current_vertex].id << ", color: " << graphCSR[current_vertex].color << ", neigh -> ";
+            continue;//static_cast<int>(g[*v].color)
+            fout << "u:" << graphCSR[current_vertex].id << ", color: " << static_cast<int>(graphCSR[current_vertex].color) << ", neigh -> ";
         BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
-            fout << "(" << graphCSR[neighbor].id << "," << graphCSR[neighbor].color << "), ";
+            fout << "(" << graphCSR[neighbor].id << "," << static_cast<int>(graphCSR[neighbor].color) << "), ";
         }
         fout << "\n";
     }
