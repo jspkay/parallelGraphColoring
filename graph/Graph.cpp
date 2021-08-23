@@ -56,7 +56,7 @@ void Graph::readInput() {
 Graph::Graph() {
     readInput();
     this->graphCSR = GraphCSR(boost::edges_are_unsorted_multi_pass, std::begin(edges), edges.end(), V+1);
-    int cont = 0, degree;    //ci sarà un nodo 0, fittizio
+    int cont = 0, degree = 0;    //ci sarà un nodo 0, fittizio
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {
         graphCSR[current_vertex].id = cont++;
         graphCSR[current_vertex].color = -1;
