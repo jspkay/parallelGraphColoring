@@ -31,3 +31,6 @@
 *.out
 *.app
 .vscode/settings.json
+cmake-build-debug/CMakeFiles/p2.dir/CXX.includecache
+cmake-build-debug/p2
+cmake-build-debug/Testing/Temporary/LastTest.log

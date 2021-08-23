@@ -5,9 +5,8 @@
 
 int main() {
     Graph mygraph = Graph();
-    mygraph.doColoring();
-
-
+    mygraph.sequential();
+   //mygraph.largestDegree();
 
     /*graph a = graph(10);
     a.addEdge(12, 15);

@@ -45,18 +45,24 @@ void Graph::readInput() {
 Graph::Graph() {
     readInput();
     this->graphCSR = GraphCSR(boost::edges_are_unsorted_multi_pass, std::begin(edges), edges.end(), V+1);
-    int cont = 0;    //ci sarà un nodo 0, fittizio
+    int cont = 0, degree;    //ci sarà un nodo 0, fittizio
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {
-            graphCSR[current_vertex].id = cont++;
-            graphCSR[current_vertex].color = -1;
+        graphCSR[current_vertex].id = cont++;
+        graphCSR[current_vertex].color = -1;
+        graphCSR[current_vertex].random = rand() % 1000 + 1; //1-1000
+        BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR){
+            degree++;
         }
+        graphCSR[current_vertex].degree = degree;
+        degree = 0; //reset
+    }
     cout << "Fine costruzione grafo in formato CSR!\n";
     cout << "******************\n";
     cout << "V:" << V << ", E:" << E;
     cout << "\n******************" << std::endl;
 }
 
-void Graph::doColoring(){
+void Graph::sequential(){
     int C[256], i, color=-1;
     for(int i=0; i<256; i++){
         C[i]=0; //colore non usato
@@ -90,10 +96,14 @@ void Graph::printOutput() {
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
         if(graphCSR[current_vertex].id==0)
             continue;
-        fout << "u:" << graphCSR[current_vertex].id << ", color: " << graphCSR[current_vertex].color << ", neigh -> ";
+        fout << "u:" << graphCSR[current_vertex].id << ", color: " << graphCSR[current_vertex].color << ", rand:" << graphCSR[current_vertex].random << ", degree:" << graphCSR[current_vertex].degree << ", neigh -> ";
         BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
-            fout << "(" << graphCSR[neighbor].id << "," << graphCSR[neighbor].color << "), ";
+            fout << "(" << graphCSR[neighbor].id << "," << graphCSR[neighbor].color << ") ";
         }
         fout << "\n";
     }
+}
+
+void Graph::largestDegree(){
+
 }
