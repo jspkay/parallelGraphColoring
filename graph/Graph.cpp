@@ -45,7 +45,7 @@ Graph::Graph() {
     int cont = 0;    //id (informatico) parte da 0, quando stamperai dovrai fare +1
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {
             graphCSR[current_vertex].id = cont++;
-            graphCSR[current_vertex].color = UINT8_MAX;
+            graphCSR[current_vertex].color = -1;
         }
     cout << "Fine costruzione grafo in formato CSR!\n";
     cout << "******************\n";
@@ -54,12 +54,37 @@ Graph::Graph() {
 }
 
 bool Graph::doColoring() {
+    int C[256], i, color=-1;
+    for(int i=0; i<256; i++){
+        C[i]=0; //colore non usato
+    }
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {
-        cout << "current vertex:" << graphCSR[current_vertex].id << ", neigh -> ";
+        //cout << "current vertex:" << graphCSR[current_vertex].id << ", neigh -> ";
         BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR){
-            cout << graphCSR[neighbor].id << " ";
+            //cout << graphCSR[neighbor].id << " ";
+            if(graphCSR[neighbor].color != -1)
+                C[graphCSR[neighbor].color] = 1;
         }
-        cout << "\n";
+        //cout << "\n";
+        //ricerca colore minimo non usato
+        for(i=0; i<256; i++){
+            if(C[i]==0 && color==-1) //colore non usato
+                color=i;
+            else
+                C[i]=0;
+        }
+        graphCSR[current_vertex].color = color; //coloro vertice
+        color = -1;
+    }
+    fstream fout("output.txt", ios::out);
+    BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {
+            if(graphCSR[current_vertex].id==0)
+                continue;
+            fout << "u:" << graphCSR[current_vertex].id << ", color: " << graphCSR[current_vertex].color << ", neigh -> ";
+            BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
+                    fout << "(" << graphCSR[neighbor].id << "," << graphCSR[neighbor].color << "), ";
+            }
+            fout << "\n";
     }
     return false;
 }
