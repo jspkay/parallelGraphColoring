@@ -11,42 +11,38 @@
 using namespace  std;
 
 void Graph::readInput() {
+    string line;
+    stringstream lineStream;
     fstream fin("../graph/benchmark/rgg_n_2_15_s0.txt", ios::in);
     if(!fin.is_open()) {
         cout << "errore apertura file fin" << endl;
     }
-    fin >> V >> E;
+    getline(fin, line);
+    lineStream = stringstream(line);
+    lineStream >> V >> E;
     if(!fin.good()) {
         cout << "errore lettura" << endl;
     }
 
-    string line;
-    stringstream lineStream;
     int neighbour;
-    for(int i=0; i<=V; i++){
+    for(int i=0; i<V; i++){
         getline(fin, line);
         lineStream = stringstream(line);
         while(lineStream >> neighbour)
-            edges.emplace_back(std::pair<int, int>(i,neighbour));
+            edges.emplace_back(std::pair<int, int>(i,neighbour-1));
     }
-    fin.close();
-}
+    fin.close();/*
+    for(auto a = std::begin(edges); a != std::end(edges); a++)
+        cout << a->first << " " << a->second << endl;
+*/
+ }
 
 Graph::Graph() {
     readInput();
-    this->graphCSR = GraphCSR(boost::edges_are_unsorted_multi_pass, std::begin(edges), edges.end(), V+1);
-    int cont = 0;// degree = 0;    //ci sarà un nodo 0, fittizio
+    this->graphCSR = GraphCSR(boost::edges_are_unsorted_multi_pass, std::begin(edges), edges.end(), V);
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {
-        graphCSR[current_vertex].id = cont++;
         graphCSR[current_vertex].color = -1;
         graphCSR[current_vertex].random = rand() % 1000 + 1; //1-1000
-        /*
-        BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR){
-            degree++;
-        }
-        graphCSR[current_vertex].degree = degree;
-        degree = 0; //reset
-         */
     }
     concurentThreadsSupported = std::thread::hardware_concurrency();
     cout << "Fine costruzione grafo in formato CSR!\n";
@@ -88,12 +84,11 @@ void Graph::printOutput() {
     if(!fout.is_open()) {
         cout << "errore apertura file fout" << endl;
     }
+    //ricorda di usare current_vertex+1 dato che gli indici partono da 1 nel file, mentre da 0 nella csr
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
-        if(graphCSR[current_vertex].id==0)
-            continue;
-        fout << "u:" << graphCSR[current_vertex].id << ", color: " << static_cast<int>(graphCSR[current_vertex].color) << ", rand:" << graphCSR[current_vertex].random << ", degree:" << boost::out_degree(current_vertex, graphCSR) << ", neigh -> ";
+        fout << "u:" << current_vertex+1 << ", color: " << static_cast<int>(graphCSR[current_vertex].color) << ", rand:" << graphCSR[current_vertex].random << ", degree:" << boost::out_degree(current_vertex, graphCSR) << ", neigh -> ";
         BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
-            fout << "(" << graphCSR[neighbor].id << "," << static_cast<int>(graphCSR[neighbor].color) << ") ";
+            fout << "(" << neighbor+1 << "," << static_cast<int>(graphCSR[neighbor].color) << ") ";
         }
         fout << "\n";
     }
