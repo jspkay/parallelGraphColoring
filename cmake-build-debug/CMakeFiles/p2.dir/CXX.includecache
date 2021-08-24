@@ -36,16 +36,6 @@ boost/graph/graph_traits.hpp
 boost/graph/graph_utility.hpp
 -
 
-/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/main.cpp
-iostream
--
-fstream
--
-thread
--
-graph/Graph.h
-/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/Graph.h
-
 /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/compare.hpp
 boost/algorithm/string/config.hpp
 -

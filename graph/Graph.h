@@ -25,7 +25,6 @@ private:
     void readInput();
     void printOutput();
     unsigned concurentThreadsSupported;
-    std::vector<GraphCSR::vertex_descriptor> set;
 public:
     Graph();
     void sequential();
