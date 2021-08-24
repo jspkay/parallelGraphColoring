@@ -112,7 +112,7 @@ void Graph::largestDegree(){
         //cout << current_vertex << ": " << "\n";
         BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
             //cout << "(" << boost::out_degree(current_vertex, graphCSR) << "," << graphCSR[current_vertex].random << ") vs (" << boost::out_degree(neighbor, graphCSR) << "," << graphCSR[neighbor].random << ")\n";
-            if(graphCSR[neighbor].color == -1) { //se non colorato confronto con il nodo corrente
+            if(graphCSR[neighbor].color == -1) { //se non colorato, confronto con il nodo corrente
                 if (boost::out_degree(current_vertex, graphCSR) < boost::out_degree(neighbor, graphCSR)) {
                     major = false;
                     break;
@@ -136,6 +136,9 @@ void Graph::largestDegree(){
                 }
                 graphCSR[current_vertex].color = color; //coloro il vertice corrente
             }
+            else //se non ha vicini, gli do direttamente 0
+                graphCSR[current_vertex].color = 0;
+
             set.pop_front();
         }
         else {
