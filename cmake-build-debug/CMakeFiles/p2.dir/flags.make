@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -IC:\PROGRA~1\Boost\BOOST_~1
 
-CXX_FLAGS = /DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -MDd -std:c++17
+CXX_FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -MDd -std:c++17
 
