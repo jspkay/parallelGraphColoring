@@ -120,5 +120,31 @@ void Graph::printOutput() {
 }
 
 void Graph::largestDegree(){
-
+    bool major = false;
+    int8_t color=-1;
+    int C[256], i;
+    for(int i=0; i<256; i++){
+        C[i]=0; //colore non usato
+    }
+    BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {  //qui ci vuole while
+        BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
+            if(graphCSR[current_vertex].degree < graphCSR[neighbor].degree)
+                break;
+            else if(graphCSR[current_vertex].degree == graphCSR[neighbor].degree)
+                if(graphCSR[current_vertex].random == graphCSR[neighbor].random)
+                    break;
+            C[graphCSR[neighbor].color] = 1;
+            major = true;
+        }
+        if(major){
+            for(i=0; i<256; i++){
+                if(C[i]==0 && color==-1) //colore non usato
+                    color=i;
+                else
+                    C[i]=0; //reset colori per il prossimo ciclo
+            }
+            graphCSR[current_vertex].color = color; //coloro il vertice corrente
+            color = -1;
+        }
+    }
 }
