@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <thread>
 #include "graph/Graph.h"
 
 
@@ -9,11 +10,5 @@ int main() {
     std::cout << "Time needed to create the graph without coloring " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
     mygraph.sequential();
    //mygraph.largestDegree();
-
-    /*graph a = graph(10);
-    a.addEdge(12, 15);
-//    a.addEdge(1,2);
-    a.addEdge(2,3);
-    a.addEdge(3,4);*/
-    return 0;
+    EXIT_SUCCESS;
 }

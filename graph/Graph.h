@@ -24,6 +24,7 @@ private:
     GraphCSR graphCSR;
     void readInput();
     void printOutput();
+    unsigned concurentThreadsSupported;
 public:
     Graph();
     void sequential();

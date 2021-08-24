@@ -6,6 +6,7 @@
 #include "fstream"
 #include "iostream"
 #include <regex>
+#include <thread>
 
 using namespace  std;
 
@@ -67,10 +68,12 @@ Graph::Graph() {
         graphCSR[current_vertex].degree = degree;
         degree = 0; //reset
     }
+    concurentThreadsSupported = std::thread::hardware_concurrency();
     cout << "Fine costruzione grafo in formato CSR!\n";
     cout << "******************\n";
     cout << "V:" << V << ", E:" << E;
     cout << "\n******************" << std::endl;
+    cout << concurentThreadsSupported << " core available";
 }
 
 void Graph::sequential(){
