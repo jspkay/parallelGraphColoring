@@ -52,8 +52,8 @@ Graph::Graph() {
     cout << "Fine costruzione grafo in formato CSR!\n";
     cout << "******************\n";
     cout << "V:" << V << ", E:" << E;
-    cout << "\n******************" << std::endl;
-    cout << concurentThreadsSupported << " core available";
+    cout << "\n******************\n";
+    cout << concurentThreadsSupported << " core available" << std::endl;
 }
 
 void Graph::sequential(){
@@ -80,11 +80,11 @@ void Graph::sequential(){
         graphCSR[current_vertex].color = color; //coloro il vertice corrente
         color = -1;
     }
-    printOutput();
+    printOutput("sequential-output.txt");
 }
 
-void Graph::printOutput() {
-    fstream fout("output.txt", ios::out);
+void Graph::printOutput(char* name) {
+    fstream fout(name, ios::out);
     if(!fout.is_open()) {
         cout << "errore apertura file fout" << endl;
     }
@@ -100,31 +100,55 @@ void Graph::printOutput() {
 }
 
 void Graph::largestDegree(){
-    bool major = false;
-    int8_t color=-1;
-    int C[256], i;
-    for(int i=0; i<256; i++){
-        C[i]=0; //colore non usato
+    bool major = true;
+    int C[256]{}, i, ci;
+    deque<GraphCSR::vertex_descriptor> set;
+    BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
+        set.push_back(current_vertex);
     }
-    BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {  //qui ci vuole while
+    GraphCSR::vertex_descriptor current_vertex;
+    while(set.size()!=0){
+        current_vertex = set.front();
+        //cout << current_vertex << ": " << "\n";
         BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
-            if(boost::out_degree(current_vertex, graphCSR) < boost::out_degree(neighbor, graphCSR))
-                break;
-            else if(boost::out_degree(current_vertex, graphCSR) == boost::out_degree(neighbor, graphCSR))
-                if(graphCSR[current_vertex].random == graphCSR[neighbor].random)
+            //cout << "(" << boost::out_degree(current_vertex, graphCSR) << "," << graphCSR[current_vertex].random << ") vs (" << boost::out_degree(neighbor, graphCSR) << "," << graphCSR[neighbor].random << ")\n";
+            if(graphCSR[neighbor].color == -1) { //se non colorato confronto con il nodo corrente
+                if (boost::out_degree(current_vertex, graphCSR) < boost::out_degree(neighbor, graphCSR)) {
+                    major = false;
                     break;
-            C[graphCSR[neighbor].color] = 1;
-            major = true;
+                } else if (boost::out_degree(current_vertex, graphCSR) == boost::out_degree(neighbor, graphCSR))
+                    if (graphCSR[current_vertex].random < graphCSR[neighbor].random) {
+                        major = false;
+                        break;
+                    }
+            }
+            else //altrimento aggiungo il colore a quelli "già usati"
+                C[graphCSR[neighbor].color] = 1;
         }
         if(major){
-            for(i=0; i<256; i++){
-                if(C[i]==0 && color==-1) //colore non usato
-                    color=i;
-                else
-                    C[i]=0; //reset colori per il prossimo ciclo
+            if (boost::out_degree(current_vertex, graphCSR) > 0) {
+                int8_t color = -1;
+                for (i = 0; i < 256; i++) {
+                    if (C[i] == 0 && color == -1) //colore non usato
+                        color = i;
+                    else
+                        C[i] = 0; //reset colori per il prossimo ciclo
+                }
+                graphCSR[current_vertex].color = color; //coloro il vertice corrente
             }
-            graphCSR[current_vertex].color = color; //coloro il vertice corrente
-            color = -1;
+            set.pop_front();
+        }
+        else {
+            //se vertice non è stato colorato e lo deve essere, lo reinserisco
+            set.pop_front();
+            GraphCSR::vertex_descriptor last = set.back();
+            set.push_back(current_vertex);
+            //reset strutture dati prossimo ciclo
+            major = true;
+            for(int i=0; i<256; i++){
+                C[i]=0; //colore non usato
+            }
         }
     }
+    printOutput("largest-output.txt");
 }

@@ -1,9 +1,7 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/p2.dir/graph/Graph.cpp.obj"
-  "CMakeFiles/p2.dir/main.cpp.obj"
-  "p2.exe"
-  "p2.exe.manifest"
-  "p2.lib"
+  "CMakeFiles/p2.dir/graph/Graph.cpp.o"
+  "CMakeFiles/p2.dir/main.cpp.o"
+  "p2"
   "p2.pdb"
 )
 

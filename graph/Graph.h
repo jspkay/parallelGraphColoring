@@ -23,7 +23,7 @@ private:
     std::vector<std::pair<int, int>> edges;
     GraphCSR graphCSR;
     void readInput();
-    void printOutput();
+    void printOutput(char* name);
     unsigned concurentThreadsSupported;
 public:
     Graph();
