@@ -40,14 +40,14 @@ void graph::addEdge(int a, int b) {
 
 std::vector<int> graph::getNeighbors(int n){
 
-    return std::vector<int>{verteces[n].begin(), verteces[n].end()};
+    //return std::vector<int>{verteces[n].begin(), verteces[n].end()};
 
-    /*std::vector<int> res{};
+    std::vector<int> res{};
 
     for(auto el : verteces[n])
         res.push_back(el);
 
-    return res; */
+    return res;
 }
 
 /*

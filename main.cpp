@@ -2,7 +2,7 @@
 #include <set>
 #include "graph/graph.h"
 
-void greedyAlgorithm(graph &G){
+std::vector<int> greedyAlgorithm(graph &G){
     std::vector<int> colors(static_cast<int>(G.getSize()));
     for(int i=0; i<G.getSize(); i++)
         colors[i] = -1;
@@ -23,19 +23,29 @@ void greedyAlgorithm(graph &G){
         colors[i] = col;
     }
 
+    return colors;
+}
 
+template <typename T>
+std::ostream& operator<<(std::ostream& os, std::vector<T> vec){
+    int i=0;
+    for(T &el : vec)
+      os << i++ << " - "<<   el << '\n';
+    return os;
 }
 
 int main() {
     graph a = graph(10);
 
     a.addEdge(2, 5);
-    a.addEdge(2, 5);
     a.addEdge(1,2);
     a.addEdge(2,3);
     a.addEdge(3,4);
+    a.addEdge(2, 4);
 
-    greedyAlgorithm(a);
+    std::vector<int> colors = greedyAlgorithm(a);
+
+    std::cout << colors << std::endl;
 
     return 0;
 }
