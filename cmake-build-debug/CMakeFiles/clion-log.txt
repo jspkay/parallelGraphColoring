@@ -1,4 +1,4 @@
-/etc/programs/clion-2019.3.4/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_DEPENDS_USE_COMPILER=FALSE -G "CodeBlocks - Unix Makefiles" /home/salvo/CLionProjects/progettoPDS/p2
+/programs/clion-2021.2/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_DEPENDS_USE_COMPILER=FALSE -G "CodeBlocks - Unix Makefiles" /home/salvo/CLionProjects/progettoPDS/p2
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/salvo/CLionProjects/progettoPDS/p2/cmake-build-debug

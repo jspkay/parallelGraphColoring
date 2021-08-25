@@ -9,6 +9,8 @@
 #include <vector>
 #include <stdexcept>
 
+class node;
+
 // list implementation
 class graph {
 private:
@@ -21,7 +23,8 @@ public:
 
     void addEdge(int a, int b);
     std::vector<int> getNeighbors(int n);
-};
 
+    unsigned long getSize(){return n;};
+};
 
 #endif //P2_GRAPH_H

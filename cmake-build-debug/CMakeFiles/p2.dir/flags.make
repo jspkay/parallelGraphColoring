@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = 
 
-CXX_FLAGS = -g -O0 -std=gnu++14
+CXX_FLAGS = -g -D_GLIBCXX_DEBUG -std=gnu++14
 
