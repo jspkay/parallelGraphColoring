@@ -14,22 +14,41 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_utility.hpp>
 
-struct VertexDescriptor { int id,random/*,degree; uso boost::out_degree*/; int8_t color; }; //change from int to int8_t
-typedef boost::compressed_sparse_row_graph<boost::bidirectionalS,VertexDescriptor> GraphCSR;
+class Graph{
+    long unsigned V,E;
 
+public:
+
+    // graph construction
+    Graph(int V, int E) :
+            V(V), E(E){};
+    virtual void addEdge(int a, int b) = 0;
+    virtual void prepare() = 0;
+
+    // methods
+    unsigned getSize() {
+        return V;
+    }
+    virtual void forEachVertex( std::function<void(int)> f) = 0;
+    virtual void forEachNeighbor( int v, std::function<void(int)> f) = 0;
+
+    virtual ~Graph() = 0;
+};
+
+/*
 class Graph {
 private:
     int V, E;  //number Verteces and Edges
     std::vector<std::pair<int, int>> edges;
-    GraphCSR graphCSR;
+    graphCsr_t graphCSR;
     void readInput();
     void printOutput(char* name);
-    unsigned concurentThreadsSupported;
+    unsigned concurrentThreadsSupported;
 public:
     Graph();
     void sequential();
     void largestDegree();
 };
-
+*/
 
 #endif //P2_GRAPH_H

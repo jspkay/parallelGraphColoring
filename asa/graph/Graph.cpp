@@ -48,12 +48,12 @@ Graph::Graph() {
         degree = 0; //reset
          */
     }
-    concurentThreadsSupported = std::thread::hardware_concurrency();
+    concurrentThreadsSupported = std::thread::hardware_concurrency();
     cout << "Fine costruzione grafo in formato CSR!\n";
     cout << "******************\n";
     cout << "V:" << V << ", E:" << E;
     cout << "\n******************\n";
-    cout << concurentThreadsSupported << " core available" << std::endl;
+    cout << concurrentThreadsSupported << " core available" << std::endl;
 }
 
 void Graph::sequential(){
