@@ -2,16 +2,17 @@
 // Created by salvo on 26/08/21.
 //
 
-#include "./Graph.h"
+#include "../Graph.h"
 #include "Graph_simple.h"
 
-Graph_simple::Graph_simple(unsigned long V, unsigned long E) :
- Graph<Graph_simple>(V,E) {
+using asa::Graph_simple;
+
+Graph_simple::Graph_simple(unsigned long V, unsigned long E) : Graph(V,E) {
     verteces = std::vector<std::forward_list<int>>(V);
     for(auto &el : verteces) el = std::forward_list<int>{};
 }
 
-void Graph_simple::addEdge(int a, int b) {
+void Graph_simple::addEdge(unsigned long a, unsigned long b) {
     if(a == b){
         std::cout << " No self loop!\nexiting ";
         exit(-2);
@@ -32,13 +33,25 @@ void Graph_simple::addEdge(int a, int b) {
     verteces[b].emplace_front(a);
 }
 
+void Graph_simple::prepare() {}
 
-void Graph_simple::forEachVertex(std::function<void(int)> f){
-    std::for_each(verteces.begin(), verteces.end(), f);
+
+void Graph_simple::forEachVertex(std::function<void(unsigned long)> f){
+    int i=0;
+    for(auto &el : verteces){
+        f(i++);
+    }
+    //std::for_each(verteces.begin(), verteces.end(), f);
 }
 
-void Graph_simple::forEachNeighbor(int v, std::function<void(int)> f) {
+void Graph_simple::forEachNeighbor(unsigned long v, std::function<void(unsigned long)> f) {
     std::for_each(verteces[v].begin(), verteces[v].end(), f);
+}
+
+unsigned long Graph_simple::getDegree(node v) {
+    unsigned long i=0;
+    for(auto el : verteces[v]) i++;
+    return i;
 }
 
 /*

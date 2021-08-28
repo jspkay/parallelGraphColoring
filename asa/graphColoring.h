@@ -5,7 +5,7 @@
 #ifndef P2_GRAPHCOLORING_H
 #define P2_GRAPHCOLORING_H
 
-#include "graph/Graph.h"
+#include "Graph.h"
 
 namespace asa {
 
@@ -15,14 +15,19 @@ namespace asa {
     //classes
     class graphColoring {
         std::vector<int> colors;
-        std::shared_ptr<Graph> g;
-
-        void sequentialAlgorithm();
+        std::unique_ptr< std::vector<int> > randoms;
+        Graph * g; // TODO: Can we use something else instead of a simple pointer?
 
     public:
-        graphColoring(Graph *g );
-        virtual ~graphColoring();
+        graphColoring(Graph *g);
+        ~graphColoring();
 
+        void sequentialAlgorithm();
+        void largestDegree();
+
+        void setRandoms(int maxValue);
+
+        std::vector<int> getColors();
     };
 
 }
