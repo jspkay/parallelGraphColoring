@@ -13,8 +13,10 @@
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_utility.hpp>
-#include <shared_mutex>
+#include <mutex>
+#include <condition_variable>
 #include <thread>
+#include <shared_mutex>
 
 
 struct VertexDescriptor { int id,random/*,degree; uso boost::out_degree*/; int8_t color; }; //change from int to int8_t
@@ -28,12 +30,12 @@ private:
     void readInput();
     void printOutput(char* name);
     unsigned concurentThreadsAvailable;
-    mutable std::shared_timed_mutex mutex;
-    //std::condition_variable cv;
+    std::shared_timed_mutex mutex;
+    std::condition_variable_any cv;
     std::deque<GraphCSR::vertex_descriptor> set;
     std::vector<std::thread> threads;
     int active_threads;
-    bool continue_flag = true, isEnded = true;
+    bool isEnded = false, toEnd = false;
 public:
     Graph();
     void sequential();

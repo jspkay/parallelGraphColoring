@@ -35,9 +35,13 @@ boost/graph/graph_traits.hpp
 -
 boost/graph/graph_utility.hpp
 -
-shared_mutex
+mutex
+-
+condition_variable
 -
 thread
+-
+shared_mutex
 -
 
 /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/compare.hpp
