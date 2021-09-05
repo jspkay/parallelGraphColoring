@@ -9,6 +9,7 @@
 #include <thread>
 
 using namespace  std;
+#define LEAVE_FREE 1
 
 void Graph::readInput() {
     fstream fin("../graph/benchmark/rgg_n_2_15_s0.txt", ios::in);
@@ -48,12 +49,13 @@ Graph::Graph() {
         degree = 0; //reset
          */
     }
-    concurentThreadsSupported = std::thread::hardware_concurrency();
+    concurentThreadsAvailable = std::thread::hardware_concurrency() - LEAVE_FREE;
+    active_threads = concurentThreadsAvailable;
     cout << "Fine costruzione grafo in formato CSR!\n";
     cout << "******************\n";
     cout << "V:" << V << ", E:" << E;
     cout << "\n******************\n";
-    cout << concurentThreadsSupported << " core available" << std::endl;
+    cout << concurentThreadsAvailable << " core available" << std::endl;
 }
 
 void Graph::sequential(){
@@ -100,58 +102,79 @@ void Graph::printOutput(char* name) {
 }
 
 void Graph::largestDegree(){
-    bool major = true;
-    int C[256]{}, i, ci;
-    deque<GraphCSR::vertex_descriptor> set;
+    //riempio set
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
         set.push_back(current_vertex);
     }
-    GraphCSR::vertex_descriptor current_vertex;
-    while(set.size()!=0){
-        current_vertex = set.front();
-        //cout << current_vertex << ": " << "\n";
-        BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
-            //cout << "(" << boost::out_degree(current_vertex, graphCSR) << "," << graphCSR[current_vertex].random << ") vs (" << boost::out_degree(neighbor, graphCSR) << "," << graphCSR[neighbor].random << ")\n";
-            if(graphCSR[neighbor].color == -1) { //se non colorato, confronto con il nodo corrente
-                if (boost::out_degree(current_vertex, graphCSR) < boost::out_degree(neighbor, graphCSR)) {
-                    major = false;
-                    break;
-                } else if (boost::out_degree(current_vertex, graphCSR) == boost::out_degree(neighbor, graphCSR))
-                    if (graphCSR[current_vertex].random < graphCSR[neighbor].random) {
-                        major = false;
-                        break;
+    for(int n=0; n<concurentThreadsAvailable; n++) {
+        threads.emplace_back([this]() {
+            GraphCSR::vertex_descriptor current_vertex;
+            int C[256]{}, i, color_i;
+            bool major = true;
+            while (continue_flag) {
+                //shared_lock<std::shared_timed_mutex> lock(mutex);
+                current_vertex = set.front();
+                //cout << current_vertex << ": " << "\n";
+                //terminazione thread
+                if(set.size()==0 && !continue_flag) {
+                    active_threads--;
+                    if(active_threads==0){
+                        isEnded = true;
+                        //cv.notify_all();
                     }
-            }
-            else //altrimento aggiungo il colore a quelli "già usati"
-                C[graphCSR[neighbor].color] = 1;
-        }
-        if(major){
-            if (boost::out_degree(current_vertex, graphCSR) > 0) {
-                int8_t color = -1;
-                for (i = 0; i < 256; i++) {
-                    if (C[i] == 0 && color == -1) //colore non usato
-                        color = i;
-                    else
-                        C[i] = 0; //reset colori per il prossimo ciclo
+                    break;
                 }
-                graphCSR[current_vertex].color = color; //coloro il vertice corrente
+                BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
+                        //cout << "(" << boost::out_degree(current_vertex, graphCSR) << "," << graphCSR[current_vertex].random << ") vs (" << boost::out_degree(neighbor, graphCSR) << "," << graphCSR[neighbor].random << ")\n";
+                        if (graphCSR[neighbor].color == -1) { //se non colorato, confronto con il nodo corrente
+                            if (boost::out_degree(current_vertex, graphCSR) < boost::out_degree(neighbor, graphCSR)) {
+                                major = false;
+                                break;
+                            } else if (boost::out_degree(current_vertex, graphCSR) ==
+                                       boost::out_degree(neighbor, graphCSR))
+                                if (graphCSR[current_vertex].random < graphCSR[neighbor].random) {
+                                    major = false;
+                                    break;
+                                }
+                        } else //altrimento aggiungo il colore a quelli "già usati"
+                            C[graphCSR[neighbor].color] = 1;
+                    }
+                if (major) {
+                    if (boost::out_degree(current_vertex, graphCSR) > 0) {
+                        int8_t color = -1;
+                        for (i = 0; i < 256; i++) {
+                            if (C[i] == 0 && color == -1) //colore non usato
+                                color = i;
+                            else
+                                C[i] = 0; //reset colori per il prossimo ciclo
+                        }
+                        color_i = color; //coloro il vertice corrente
+                    } else //se non ha vicini, gli do direttamente 0
+                        color_i = 0;
+                    //lock.unlock();
+                    //std::unique_lock<std::shared_timed_mutex> u_lock(mutex);
+                    graphCSR[current_vertex].color = color_i;
+                    set.pop_front();
+                    if(set.size()==0)
+                        continue_flag = false; //fine alg
+                } else {
+                    //se vertice non è stato colorato e lo deve essere, lo reinserisco
+                    set.pop_front();
+                    GraphCSR::vertex_descriptor last = set.back();
+                    set.push_back(current_vertex);
+                    //reset strutture dati prossimo ciclo
+                    major = true;
+                    for (int i = 0; i < 256; i++) {
+                        C[i] = 0; //colore non usato
+                    }
+                }
             }
-            else //se non ha vicini, gli do direttamente 0
-                graphCSR[current_vertex].color = 0;
-
-            set.pop_front();
-        }
-        else {
-            //se vertice non è stato colorato e lo deve essere, lo reinserisco
-            set.pop_front();
-            GraphCSR::vertex_descriptor last = set.back();
-            set.push_back(current_vertex);
-            //reset strutture dati prossimo ciclo
-            major = true;
-            for(int i=0; i<256; i++){
-                C[i]=0; //colore non usato
-            }
-        }
+        });
     }
+    //unique_lock<shared_timed_mutex> lock(mutex);
+    //cv.wait(lock,[this](){return isEnded; });
+    for(std::thread& t : threads)
+        t.join();
     printOutput("largest-output.txt");
 }
+

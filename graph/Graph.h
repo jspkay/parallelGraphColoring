@@ -13,6 +13,9 @@
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include <shared_mutex>
+#include <thread>
+
 
 struct VertexDescriptor { int id,random/*,degree; uso boost::out_degree*/; int8_t color; }; //change from int to int8_t
 typedef boost::compressed_sparse_row_graph<boost::bidirectionalS,VertexDescriptor> GraphCSR;
@@ -24,7 +27,13 @@ private:
     GraphCSR graphCSR;
     void readInput();
     void printOutput(char* name);
-    unsigned concurentThreadsSupported;
+    unsigned concurentThreadsAvailable;
+    mutable std::shared_timed_mutex mutex;
+    //std::condition_variable cv;
+    std::deque<GraphCSR::vertex_descriptor> set;
+    std::vector<std::thread> threads;
+    int active_threads;
+    bool continue_flag = true, isEnded = true;
 public:
     Graph();
     void sequential();
