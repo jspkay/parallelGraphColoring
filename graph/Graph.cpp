@@ -190,14 +190,15 @@ void Graph::JonesPlassmann(){
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
         total_set.push_back(current_vertex);
     }
+    cout << "main thread " << std::this_thread::get_id() << " avviato!"<< endl;
     ///////////////////////////////////////////////////////////////////////////
     for(int n=0; n<concurentThreadsAvailable-1; n++){
         threads.emplace_back([this](){
+            cout << "thread " << std::this_thread::get_id() << " avviato!"<< endl;
             GraphCSR::vertex_descriptor current_vertex;
             bool major = true;
             while (true) {
-                //cout << std::this_thread::get_id() << endl;
-                std::unique_lock<std::shared_timed_mutex> ul(mutex);
+                std::unique_lock<std::shared_timed_mutex> ulk(mutex);
                 //////////////////////////////////////////////////////////////////////
                 //terminazione thread
                 if(total_set.size()==0){
@@ -208,8 +209,12 @@ void Graph::JonesPlassmann(){
                     }
                     break;
                 }
-                //////////////////////////////////////////////////////////////////////
                 current_vertex = total_set.front();
+                total_set.pop_front();
+                ulk.unlock();
+                //////////////////////////////////////////////////////////////////////
+                std::shared_lock<std::shared_timed_mutex> slk(mutex);
+                //cout << std::this_thread::get_id() << ": ottenuto shared" << endl;
                 BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
                         if(graphCSR[neighbor].color != -1)
                             continue;
@@ -224,14 +229,17 @@ void Graph::JonesPlassmann(){
                             }
                         }
                 }
+                slk.unlock();
                 //////////////////////////////////////////////////////////////////////
+                //cout << std::this_thread::get_id() << ": rilasciato shared" << endl;
+                ulk.lock();
                 //aggiungo a vertici da colorare se maggiore
-                total_set.pop_front();
                 if(major) {
                     toColor_set.push_back(current_vertex);
+                    //cout << "size: " << total_set.size() << endl;
                 }
                 else {
-                    total_set.push_back(current_vertex);
+                    total_set.push_back(current_vertex); //reinserisco in coda se non è stato colorato
                     major=true;
                 }
                 cv.notify_all();
@@ -242,8 +250,9 @@ void Graph::JonesPlassmann(){
     GraphCSR::vertex_descriptor current_vertex;
     int C[256]{}, i;
     while(true) {
-        std::unique_lock<std::shared_timed_mutex> ul(mutex);
-        cv.wait(ul, [this]() { return toColor_set.size() != 0 || (isEnded == true && total_set.size() == 0); });
+        std::unique_lock<std::shared_timed_mutex> ulk(mutex);
+        //cout << "--------->ottenuto unique" << endl;
+        cv.wait(ulk, [this]() { return toColor_set.size() != 0 || isEnded == true; });
         if(isEnded)
             break;
         current_vertex = toColor_set.front();
@@ -262,6 +271,7 @@ void Graph::JonesPlassmann(){
                 C[i] = 0; //reset colori per il prossimo ciclo
         }
         graphCSR[current_vertex].color = color; //coloro il vertice corrente
+        //cout << ">---------fine unique" << endl;
     }
     for(std::thread& t : threads)
         t.join();
@@ -281,7 +291,7 @@ void Graph::largestDegree(){
         current_vertex = set.front();
         //cout << current_vertex << ": " << "\n";
         BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
-                cout << "(" << boost::out_degree(current_vertex, graphCSR) << "," << graphCSR[current_vertex].random << ") vs (" << boost::out_degree(neighbor, graphCSR) << "," << graphCSR[neighbor].random << ")\n";
+                //cout << "(" << boost::out_degree(current_vertex, graphCSR) << "," << graphCSR[current_vertex].random << ") vs (" << boost::out_degree(neighbor, graphCSR) << "," << graphCSR[neighbor].random << ")\n";
                 if(graphCSR[neighbor].color == -1) { //se non colorato, confronto con il nodo corrente
                     if (boost::out_degree(current_vertex, graphCSR) < boost::out_degree(neighbor, graphCSR)) {
                         major = false;
