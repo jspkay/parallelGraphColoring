@@ -100,21 +100,24 @@ void Graph::printOutput(char* name) {
         fout << "\n";
     }
 }
-
+/*
 void Graph::largestDegree(){
     //riempio set
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
-        set.push_back(current_vertex);
+        total_set.push_back(current_vertex);
     }
-    for(int n=0; n<concurentThreadsAvailable; n++) {
+    ///////////////////////////////////////////////////////////////////////////
+    for(int n=0; n<concurentThreadsAvailable; n++){
         threads.emplace_back([this](){
+            cout << std::this_thread::get_id << endl;
             GraphCSR::vertex_descriptor current_vertex;
             int C[256]{}, i, color_i;
             bool major = true;
             while (true) {
                 std::shared_lock<std::shared_timed_mutex> sl(mutex);
+                //////////////////////////////////////////////////////////////////////
                 //terminazione thread
-                if(set.size()==0){
+                if(total_set.size()==0){
                     active_threads--;
                     if(active_threads==0){
                         isEnded = true;
@@ -122,9 +125,10 @@ void Graph::largestDegree(){
                     }
                     break;
                 }
-                current_vertex = set.front();
-                BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
-                        cout << "(" << boost::out_degree(current_vertex, graphCSR) << "," << graphCSR[current_vertex].random << ") vs (" << boost::out_degree(neighbor, graphCSR) << "," << graphCSR[neighbor].random << ")\n";
+                //////////////////////////////////////////////////////////////////////
+                current_vertex = total_set.front();
+                BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR){
+                        cout << std::this_thread::get_id << "] (" << boost::out_degree(current_vertex, graphCSR) << "," << graphCSR[current_vertex].random << ") vs (" << boost::out_degree(neighbor, graphCSR) << "," << graphCSR[neighbor].random << ")\n";
                         if (graphCSR[neighbor].color == -1){ //se non colorato, confronto con il nodo corrente
                             if (boost::out_degree(current_vertex, graphCSR) < boost::out_degree(neighbor, graphCSR)){
                                 major = false;
@@ -137,8 +141,13 @@ void Graph::largestDegree(){
                         } else //altrimento aggiungo il colore a quelli "già usati"
                             C[graphCSR[neighbor].color] = 1;
                 }
-                cout << "size " << set.size() << " " << major << endl;
-                if (major) {
+                //////////////////////////////////////////////////////////////////////
+                cout << total_set.size() << endl;
+                //aggiungo a vertici da colorare se maggiore
+                sl.unlock();
+                std::unique_lock<std::shared_timed_mutex> ul(mutex);
+                total_set.pop_front();
+                if(major) {
                     if (boost::out_degree(current_vertex, graphCSR) > 0) {
                         int8_t color = -1;
                         for (i = 0; i < 256; i++) {
@@ -148,18 +157,15 @@ void Graph::largestDegree(){
                                 C[i] = 0; //reset colori per il prossimo ciclo
                         }
                         color_i = color; //coloro il vertice corrente
-                    } else //se non ha vicini, gli do direttamente 0
+                    }
+                    else //se non ha vicini, gli do direttamente 0
                         color_i = 0;
-                    sl.unlock();
-                    std::unique_lock<std::shared_timed_mutex> ul(mutex);
-                    graphCSR[current_vertex].color = color_i;
-                    set.pop_front();
-                } else {
+                    graphCSR[current_vertex].color = color_i; //qui coloro
+                }
+                //minor
+                else {
                     //se vertice non è stato colorato e lo deve essere, lo reinserisco
-                    sl.unlock();
-                    std::unique_lock<std::shared_timed_mutex> ul(mutex);
-                    set.pop_front();
-                    set.push_back(current_vertex);
+                    total_set.push_back(current_vertex);
                     cv.notify_all();
                     //reset strutture dati prossimo ciclo
                     major = true;
@@ -170,12 +176,152 @@ void Graph::largestDegree(){
             }
         });
     }
+    /////////////////////////////////////////////////////////////////////////////
     std::unique_lock<std::shared_timed_mutex> ul(mutex);
-    cout << std::this_thread::get_id() << " mi addormento" << " mi risveglio, size " << set.size() << endl;
     cv.wait(ul,[this](){return isEnded; });
-    cout << std::this_thread::get_id() << " mi risveglio" << endl;
     for(std::thread& t : threads)
         t.join();
     printOutput("largest-output.txt");
 }
+*/
 
+void Graph::JonesPlassmann(){
+    //riempio set
+    BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
+        total_set.push_back(current_vertex);
+    }
+    ///////////////////////////////////////////////////////////////////////////
+    for(int n=0; n<concurentThreadsAvailable-1; n++){
+        threads.emplace_back([this](){
+            GraphCSR::vertex_descriptor current_vertex;
+            bool major = true;
+            while (true) {
+                //cout << std::this_thread::get_id() << endl;
+                std::unique_lock<std::shared_timed_mutex> ul(mutex);
+                //////////////////////////////////////////////////////////////////////
+                //terminazione thread
+                if(total_set.size()==0){
+                    active_threads--;
+                    if(active_threads==1){
+                        isEnded = true;
+                        cv.notify_one();
+                    }
+                    break;
+                }
+                //////////////////////////////////////////////////////////////////////
+                current_vertex = total_set.front();
+                BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
+                        if(graphCSR[neighbor].color != -1)
+                            continue;
+                        if (graphCSR[current_vertex].random < graphCSR[neighbor].random) {
+                            major = false;
+                            break;
+                        }
+                        else if(graphCSR[current_vertex].random == graphCSR[neighbor].random){
+                            if(current_vertex < neighbor) {
+                                major = false;
+                                break;
+                            }
+                        }
+                }
+                //////////////////////////////////////////////////////////////////////
+                //aggiungo a vertici da colorare se maggiore
+                total_set.pop_front();
+                if(major) {
+                    toColor_set.push_back(current_vertex);
+                }
+                else {
+                    total_set.push_back(current_vertex);
+                    major=true;
+                }
+                cv.notify_all();
+            }
+        });
+    }
+    /////////////////////////////////////////////////////////////////////////////
+    GraphCSR::vertex_descriptor current_vertex;
+    int C[256]{}, i;
+    while(true) {
+        std::unique_lock<std::shared_timed_mutex> ul(mutex);
+        cv.wait(ul, [this]() { return toColor_set.size() != 0 || (isEnded == true && total_set.size() == 0); });
+        if(isEnded)
+            break;
+        current_vertex = toColor_set.front();
+        toColor_set.pop_front();
+        //////////////////////////////////////////////////////////////////////////
+        int8_t color = -1;
+        BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
+            if (graphCSR[neighbor].color != -1) { //se non colorato, confronto con il nodo corrente
+                    C[graphCSR[neighbor].color] = 1;
+                }
+        }
+        for (i = 0; i < 256; i++) {
+            if (C[i] == 0 && color == -1) //colore non usato
+                color = i;
+            else
+                C[i] = 0; //reset colori per il prossimo ciclo
+        }
+        graphCSR[current_vertex].color = color; //coloro il vertice corrente
+    }
+    for(std::thread& t : threads)
+        t.join();
+    printOutput("jp-output.txt");
+}
+
+
+void Graph::largestDegree(){
+    bool major = true;
+    int C[256]{}, i, ci;
+    deque<GraphCSR::vertex_descriptor> set;
+    BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
+            set.push_back(current_vertex);
+        }
+    GraphCSR::vertex_descriptor current_vertex;
+    while(set.size()!=0){
+        current_vertex = set.front();
+        //cout << current_vertex << ": " << "\n";
+        BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
+                cout << "(" << boost::out_degree(current_vertex, graphCSR) << "," << graphCSR[current_vertex].random << ") vs (" << boost::out_degree(neighbor, graphCSR) << "," << graphCSR[neighbor].random << ")\n";
+                if(graphCSR[neighbor].color == -1) { //se non colorato, confronto con il nodo corrente
+                    if (boost::out_degree(current_vertex, graphCSR) < boost::out_degree(neighbor, graphCSR)) {
+                        major = false;
+                        break;
+                    } else if (boost::out_degree(current_vertex, graphCSR) == boost::out_degree(neighbor, graphCSR))
+                        if (graphCSR[current_vertex].random < graphCSR[neighbor].random) {
+                            major = false;
+                            break;
+                        }
+                }
+                else //altrimento aggiungo il colore a quelli "già usati"
+                    C[graphCSR[neighbor].color] = 1;
+            }
+        if(major){
+            if (boost::out_degree(current_vertex, graphCSR) > 0) {
+                int8_t color = -1;
+                for (i = 0; i < 256; i++) {
+                    if (C[i] == 0 && color == -1) //colore non usato
+                        color = i;
+                    else
+                        C[i] = 0; //reset colori per il prossimo ciclo
+                }
+                graphCSR[current_vertex].color = color; //coloro il vertice corrente
+            }
+            else //se non ha vicini, gli do direttamente 0
+                graphCSR[current_vertex].color = 0;
+
+            set.pop_front();
+        }
+        else {
+            //se vertice non è stato colorato e lo deve essere, lo reinserisco
+            set.pop_front();
+            GraphCSR::vertex_descriptor last = set.back();
+            set.push_back(current_vertex);
+            //reset strutture dati prossimo ciclo
+            major = true;
+            for(int i=0; i<256; i++){
+                C[i]=0; //colore non usato
+            }
+        }
+    }
+    printOutput("largest-output.txt");
+}

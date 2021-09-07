@@ -19,7 +19,7 @@
 #include <shared_mutex>
 
 
-struct VertexDescriptor { int id,random/*,degree; uso boost::out_degree*/; int8_t color; }; //change from int to int8_t
+struct VertexDescriptor { int id,random; int8_t color; }; //change from int to int8_t
 typedef boost::compressed_sparse_row_graph<boost::bidirectionalS,VertexDescriptor> GraphCSR;
 
 class Graph {
@@ -32,14 +32,15 @@ private:
     unsigned concurentThreadsAvailable;
     std::shared_timed_mutex mutex;
     std::condition_variable_any cv;
-    std::deque<GraphCSR::vertex_descriptor> set;
+    std::deque<GraphCSR::vertex_descriptor> total_set, toColor_set;
     std::vector<std::thread> threads;
     int active_threads;
-    bool isEnded = false, toEnd = false;
+    bool isEnded = false;
 public:
     Graph();
     void sequential();
     void largestDegree();
+    void JonesPlassmann();
 };
 
 

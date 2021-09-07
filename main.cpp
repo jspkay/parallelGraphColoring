@@ -9,6 +9,6 @@ int main() {
     Graph mygraph;
     std::cout << "Time needed to create the graph without coloring " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
     //mygraph.sequential();
-    mygraph.largestDegree();
+    mygraph.JonesPlassmann();
     EXIT_SUCCESS;
 }
