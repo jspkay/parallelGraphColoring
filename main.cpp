@@ -13,7 +13,7 @@ int main() {
     const clock_t end_seq_time = clock();
     mygraph.clearGraph();
     const clock_t begin_ld_time = clock();
-    mygraph.largestDegree();
+    mygraph.largestDegree(); //13 colori
     const clock_t end_ld_time = clock();
     mygraph.clearGraph();
     const clock_t begin_jp_time = clock();

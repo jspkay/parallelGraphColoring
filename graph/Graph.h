@@ -19,7 +19,7 @@
 #include <shared_mutex>
 
 
-struct VertexDescriptor { int id,random,num_iteration; int8_t color; }; //change from int to int8_t
+struct VertexDescriptor { int id,random,num_it; int8_t color; }; //change from int to int8_t
 typedef boost::compressed_sparse_row_graph<boost::bidirectionalS,VertexDescriptor> GraphCSR;
 
 class Graph {
@@ -35,6 +35,7 @@ private:
     std::deque<GraphCSR::vertex_descriptor> total_set, toColor_set;
     std::vector<std::thread> threads;
     int active_threads;
+    int jp_numIteration, increase_jp_numIteration;
     bool isEnded = false;
 public:
     Graph();
