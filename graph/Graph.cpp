@@ -41,13 +41,7 @@ Graph::Graph() {
         graphCSR[current_vertex].id = cont++;
         graphCSR[current_vertex].color = -1;
         graphCSR[current_vertex].random = rand() % 1000 + 1; //1-1000
-        /*
-        BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR){
-            degree++;
-        }
-        graphCSR[current_vertex].degree = degree;
-        degree = 0; //reset
-         */
+        graphCSR[current_vertex].num_iteration = 0; //servirà per jp alg
     }
     concurentThreadsAvailable = std::thread::hardware_concurrency() - LEAVE_FREE;
     active_threads = concurentThreadsAvailable;
@@ -56,6 +50,18 @@ Graph::Graph() {
     cout << "V:" << V << ", E:" << E;
     cout << "\n******************\n";
     cout << concurentThreadsAvailable << " core available" << std::endl;
+}
+
+void Graph::clearGraph() {
+    toColor_set.clear();
+    total_set.clear();
+    threads.clear();
+    active_threads = concurentThreadsAvailable;
+    isEnded = false;
+    BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {
+            graphCSR[current_vertex].color = -1;
+            graphCSR[current_vertex].num_iteration = 0;
+        }
 }
 
 void Graph::sequential(){
@@ -100,101 +106,17 @@ void Graph::printOutput(char* name) {
         fout << "\n";
     }
 }
-/*
+
 void Graph::largestDegree(){
     //riempio set
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
         total_set.push_back(current_vertex);
     }
-    ///////////////////////////////////////////////////////////////////////////
-    for(int n=0; n<concurentThreadsAvailable; n++){
-        threads.emplace_back([this](){
-            cout << std::this_thread::get_id << endl;
-            GraphCSR::vertex_descriptor current_vertex;
-            int C[256]{}, i, color_i;
-            bool major = true;
-            while (true) {
-                std::shared_lock<std::shared_timed_mutex> sl(mutex);
-                //////////////////////////////////////////////////////////////////////
-                //terminazione thread
-                if(total_set.size()==0){
-                    active_threads--;
-                    if(active_threads==0){
-                        isEnded = true;
-                        cv.notify_all();
-                    }
-                    break;
-                }
-                //////////////////////////////////////////////////////////////////////
-                current_vertex = total_set.front();
-                BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR){
-                        cout << std::this_thread::get_id << "] (" << boost::out_degree(current_vertex, graphCSR) << "," << graphCSR[current_vertex].random << ") vs (" << boost::out_degree(neighbor, graphCSR) << "," << graphCSR[neighbor].random << ")\n";
-                        if (graphCSR[neighbor].color == -1){ //se non colorato, confronto con il nodo corrente
-                            if (boost::out_degree(current_vertex, graphCSR) < boost::out_degree(neighbor, graphCSR)){
-                                major = false;
-                                break;
-                            } else if (boost::out_degree(current_vertex, graphCSR) == boost::out_degree(neighbor, graphCSR))
-                                if (graphCSR[current_vertex].random < graphCSR[neighbor].random) {
-                                    major = false;
-                                    break;
-                                }
-                        } else //altrimento aggiungo il colore a quelli "già usati"
-                            C[graphCSR[neighbor].color] = 1;
-                }
-                //////////////////////////////////////////////////////////////////////
-                cout << total_set.size() << endl;
-                //aggiungo a vertici da colorare se maggiore
-                sl.unlock();
-                std::unique_lock<std::shared_timed_mutex> ul(mutex);
-                total_set.pop_front();
-                if(major) {
-                    if (boost::out_degree(current_vertex, graphCSR) > 0) {
-                        int8_t color = -1;
-                        for (i = 0; i < 256; i++) {
-                            if (C[i] == 0 && color == -1) //colore non usato
-                                color = i;
-                            else
-                                C[i] = 0; //reset colori per il prossimo ciclo
-                        }
-                        color_i = color; //coloro il vertice corrente
-                    }
-                    else //se non ha vicini, gli do direttamente 0
-                        color_i = 0;
-                    graphCSR[current_vertex].color = color_i; //qui coloro
-                }
-                //minor
-                else {
-                    //se vertice non è stato colorato e lo deve essere, lo reinserisco
-                    total_set.push_back(current_vertex);
-                    cv.notify_all();
-                    //reset strutture dati prossimo ciclo
-                    major = true;
-                    for (int i = 0; i < 256; i++) {
-                        C[i] = 0; //colore non usato
-                    }
-                }
-            }
-        });
-    }
-    /////////////////////////////////////////////////////////////////////////////
-    std::unique_lock<std::shared_timed_mutex> ul(mutex);
-    cv.wait(ul,[this](){return isEnded; });
-    for(std::thread& t : threads)
-        t.join();
-    printOutput("largest-output.txt");
-}
-*/
-
-void Graph::JonesPlassmann(){
-    //riempio set
-    BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
-        total_set.push_back(current_vertex);
-    }
-    cout << "main thread " << std::this_thread::get_id() << " avviato!"<< endl;
+    //cout << "main thread " << std::this_thread::get_id() << " avviato!"<< endl;
     ///////////////////////////////////////////////////////////////////////////
     for(int n=0; n<concurentThreadsAvailable-1; n++){
         threads.emplace_back([this](){
-            cout << "thread " << std::this_thread::get_id() << " avviato!"<< endl;
+            //cout << "thread " << std::this_thread::get_id() << " avviato!"<< endl;
             GraphCSR::vertex_descriptor current_vertex;
             bool major = true;
             while (true) {
@@ -217,17 +139,15 @@ void Graph::JonesPlassmann(){
                 //cout << std::this_thread::get_id() << ": ottenuto shared" << endl;
                 BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
                         if(graphCSR[neighbor].color != -1)
-                            continue;
-                        if (graphCSR[current_vertex].random < graphCSR[neighbor].random) {
+                            continue; //SE GIÀ COLORATO SKIP
+                        if (boost::out_degree(current_vertex, graphCSR) < boost::out_degree(neighbor, graphCSR)) {
                             major = false;
                             break;
-                        }
-                        else if(graphCSR[current_vertex].random == graphCSR[neighbor].random){
-                            if(current_vertex < neighbor) {
-                                major = false;
+                        } else if (boost::out_degree(current_vertex, graphCSR) == boost::out_degree(neighbor, graphCSR))
+                            if (graphCSR[current_vertex].random < graphCSR[neighbor].random) {
+                                major = false;  //A PARITA' DI DEGREE VEDO RANDOM
                                 break;
                             }
-                        }
                 }
                 slk.unlock();
                 //////////////////////////////////////////////////////////////////////
@@ -275,11 +195,95 @@ void Graph::JonesPlassmann(){
     }
     for(std::thread& t : threads)
         t.join();
+    printOutput("largestDegree-output.txt");
+}
+
+
+ void Graph::JonesPlassmann(){
+    //riempio set
+    BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
+        total_set.push_back(current_vertex);
+    }
+    //cout << "main thread " << std::this_thread::get_id() << " avviato!"<< endl;
+    ///////////////////////////////////////////////////////////////////////////
+    for(int n=0; n<concurentThreadsAvailable-1; n++){
+        threads.emplace_back([this](){
+            //cout << "thread " << std::this_thread::get_id() << " avviato!"<< endl;
+            GraphCSR::vertex_descriptor current_vertex;
+            bool major = true;
+            while (true) {
+                std::unique_lock<std::shared_timed_mutex> ulk(mutex);
+                //////////////////////////////////////////////////////////////////////
+                //terminazione thread
+                if(total_set.size()==0){
+                    active_threads--;
+                    if(active_threads==1){
+                        isEnded = true;
+                        cv.notify_one();
+                    }
+                    break;
+                }
+                current_vertex = total_set.front();
+                total_set.pop_front();
+                ulk.unlock();
+                //////////////////////////////////////////////////////////////////////
+                std::shared_lock<std::shared_timed_mutex> slk(mutex);
+                //cout << std::this_thread::get_id() << ": ottenuto shared" << endl;
+                BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
+                        if(graphCSR[neighbor].color != -1)
+                            continue; //SE GIÀ COLORATO SKIP
+                        if (graphCSR[current_vertex].random < graphCSR[neighbor].random) {
+                            major = false;
+                            break;
+                        }
+                        else if(graphCSR[current_vertex].random == graphCSR[neighbor].random){
+                            if(current_vertex < neighbor) {
+                                major = false;
+                                break;
+                            }
+                        }
+                }
+                slk.unlock();
+                //////////////////////////////////////////////////////////////////////
+                //cout << std::this_thread::get_id() << ": rilasciato shared" << endl;
+                ulk.lock();
+                //aggiungo a vertici da colorare se maggiore
+                if(major) {
+                    toColor_set.push_back(current_vertex);
+                }
+                else {
+                    graphCSR[current_vertex].num_iteration++;
+                    total_set.push_back(current_vertex); //reinserisco in coda se non è stato colorato
+                    major=true;
+                }
+                cv.notify_all();
+            }
+        });
+    }
+    /////////////////////////////////////////////////////////////////////////////
+    GraphCSR::vertex_descriptor current_vertex;
+    int C[256]{}, i;
+    while(true) {
+        std::unique_lock<std::shared_timed_mutex> ulk(mutex);
+        //cout << "--------->ottenuto unique" << endl;
+        cv.wait(ulk, [this]() { return toColor_set.size() != 0 || isEnded == true; });
+        if(isEnded)
+            break;
+        current_vertex = toColor_set.front();
+        toColor_set.pop_front();
+        //////////////////////////////////////////////////////////////////////////
+        graphCSR[current_vertex].color =  graphCSR[current_vertex].num_iteration; //coloro il vertice corrente
+        //cout << ">---------fine unique" << endl;
+    }
+    for(std::thread& t : threads)
+        t.join();
     printOutput("jp-output.txt");
 }
 
 
-void Graph::largestDegree(){
+
+
+/*void Graph::largestDegree(){
     bool major = true;
     int C[256]{}, i, ci;
     deque<GraphCSR::vertex_descriptor> set;
@@ -334,4 +338,4 @@ void Graph::largestDegree(){
         }
     }
     printOutput("largest-output.txt");
-}
+}*/

@@ -19,7 +19,7 @@
 #include <shared_mutex>
 
 
-struct VertexDescriptor { int id,random; int8_t color; }; //change from int to int8_t
+struct VertexDescriptor { int id,random,num_iteration; int8_t color; }; //change from int to int8_t
 typedef boost::compressed_sparse_row_graph<boost::bidirectionalS,VertexDescriptor> GraphCSR;
 
 class Graph {
@@ -38,6 +38,7 @@ private:
     bool isEnded = false;
 public:
     Graph();
+    void clearGraph();
     void sequential();
     void largestDegree();
     void JonesPlassmann();
