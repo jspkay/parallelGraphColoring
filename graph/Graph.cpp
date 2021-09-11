@@ -7,6 +7,8 @@
 #include "iostream"
 #include <regex>
 #include <thread>
+#include <queue>
+#include <mutex>
 
 using namespace  std;
 
@@ -25,16 +27,54 @@ void Graph::readInput() {
     }
 
     int neighbour;
+    queue<string> q;
+    mutex mq;
+
+    //consumer
+
+    auto cons = [&mq, &q, this](){
+        string line;
+        stringstream lineStream;
+        int neighbour;
+        int i;
+        while(true){
+            {
+                lock_guard<mutex> lk(mq);
+                if(q.empty())
+                    continue;
+                line = q.front();
+                q.pop();
+            }
+            if(line == "stop")
+                return;
+            lineStream = stringstream(line);
+            lineStream >> i;
+            while(lineStream >> neighbour)
+                edges.emplace_back(std::pair<int, int>(i,neighbour-1));
+
+
+        }
+    };
+    //start consumer
+    thread consT(cons);
+    //producer
     for(int i=0; i<V; i++){
         getline(fin, line);
-        lineStream = stringstream(line);
-        while(lineStream >> neighbour)
-            edges.emplace_back(std::pair<int, int>(i,neighbour-1));
+        {
+            lock_guard<mutex> lk(mq);
+            q.emplace(std::to_string(i) + " " + line);
+        }
+    }
+    {
+        lock_guard<mutex> lk(mq);
+        q.push("stop");
     }
     fin.close();/*
     for(auto a = std::begin(edges); a != std::end(edges); a++)
         cout << a->first << " " << a->second << endl;
 */
+    consT.join();
+
  }
 
 Graph::Graph() {
