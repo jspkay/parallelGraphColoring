@@ -1,7 +1,3 @@
-//
-// Created by salvo on 11/08/21.
-//
-
 #include "Graph.h"
 #include "fstream"
 #include "iostream"
@@ -26,27 +22,40 @@ void Graph::readInput() {
         cout << "errore lettura" << endl;
     }
 
-    int neighbour;
     queue<string> q;
     mutex mq;
+    condition_variable cv;
+
+    //producer
+    auto pro = [&mq, &q, &fin, &cv, this](){
+        string line;
+        for(int i=0; i<V; i++){
+            getline(fin, line);
+            lock_guard<mutex> lk(mq);
+            q.emplace(std::to_string(i) + " " + line);
+            cv.notify_one();
+        }
+        fin.close();
+        lock_guard<mutex> lk(mq);
+        q.emplace("stop");
+        cv.notify_one();
+    };
 
     //consumer
-
-    auto cons = [&mq, &q, this](){
+    auto cons = [&mq, &q, &cv, this](){
         string line;
         stringstream lineStream;
         int neighbour;
         int i;
         while(true){
-            {
-                lock_guard<mutex> lk(mq);
-                if(q.empty())
-                    continue;
-                line = q.front();
-                q.pop();
-            }
+            unique_lock<mutex> lk(mq);
+            cv.wait(lk, [&q](){return !q.empty();});
+            line = q.front();
+            q.pop();
+            lk.unlock();
             if(line == "stop")
                 return;
+
             lineStream = stringstream(line);
             lineStream >> i;
             while(lineStream >> neighbour)
@@ -55,27 +64,19 @@ void Graph::readInput() {
 
         }
     };
+    //start producer
+    thread proT(pro);
     //start consumer
     thread consT(cons);
     //producer
-    for(int i=0; i<V; i++){
-        getline(fin, line);
-        {
-            lock_guard<mutex> lk(mq);
-            q.emplace(std::to_string(i) + " " + line);
-        }
-    }
-    {
-        lock_guard<mutex> lk(mq);
-        q.push("stop");
-    }
-    fin.close();/*
+    /*
     for(auto a = std::begin(edges); a != std::end(edges); a++)
         cout << a->first << " " << a->second << endl;
 */
+    proT.join();
     consT.join();
 
- }
+}
 
 Graph::Graph() {
     readInput();
@@ -148,8 +149,8 @@ void Graph::largestDegree(){
             else if(boost::out_degree(current_vertex, graphCSR) == boost::out_degree(neighbor, graphCSR))
                 if(graphCSR[current_vertex].random == graphCSR[neighbor].random)
                     break;
-            C[graphCSR[neighbor].color] = 1;
-            major = true;
+                C[graphCSR[neighbor].color] = 1;
+                major = true;
         }
         if(major){
             for(i=0; i<256; i++){
