@@ -90,32 +90,62 @@ CMakeFiles/p2.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/p2.dir/main.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/main.cpp -o CMakeFiles/p2.dir/main.cpp.s
 
-CMakeFiles/p2.dir/graph/Graph.cpp.o: CMakeFiles/p2.dir/flags.make
-CMakeFiles/p2.dir/graph/Graph.cpp.o: ../graph/Graph.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/p2.dir/graph/Graph.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/p2.dir/graph/Graph.cpp.o -c /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/Graph.cpp
+CMakeFiles/p2.dir/Graph/GraphCSR.cpp.o: CMakeFiles/p2.dir/flags.make
+CMakeFiles/p2.dir/Graph/GraphCSR.cpp.o: ../Graph/GraphCSR.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/p2.dir/Graph/GraphCSR.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/p2.dir/Graph/GraphCSR.cpp.o -c /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphCSR.cpp
 
-CMakeFiles/p2.dir/graph/Graph.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/p2.dir/graph/Graph.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/Graph.cpp > CMakeFiles/p2.dir/graph/Graph.cpp.i
+CMakeFiles/p2.dir/Graph/GraphCSR.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/p2.dir/Graph/GraphCSR.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphCSR.cpp > CMakeFiles/p2.dir/Graph/GraphCSR.cpp.i
 
-CMakeFiles/p2.dir/graph/Graph.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/p2.dir/graph/Graph.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/Graph.cpp -o CMakeFiles/p2.dir/graph/Graph.cpp.s
+CMakeFiles/p2.dir/Graph/GraphCSR.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/p2.dir/Graph/GraphCSR.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphCSR.cpp -o CMakeFiles/p2.dir/Graph/GraphCSR.cpp.s
+
+CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.o: CMakeFiles/p2.dir/flags.make
+CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.o: ../Graph/GraphAdjL.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.o -c /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjL.cpp
+
+CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjL.cpp > CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.i
+
+CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjL.cpp -o CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.s
+
+CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.o: CMakeFiles/p2.dir/flags.make
+CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.o: ../Graph/GraphAdjM.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.o -c /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjM.cpp
+
+CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjM.cpp > CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.i
+
+CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjM.cpp -o CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.s
 
 # Object files for target p2
 p2_OBJECTS = \
 "CMakeFiles/p2.dir/main.cpp.o" \
-"CMakeFiles/p2.dir/graph/Graph.cpp.o"
+"CMakeFiles/p2.dir/Graph/GraphCSR.cpp.o" \
+"CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.o" \
+"CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.o"
 
 # External object files for target p2
 p2_EXTERNAL_OBJECTS =
 
 p2: CMakeFiles/p2.dir/main.cpp.o
-p2: CMakeFiles/p2.dir/graph/Graph.cpp.o
+p2: CMakeFiles/p2.dir/Graph/GraphCSR.cpp.o
+p2: CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.o
+p2: CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.o
 p2: CMakeFiles/p2.dir/build.make
 p2: CMakeFiles/p2.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable p2"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable p2"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/p2.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -143,32 +143,86 @@ p2/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/build
 .PHONY : p2/fast
 
-graph/Graph.o: graph/Graph.cpp.o
+Graph/GraphAdjL.o: Graph/GraphAdjL.cpp.o
 
-.PHONY : graph/Graph.o
+.PHONY : Graph/GraphAdjL.o
 
 # target to build an object file
-graph/Graph.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/graph/Graph.cpp.o
-.PHONY : graph/Graph.cpp.o
+Graph/GraphAdjL.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.o
+.PHONY : Graph/GraphAdjL.cpp.o
 
-graph/Graph.i: graph/Graph.cpp.i
+Graph/GraphAdjL.i: Graph/GraphAdjL.cpp.i
 
-.PHONY : graph/Graph.i
+.PHONY : Graph/GraphAdjL.i
 
 # target to preprocess a source file
-graph/Graph.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/graph/Graph.cpp.i
-.PHONY : graph/Graph.cpp.i
+Graph/GraphAdjL.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.i
+.PHONY : Graph/GraphAdjL.cpp.i
 
-graph/Graph.s: graph/Graph.cpp.s
+Graph/GraphAdjL.s: Graph/GraphAdjL.cpp.s
 
-.PHONY : graph/Graph.s
+.PHONY : Graph/GraphAdjL.s
 
 # target to generate assembly for a file
-graph/Graph.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/graph/Graph.cpp.s
-.PHONY : graph/Graph.cpp.s
+Graph/GraphAdjL.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.s
+.PHONY : Graph/GraphAdjL.cpp.s
+
+Graph/GraphAdjM.o: Graph/GraphAdjM.cpp.o
+
+.PHONY : Graph/GraphAdjM.o
+
+# target to build an object file
+Graph/GraphAdjM.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.o
+.PHONY : Graph/GraphAdjM.cpp.o
+
+Graph/GraphAdjM.i: Graph/GraphAdjM.cpp.i
+
+.PHONY : Graph/GraphAdjM.i
+
+# target to preprocess a source file
+Graph/GraphAdjM.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.i
+.PHONY : Graph/GraphAdjM.cpp.i
+
+Graph/GraphAdjM.s: Graph/GraphAdjM.cpp.s
+
+.PHONY : Graph/GraphAdjM.s
+
+# target to generate assembly for a file
+Graph/GraphAdjM.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.s
+.PHONY : Graph/GraphAdjM.cpp.s
+
+Graph/GraphCSR.o: Graph/GraphCSR.cpp.o
+
+.PHONY : Graph/GraphCSR.o
+
+# target to build an object file
+Graph/GraphCSR.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphCSR.cpp.o
+.PHONY : Graph/GraphCSR.cpp.o
+
+Graph/GraphCSR.i: Graph/GraphCSR.cpp.i
+
+.PHONY : Graph/GraphCSR.i
+
+# target to preprocess a source file
+Graph/GraphCSR.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphCSR.cpp.i
+.PHONY : Graph/GraphCSR.cpp.i
+
+Graph/GraphCSR.s: Graph/GraphCSR.cpp.s
+
+.PHONY : Graph/GraphCSR.s
+
+# target to generate assembly for a file
+Graph/GraphCSR.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphCSR.cpp.s
+.PHONY : Graph/GraphCSR.cpp.s
 
 main.o: main.cpp.o
 
@@ -206,9 +260,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... p2"
-	@echo "... graph/Graph.o"
-	@echo "... graph/Graph.i"
-	@echo "... graph/Graph.s"
+	@echo "... Graph/GraphAdjL.o"
+	@echo "... Graph/GraphAdjL.i"
+	@echo "... Graph/GraphAdjL.s"
+	@echo "... Graph/GraphAdjM.o"
+	@echo "... Graph/GraphAdjM.i"
+	@echo "... Graph/GraphAdjM.s"
+	@echo "... Graph/GraphCSR.o"
+	@echo "... Graph/GraphCSR.i"
+	@echo "... Graph/GraphCSR.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

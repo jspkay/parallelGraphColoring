@@ -84,13 +84,19 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/Graph.cpp">
+		<Unit filename="/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/Graph.h">
 			<Option target="p2"/>
 		</Unit>
-		<Unit filename="/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/Graph.h">
+		<Unit filename="/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjL.cpp">
 			<Option target="p2"/>
 		</Unit>
-		<Unit filename="/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/benchmark/rgg_n_2_15_s0.txt">
+		<Unit filename="/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjM.cpp">
+			<Option target="p2"/>
+		</Unit>
+		<Unit filename="/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphCSR.cpp">
+			<Option target="p2"/>
+		</Unit>
+		<Unit filename="/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/benchmark/rgg_n_2_15_s0.txt">
 			<Option target="p2"/>
 		</Unit>
 		<Unit filename="/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/main.cpp">

@@ -4,7 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/graph/Graph.cpp" "/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles/p2.dir/graph/Graph.cpp.o"
+  "/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjL.cpp" "/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.o"
+  "/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjM.cpp" "/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.o"
+  "/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphCSR.cpp" "/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles/p2.dir/Graph/GraphCSR.cpp.o"
   "/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/main.cpp" "/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles/p2.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
