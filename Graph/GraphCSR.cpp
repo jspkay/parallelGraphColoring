@@ -43,9 +43,11 @@ GraphCSR::GraphCSR() {
             graph[current_vertex].color = -1;
             graph[current_vertex].num_it = 0;
             graph[current_vertex].random = rand() % 1000 + 1; //1-1000
+            graph[current_vertex].toBeDeleted = false;
+            graph[current_vertex].weight = -1; //smallest degree alg
         }
-    jp_numIteration = 0;
-    increase_jp_numIteration = 0;
+    numIteration = 0;
+    increase_numIteration = 0;
     concurentThreadsAvailable = std::thread::hardware_concurrency() - LEAVE_FREE;
     active_threads = concurentThreadsAvailable;
     cout << "Fine costruzione grafo in formato CSR!\n";
@@ -222,12 +224,12 @@ void GraphCSR::JonesPlassmann(){
                 current_vertex = total_set.front();
                 total_set.pop_front();
                 //SE STO INIZIANDO UN NUOVO GIRO, ALLORA ASPETTO CHE TUTTI PRIMA SIANO COLORATI
-                //QUANDO FINISCE DI COLORARE IL NUOVO SET, THREAD CHE COLORA AUMENTA jp_numIteration
-                if(graph[current_vertex].num_it > jp_numIteration){
-                    increase_jp_numIteration++;
+                //QUANDO FINISCE DI COLORARE IL NUOVO SET, THREAD CHE COLORA AUMENTA numIteration
+                if(graph[current_vertex].num_it > numIteration){
+                    increase_numIteration++;
                     cv.notify_all();
                 }
-                cv.wait(ulk,[this,current_vertex](){ return graph[current_vertex].num_it == jp_numIteration || !increase_jp_numIteration; });
+                cv.wait(ulk,[this,current_vertex](){ return graph[current_vertex].num_it == numIteration || !increase_numIteration; });
                 ulk.unlock();
                 //////////////////////////////////////////////////////////////////////
                 std::shared_lock<std::shared_timed_mutex> slk(mutex);
@@ -270,10 +272,10 @@ void GraphCSR::JonesPlassmann(){
     while(true) {
         std::unique_lock<std::shared_timed_mutex> ulk(mutex);
         //cout << "--------->ottenuto unique" << endl;
-        cv.wait(ulk, [this]() { return isEnded == true || increase_jp_numIteration == 2; });
+        cv.wait(ulk, [this]() { return isEnded == true || increase_numIteration == 2; });
         if(isEnded)
             break;
-        //means -> increase_jp_numIteration == true
+        //means -> increase_numIteration == true
         while(toColor_set.size()!=0){
             //coloro tutti con stesso colore
             current_vertex = toColor_set.front();
@@ -295,8 +297,8 @@ void GraphCSR::JonesPlassmann(){
             //if(graphCSR[current_vertex].color > 10)
             //cout << "jp: " << static_cast<int>(graphCSR[current_vertex].color) << endl;
         }
-        increase_jp_numIteration = 0;
-        jp_numIteration ++;
+        increase_numIteration = 0;
+        numIteration ++;
         //cout << "rimanenti: " << total_set.size() << endl;
         cv.notify_all();
         //cout << ">---------fine unique" << endl;
