@@ -7,20 +7,28 @@
 #include <condition_variable>
 #include <boost/spirit/include/qi.hpp>
 #include <filesystem>
+#include <shared_mutex>
 
 using namespace  std;
-/*
+/* INEFFICIENTE
 void Graph::readInput() {
+    string file_path = "../graph/benchmark/rgg_n_2_23_s0.txt";
     string line;
+    string buffer;
     stringstream lineStream;
-    fstream fin("../graph/benchmark/rgg_n_2_16_s0.txt", ios::in);
+    fstream fin(file_path, ios::in);
     if(!fin.is_open()) {
         cout << "errore apertura file fin" << endl;
     }
-    getline(fin, line);
+
+    auto file_size = std::filesystem::file_size(file_path);
+    buffer.resize(file_size);
+    fin.read(buffer.data(),buffer.size());
+    istringstream f(buffer);
+    getline(f, line);
     lineStream = stringstream(line);
     lineStream >> V >> E;
-    if(!fin.good()) {
+    if(!f.good()) {
         cout << "errore lettura" << endl;
     }
     this->edges.reserve(E);
@@ -29,15 +37,15 @@ void Graph::readInput() {
     condition_variable cv;
 
     //producer
-    auto pro = [&mq, &q, &fin, &cv, this](){
+    auto pro = [&mq, &q, &f, &cv, this](){
         string line;
         for(int i=0; i<V; i++){
-            getline(fin, line);
+            getline(f, line);
             lock_guard<mutex> lk(mq);
             q.emplace(std::to_string(i) + " " + line);
             cv.notify_one();
         }
-        fin.close();
+
         lock_guard<mutex> lk(mq);
         q.emplace("stop");
         cv.notify_one();
@@ -53,10 +61,13 @@ void Graph::readInput() {
             unique_lock<mutex> lk(mq);
             cv.wait(lk, [&q](){return !q.empty();});
             line = q.front();
+            if(line == "stop"){
+                lk.unlock();
+                return;
+            }
             q.pop();
             lk.unlock();
-            if(line == "stop")
-                return;
+
 
             lineStream = stringstream(line);
             lineStream >> i;
@@ -66,20 +77,24 @@ void Graph::readInput() {
 
         }
     };
+
     //start producer
     thread proT(pro);
     //start consumer
     thread consT(cons);
-    //producer
 
+
+    fin.close();
     proT.join();
     consT.join();
 
+
 }*/
 using namespace boost::spirit;
+
 void Graph::readInput() {
     //auto file_path = std::filesystem::path("../graph/benchmark/rgg_n_2_15_s0.txt");
-    string file_path = "../graph/benchmark/rgg_n_2_16_s0.txt";
+    string file_path = "../graph/benchmark/rgg_n_2_15_s0.txt";
     string line;
     string buffer;
     stringstream lineStream;
