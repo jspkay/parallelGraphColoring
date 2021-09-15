@@ -1,12 +1,12 @@
 #include "Graph.h"
 #include "fstream"
 #include "iostream"
-#include <regex>
 #include <thread>
 #include <queue>
 #include <mutex>
 #include <condition_variable>
 #include <boost/spirit/include/qi.hpp>
+#include <filesystem>
 
 using namespace  std;
 /*
@@ -78,16 +78,22 @@ void Graph::readInput() {
 }*/
 using namespace boost::spirit;
 void Graph::readInput() {
+    //auto file_path = std::filesystem::path("../graph/benchmark/rgg_n_2_15_s0.txt");
+    string file_path = "../graph/benchmark/rgg_n_2_16_s0.txt";
     string line;
     string buffer;
     stringstream lineStream;
-    fstream fin("../graph/benchmark/rgg_n_2_16_s0.txt", ios::in);
+    fstream fin(file_path, ios::in);
     if(!fin.is_open()) {
         cout << "errore apertura file fin" << endl;
     }
-    fin.seekg(0, std::ios::end);
-    buffer.resize(fin.tellg());
-    fin.seekg(0);
+
+    //fin.seekg(0, std::ios::end);    //punta all'ultima posizione del file
+    //buffer.resize(fin.tellg());     //resize
+    //fin.seekg(0);                   //rimette il puntatore all'inizio
+
+    auto file_size = std::filesystem::file_size(file_path);
+    buffer.resize(file_size);
     fin.read(buffer.data(),buffer.size());
     istringstream f(buffer);
     getline(f, line);
@@ -100,20 +106,6 @@ void Graph::readInput() {
     int neighbour;
     for(int i=0; i<V; i++){
         getline(f, line);
-        /*
-        bool match = false;
-        vector<int> neighbours;
-        qi::phrase_parse(line.begin(),line.end(), +(+qi::int_), qi::space, neighbours);
-
-        BOOST_FOREACH(int n, neighbours){
-            edges.emplace_back(std::pair<int, int>(i,n-1));
-        }*/
-        /*
-         qi::phrase_parse(line.begin(), line.end(), qi::int_[([&i,this](int neighbour){
-            edges.emplace_back(std::pair<int, int>(i,neighbour-1));
-        })], ascii::space);*/
-
-
         lineStream = stringstream(line);
         while(lineStream >> neighbour)
             edges.emplace_back(std::pair<int, int>(i,neighbour-1));
