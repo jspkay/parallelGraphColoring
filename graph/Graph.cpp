@@ -5,13 +5,15 @@
 #include <thread>
 #include <queue>
 #include <mutex>
+#include <condition_variable>
+#include <boost/spirit/include/qi.hpp>
 
 using namespace  std;
-
+/*
 void Graph::readInput() {
     string line;
     stringstream lineStream;
-    fstream fin("../graph/benchmark/rgg_n_2_15_s0.txt", ios::in);
+    fstream fin("../graph/benchmark/rgg_n_2_16_s0.txt", ios::in);
     if(!fin.is_open()) {
         cout << "errore apertura file fin" << endl;
     }
@@ -21,7 +23,7 @@ void Graph::readInput() {
     if(!fin.good()) {
         cout << "errore lettura" << endl;
     }
-
+    this->edges.reserve(E);
     queue<string> q;
     mutex mq;
     condition_variable cv;
@@ -69,17 +71,60 @@ void Graph::readInput() {
     //start consumer
     thread consT(cons);
     //producer
-    /*
-    for(auto a = std::begin(edges); a != std::end(edges); a++)
-        cout << a->first << " " << a->second << endl;
-*/
+
     proT.join();
     consT.join();
 
+}*/
+using namespace boost::spirit;
+void Graph::readInput() {
+    string line;
+    string buffer;
+    stringstream lineStream;
+    fstream fin("../graph/benchmark/rgg_n_2_16_s0.txt", ios::in);
+    if(!fin.is_open()) {
+        cout << "errore apertura file fin" << endl;
+    }
+    fin.seekg(0, std::ios::end);
+    buffer.resize(fin.tellg());
+    fin.seekg(0);
+    fin.read(buffer.data(),buffer.size());
+    istringstream f(buffer);
+    getline(f, line);
+    lineStream = stringstream(line);
+    lineStream >> V >> E;
+    if(!f.good()) {
+        cout << "errore lettura" << endl;
+    }
+
+    int neighbour;
+    for(int i=0; i<V; i++){
+        getline(f, line);
+        /*
+        bool match = false;
+        vector<int> neighbours;
+        qi::phrase_parse(line.begin(),line.end(), +(+qi::int_), qi::space, neighbours);
+
+        BOOST_FOREACH(int n, neighbours){
+            edges.emplace_back(std::pair<int, int>(i,n-1));
+        }*/
+        /*
+         qi::phrase_parse(line.begin(), line.end(), qi::int_[([&i,this](int neighbour){
+            edges.emplace_back(std::pair<int, int>(i,neighbour-1));
+        })], ascii::space);*/
+
+
+        lineStream = stringstream(line);
+        while(lineStream >> neighbour)
+            edges.emplace_back(std::pair<int, int>(i,neighbour-1));
+    }
+    fin.close();
 }
 
 Graph::Graph() {
+    const clock_t begin_time = clock();
     readInput();
+    std::cout << "Time needed to read the graph " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
     this->graphCSR = GraphCSR(boost::edges_are_unsorted_multi_pass, std::begin(edges), edges.end(), V);
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {
         graphCSR[current_vertex].color = -1;

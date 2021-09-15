@@ -13,6 +13,7 @@
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include <boost/iostreams/device/mapped_file.hpp>
 
 struct VertexDescriptor { int random/*,degree; uso boost::out_degree*/; int8_t color; }; //change from int to int8_t
 typedef boost::compressed_sparse_row_graph<boost::bidirectionalS,VertexDescriptor> GraphCSR;
