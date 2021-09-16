@@ -9,18 +9,18 @@ void printMenu(){
 int main(int argc, char* argv[]) {
     printMenu();
     const clock_t begin_time = clock();
-    asa::GraphCSR mygraph;
+    asa::GraphAdjL mygraph;
     const clock_t end_construction_time = clock();
     const clock_t begin_seq_time = clock();
-    //mygraph.sequential();
+    mygraph.sequential();
     const clock_t end_seq_time = clock();
     mygraph.clearGraph();
     const clock_t begin_jp_time = clock();
-    //mygraph.JonesPlassmann();
+    mygraph.JonesPlassmann();
     const clock_t end_jp_time = clock();
     mygraph.clearGraph();
     const clock_t begin_ld_time = clock();
-    //mygraph.largestDegree();
+    mygraph.largestDegree();
     const clock_t end_ld_time = clock();
     mygraph.clearGraph();
     const clock_t begin_sd_time = clock();

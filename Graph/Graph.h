@@ -28,7 +28,7 @@ namespace asa {
     typedef unsigned long node;
     typedef boost::compressed_sparse_row_graph<boost::bidirectionalS,vertexDescriptor> graphCSR;
     typedef boost::adjacency_matrix<boost::undirectedS,vertexDescriptor> graphAdjM;
-    typedef boost::adjacency_list<boost::listS,boost::vecS,boost::undirectedS,vertexDescriptor> graphAdjL;
+    typedef boost::adjacency_list<boost::listS,boost::vecS,boost::directedS,vertexDescriptor> graphAdjL;
 
     /*** Base class for CRTP ***/
     template <typename T>
@@ -342,8 +342,10 @@ namespace asa {
             printOutput("jp-output.txt");
         };
         void smallestDegree(){
-            /*** weighting phase ***/
-            //k = numIteration - i = current_color
+            /***
+                 weighting phase
+                 k = numIteration - i = current_color
+             ***/
             //riempio set
             node current_vertex;
             numIteration = 1;
@@ -359,7 +361,6 @@ namespace asa {
                     bool minor = false;
                     while (true) {
                         std::unique_lock<std::shared_timed_mutex> ulk(mutex);
-                        //////////////////////////////////////////////////////////////////////
                         /*** terminazione thread ***/
                         if(total_set.size()==0){
                             active_threads--;
@@ -369,11 +370,10 @@ namespace asa {
                             }
                             break;
                         }
-                        //////////////////////////////////////////////////////////////////////
+                        /*** pop dalla coda ***/
                         current_vertex = total_set.front();
                         total_set.pop_front();
-                        //SE STO INIZIANDO UN NUOVO GIRO, ALLORA ASPETTO CHE TUTTI PRIMA SIANO COLORATI
-                        //QUANDO FINISCE DI COLORARE IL NUOVO SET, THREAD CHE COLORA AUMENTA numIteration
+                        //SE STO INIZIANDO UN NUOVO GIRO, ALLORA ASPETTO CHE TUTTI PRIMA SIANO PESATI
                         if(static_cast<T&>(*this).graph[current_vertex].num_it > numIteration){
                             increase_numIteration++;
                             cv.notify_all();
@@ -387,23 +387,24 @@ namespace asa {
                         /*** calcolo degree current_vertex ***/
                         forEachNeighbor(current_vertex, &neighbor, [this, &neighbor, &degreeCurrVertex](){
                             if(!static_cast<T&>(*this).graph[neighbor].toBeDeleted)
-                                degreeCurrVertex++;  //se non è marcato toBeDeleted,aumento degree
+                                degreeCurrVertex++;  //se non è marcato toBeDeleted, aumento degree
                         });
-                        std::cout << degreeCurrVertex << std::endl;
                         /*** current_vertex ha smallest degree? ***/
-                        if (getDegree(current_vertex) <= numIteration)
+                        if (degreeCurrVertex <= numIteration){
+                            //std::cout << degreeCurrVertex << std::endl;
                             minor = true;
+                        }
                         slk.unlock();
                         //////////////////////////////////////////////////////////////////////
                         ulk.lock();
-                        //aggiungo a vertici da colorare se maggiore
+                        //aggiungo a vertici da pesare se maggiore
                         if(minor){
                             toColor_set.push_back(current_vertex);
                             //std::cout << "u: " << current_vertex << ", degree: " << getDegree(current_vertex) << ", curr_min: " << current_min_degree << std::endl;
                         }
                         else {
                             static_cast<T&>(*this).graph[current_vertex].num_it++;
-                            total_set.push_back(current_vertex); //reinserisco in coda se non è stato colorato
+                            total_set.push_back(current_vertex); //reinserisco in coda se non è stato pesato
                         }
                         minor = false;
                         cv.notify_all();
@@ -416,34 +417,65 @@ namespace asa {
                 std::unique_lock<std::shared_timed_mutex> ulk(mutex);
                 //cout << "--------->ottenuto unique" << endl;
                 cv.wait(ulk, [this]() { return isEnded == true || increase_numIteration == concurentThreadsAvailable - 1; });
-                if(isEnded) {
-                    std::cout << "fine sd" <<std::endl;
+                if(isEnded)
                     break;
-                }
-                //means -> increase_numIteration == concurentThreadsAvailable - 1
+                //arrivato qui means -> increase_numIteration == concurentThreadsAvailable - 1
                 bool doIHaveToIncreaseColor = toColor_set.size()!=0;
                 while(toColor_set.size()!=0){
+                    /*** pop da coda + weight ***/
                     current_vertex = toColor_set.front();
                     toColor_set.pop_front();
-
-                    //////////////////////////////////////////////////////////////////////////
-                    static_cast<T&>(*this).graph[current_vertex].weight = current_weigth; //coloro il vertice corrente
+                    static_cast<T&>(*this).graph[current_vertex].weight = current_weigth; //peso il vertice corrente
                     static_cast<T&>(*this).graph[current_vertex].toBeDeleted = true;
                 }
-                if(doIHaveToIncreaseColor)
+                if(doIHaveToIncreaseColor)  //se almeno un nodo aveva il current_weigth, allora devo incrementarlo per il prossimo giro
                     current_weigth++;
                 increase_numIteration = 0;
                 numIteration ++;
-                std::cout << "rimanenti: " << total_set.size() << std::endl;
                 cv.notify_all();
+                //std::cout << "rimanenti: " << total_set.size() << std::endl;
                 //cout << ">---------fine unique" << endl;
             }
-            //////////////////////////////////////////////////////////////////////////
-            /*** coloring phase ***/
-            
-            //////////////////////////////////////////////////////////////////////////
             for(std::thread& t : threads)
                 t.join();
+            threads.clear();
+            total_set.clear();
+            //////////////////////////////////////////////////////////////////////////
+            /***
+                 coloring phase
+             ***/
+            forEachVertex(&current_vertex,[this,&current_vertex](){
+                total_set.push_back(current_vertex);
+            });
+            int C[256]{},wei;
+            for(wei = current_weigth; wei>0; wei--){
+                forEachVertex(&current_vertex,[this,&current_vertex,current_weigth,wei,&C](){
+                    current_vertex = total_set.front();
+                    total_set.pop_front();
+                    if(static_cast<T&>(*this).graph[current_vertex].weight == wei) {
+                        /*** coloring ***/
+                        int8_t color = -1, lastColorFound = 0;
+                        node neighbor;
+                        forEachNeighbor(current_vertex, &neighbor, [this, &neighbor, &C, &lastColorFound](){
+                            if (static_cast<T&>(*this).graph[neighbor].color != -1) { //se non colorato, confronto con il nodo corrente
+                                C[static_cast<T&>(*this).graph[neighbor].color] = 1;
+                                if(static_cast<T&>(*this).graph[neighbor].color > lastColorFound)
+                                    lastColorFound = static_cast<T&>(*this).graph[neighbor].color;
+                            }
+                        });
+                        for (int i = 0; i <= lastColorFound + 1; i++) {
+                            if (C[i] == 0 && color == -1) //colore non usato
+                                color = i;
+                            else
+                                C[i] = 0; //reset colori per il prossimo ciclo
+                        }
+                        static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
+                    }
+                    else
+                        total_set.push_back(current_vertex); //reinserisco se weight minoreù
+                    //std::cout << "rimanenti: " << total_set.size() << std::endl;
+                });
+            }
             printOutput("smallestDegree-output.txt");
         };
         /*** da specializzare in ogni rappresentazione interna ***/
