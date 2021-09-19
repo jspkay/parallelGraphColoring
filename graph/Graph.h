@@ -20,10 +20,13 @@ typedef boost::compressed_sparse_row_graph<boost::bidirectionalS,VertexDescripto
 
 class Graph {
 private:
-    int V, E;  //number Verteces and Edges
+    int V = 0, E = 0;  //number Verteces and Edges
+    int startingNode = 0;
     std::vector<std::pair<int, int>> edges;
     GraphCSR graphCSR;
-    void readInput();
+    void readInput(std::string&& fname);
+    void readInputGraph(std::string&& fname);
+    void readInputGra(std::string&& fname);
     void printOutput();
     unsigned concurentThreadsSupported;
     std::vector<GraphCSR::vertex_descriptor> set;

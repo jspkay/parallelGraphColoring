@@ -90,15 +90,28 @@ void Graph::readInput() {
 
 
 }*/
-using namespace boost::spirit;
+void Graph::readInput(string&& fname) {
+    auto ext = std::filesystem::path(fname).extension();
+    if(ext == ".gra"){
+        startingNode = 0;
+        Graph::readInputGra(std::move(fname));
+    }
+    else
+        if(ext == ".graph" || ext == ".txt"){
+            startingNode = 1;
+            readInputGraph(std::move(fname));
+        }
+        else
+            cout << "Wrong input format" << endl;
+}
 
-void Graph::readInput() {
+void Graph::readInputGraph(std::string&& fname) {
     //auto file_path = std::filesystem::path("../graph/benchmark/rgg_n_2_15_s0.txt");
-    string file_path = "../graph/benchmark/rgg_n_2_15_s0.txt";
+    //string file_path = "../graph/benchmark/rgg_n_2_15_s0.txt";
     string line;
     string buffer;
     stringstream lineStream;
-    fstream fin(file_path, ios::in);
+    fstream fin(fname, ios::in);
     if(!fin.is_open()) {
         cout << "errore apertura file fin" << endl;
     }
@@ -107,7 +120,7 @@ void Graph::readInput() {
     //buffer.resize(fin.tellg());     //resize
     //fin.seekg(0);                   //rimette il puntatore all'inizio
 
-    auto file_size = std::filesystem::file_size(file_path);
+    auto file_size = std::filesystem::file_size(fname);
     buffer.resize(file_size);
     fin.read(buffer.data(),buffer.size());
     istringstream f(buffer);
@@ -119,6 +132,12 @@ void Graph::readInput() {
     }
 
     int neighbour;
+    /***  evito riallocazioni dinamiche multiple ***/
+    edges.reserve(E); //riservo E posti,
+    //total_set.resize(V); //riservo V posti
+    //toColor_set.resize(V/4);
+    /***/
+
     for(int i=0; i<V; i++){
         getline(f, line);
         lineStream = stringstream(line);
@@ -128,9 +147,55 @@ void Graph::readInput() {
     fin.close();
 }
 
+void Graph::readInputGra(std::string && fname){
+    string line;
+    string buffer;
+    stringstream lineStream;
+    fstream fin(fname, ios::in);
+    if(!fin.is_open()) {
+        cout << "errore apertura file fin" << endl;
+    }
+
+    auto file_size = std::filesystem::file_size(fname);
+    buffer.resize(file_size);
+    fin.read(buffer.data(),buffer.size());
+    istringstream f(buffer);
+    getline(f, line);
+    lineStream = stringstream(line);
+    lineStream >> V;
+    if(!f.good()) {
+        cout << "errore lettura" << endl;
+    }
+
+    int neighbour;
+    /***  evito riallocazioni dinamiche multiple ***/
+    //edges.reserve(E); //riservo E posti,
+    //total_set.resize(V); //riservo V posti
+    //toColor_set.resize(V/4);
+    /***/
+    string delimiter = ": ";
+    size_t pos = 0;
+    int j;
+    for(int i=0; i<V; i++){
+        getline(f, line);
+        lineStream = stringstream(line);
+        lineStream >> j;
+        pos = line.find(delimiter);
+        lineStream = stringstream(line.substr(pos+delimiter.length()));
+
+        while(lineStream >> neighbour){
+            edges.emplace_back(std::pair<int, int>(j,neighbour));
+            edges.emplace_back(std::pair<int, int>(neighbour,j));
+            E += 2;
+        }
+    }
+    fin.close();
+}
+
 Graph::Graph() {
     const clock_t begin_time = clock();
-    readInput();
+    //readInput("../graph/benchmark/rgg_n_2_15_s0.txt");
+    readInputGra("../graph/benchmark/v100.gra");
     std::cout << "Time needed to read the graph " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
     this->graphCSR = GraphCSR(boost::edges_are_unsorted_multi_pass, std::begin(edges), edges.end(), V);
     BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR) {
@@ -177,13 +242,27 @@ void Graph::printOutput() {
     if(!fout.is_open()) {
         cout << "errore apertura file fout" << endl;
     }
-    //ricorda di usare current_vertex+1 dato che gli indici partono da 1 nel file, mentre da 0 nella csr
-    BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
-        fout << "u:" << current_vertex+1 << ", color: " << static_cast<int>(graphCSR[current_vertex].color) << ", rand:" << graphCSR[current_vertex].random << ", degree:" << boost::out_degree(current_vertex, graphCSR) << ", neigh -> ";
-        BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
-            fout << "(" << neighbor+1 << "," << static_cast<int>(graphCSR[neighbor].color) << ") ";
+
+    if(startingNode == 0){
+        BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
+            fout << "u:" << current_vertex << ", color: " << static_cast<int>(graphCSR[current_vertex].color) << ", rand:" << graphCSR[current_vertex].random << ", degree:" << boost::out_degree(current_vertex, graphCSR) << ", neigh -> ";
+            BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
+                fout << "(" << neighbor << "," << static_cast<int>(graphCSR[neighbor].color) << ") ";
+            }
+            fout << "\n";
         }
-        fout << "\n";
+    }else
+    {
+        //per rgg
+        //ricorda di usare current_vertex+1 dato che gli indici partono da 1 nel file, mentre da 0 nella csr
+
+        BGL_FORALL_VERTICES(current_vertex, graphCSR, GraphCSR){
+            fout << "u:" << current_vertex+1 << ", color: " << static_cast<int>(graphCSR[current_vertex].color) << ", rand:" << graphCSR[current_vertex].random << ", degree:" << boost::out_degree(current_vertex, graphCSR) << ", neigh -> ";
+            BGL_FORALL_ADJ(current_vertex, neighbor, graphCSR, GraphCSR) {
+                fout << "(" << neighbor+1 << "," << static_cast<int>(graphCSR[neighbor].color) << ") ";
+            }
+            fout << "\n";
+        }
     }
 }
 
@@ -216,3 +295,5 @@ void Graph::largestDegree(){
         }
     }
 }
+
+
