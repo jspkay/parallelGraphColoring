@@ -131,17 +131,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named p2
+# Target rules for targets named GraphColoring
 
 # Build rule for target.
-p2: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 p2
-.PHONY : p2
+GraphColoring: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 GraphColoring
+.PHONY : GraphColoring
 
 # fast build rule for target.
-p2/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/build
-.PHONY : p2/fast
+GraphColoring/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/build
+.PHONY : GraphColoring/fast
 
 Graph/GraphAdjL.o: Graph/GraphAdjL.cpp.o
 
@@ -149,7 +149,7 @@ Graph/GraphAdjL.o: Graph/GraphAdjL.cpp.o
 
 # target to build an object file
 Graph/GraphAdjL.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o
 .PHONY : Graph/GraphAdjL.cpp.o
 
 Graph/GraphAdjL.i: Graph/GraphAdjL.cpp.i
@@ -158,7 +158,7 @@ Graph/GraphAdjL.i: Graph/GraphAdjL.cpp.i
 
 # target to preprocess a source file
 Graph/GraphAdjL.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.i
 .PHONY : Graph/GraphAdjL.cpp.i
 
 Graph/GraphAdjL.s: Graph/GraphAdjL.cpp.s
@@ -167,7 +167,7 @@ Graph/GraphAdjL.s: Graph/GraphAdjL.cpp.s
 
 # target to generate assembly for a file
 Graph/GraphAdjL.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphAdjL.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.s
 .PHONY : Graph/GraphAdjL.cpp.s
 
 Graph/GraphAdjM.o: Graph/GraphAdjM.cpp.o
@@ -176,7 +176,7 @@ Graph/GraphAdjM.o: Graph/GraphAdjM.cpp.o
 
 # target to build an object file
 Graph/GraphAdjM.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o
 .PHONY : Graph/GraphAdjM.cpp.o
 
 Graph/GraphAdjM.i: Graph/GraphAdjM.cpp.i
@@ -185,7 +185,7 @@ Graph/GraphAdjM.i: Graph/GraphAdjM.cpp.i
 
 # target to preprocess a source file
 Graph/GraphAdjM.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.i
 .PHONY : Graph/GraphAdjM.cpp.i
 
 Graph/GraphAdjM.s: Graph/GraphAdjM.cpp.s
@@ -194,7 +194,7 @@ Graph/GraphAdjM.s: Graph/GraphAdjM.cpp.s
 
 # target to generate assembly for a file
 Graph/GraphAdjM.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphAdjM.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.s
 .PHONY : Graph/GraphAdjM.cpp.s
 
 Graph/GraphCSR.o: Graph/GraphCSR.cpp.o
@@ -203,7 +203,7 @@ Graph/GraphCSR.o: Graph/GraphCSR.cpp.o
 
 # target to build an object file
 Graph/GraphCSR.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphCSR.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o
 .PHONY : Graph/GraphCSR.cpp.o
 
 Graph/GraphCSR.i: Graph/GraphCSR.cpp.i
@@ -212,7 +212,7 @@ Graph/GraphCSR.i: Graph/GraphCSR.cpp.i
 
 # target to preprocess a source file
 Graph/GraphCSR.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphCSR.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.i
 .PHONY : Graph/GraphCSR.cpp.i
 
 Graph/GraphCSR.s: Graph/GraphCSR.cpp.s
@@ -221,7 +221,7 @@ Graph/GraphCSR.s: Graph/GraphCSR.cpp.s
 
 # target to generate assembly for a file
 Graph/GraphCSR.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/Graph/GraphCSR.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.s
 .PHONY : Graph/GraphCSR.cpp.s
 
 main.o: main.cpp.o
@@ -230,7 +230,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -239,7 +239,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -248,7 +248,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/p2.dir/build.make CMakeFiles/p2.dir/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 # Help Target
@@ -259,7 +259,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... p2"
+	@echo "... GraphColoring"
 	@echo "... Graph/GraphAdjL.o"
 	@echo "... Graph/GraphAdjL.i"
 	@echo "... Graph/GraphAdjL.s"

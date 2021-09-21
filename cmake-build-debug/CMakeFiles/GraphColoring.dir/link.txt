@@ -1,0 +1,1 @@
+/usr/bin/c++  -pthread -g -O0   CMakeFiles/GraphColoring.dir/main.cpp.o CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o  -o GraphColoring 
