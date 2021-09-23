@@ -99,11 +99,11 @@ int main(int argc, char* argv[]) {
     const clock_t end_seq_time = clock();
     mygraph.clearGraph();
     const clock_t begin_jp_time = clock();
-    mygraph.jonesPlassmann();
+    //mygraph.jonesPlassmann();
     const clock_t end_jp_time = clock();
     //mygraph.clearGraph();
     const clock_t begin_ld_time = clock();
-    //mygraph.largestDegree();
+    mygraph.largestDegree();
     const clock_t end_ld_time = clock();
     mygraph.clearGraph();
     const clock_t begin_sd_time = clock();

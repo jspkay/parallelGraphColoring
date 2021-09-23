@@ -7,7 +7,7 @@
 
 using namespace asa;
 using namespace  std;
-#define LEAVE_FREE 1
+#define LEAVE_FREE 0
 
 void GraphCSR::ResetEachVertex(){
     BGL_FORALL_VERTICES(current_vertex, graph, graphCSR) {
