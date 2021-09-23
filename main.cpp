@@ -110,6 +110,7 @@ int main(int argc, char* argv[]) {
     const clock_t begin_sd_time = clock();
     mygraph.smallestDegree();
     const clock_t end_sd_time = clock();
+    mygraph.clearGraph(); //si fa join dei thread attivati, evita exception
     std::cout << "******************\n";
     std::cout << "Time needed to create the graph without coloring " << float( end_construction_time - begin_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
     std::cout << "Time sequential: " << float( end_seq_time - begin_seq_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;

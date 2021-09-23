@@ -99,6 +99,8 @@ namespace asa {
         void clearGraph(){
             toColor_set.clear();
             total_set.clear();
+            for(std::thread& t : threads)
+                t.join();
             threads.clear();
             active_threads = concurentThreadsAvailable;
             isEnded = false;
@@ -127,7 +129,7 @@ namespace asa {
                 }
             });
             fout.close();
-        }
+        };
         /*** algoritmi colorazione ***/
         void sequential(){
             int8_t color=-1;
@@ -217,8 +219,6 @@ namespace asa {
                 static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
                 //cout << ">---------fine unique" << endl;
             }
-            for(std::thread& t : threads)
-                t.join();
             printOutput("largestDegree-output.txt");
         };
         void jonesPlassmann(){
@@ -316,8 +316,6 @@ namespace asa {
                 //cout << ">---------fine unique" << endl;
             }
             //////////////////////////////////////////////////////////////////////////
-            for(std::thread& t : threads)
-                t.join();
             printOutput("jp-output.txt");
         };
         void smallestDegree(){
@@ -415,9 +413,6 @@ namespace asa {
                 //std::cout << "rimanenti: " << total_set.size() << std::endl;
                 //cout << ">---------fine unique" << endl;
             }
-            for(std::thread& t : threads)
-                t.join();
-            threads.clear();
             total_set.clear();
             //////////////////////////////////////////////////////////////////////////
             /***
