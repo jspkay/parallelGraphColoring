@@ -75,6 +75,27 @@ namespace asa {
             }
             fin.close();
         };
+        int searchColor(node u){
+            int i,lastColorFound=0;
+            int C[256]={};
+            int8_t color=-1;
+            node neighbor;
+            node current_vertex = u;
+            forEachNeighbor(current_vertex,&neighbor,[this,&current_vertex,&neighbor,&C, &lastColorFound](){
+                if(static_cast<T&>(*this).graph[neighbor].color != -1) {
+                    C[static_cast<T &>(*this).graph[neighbor].color] = 1; //segno il colore del vicino
+                    if(static_cast<T&>(*this).graph[neighbor].color > lastColorFound)
+                        lastColorFound = static_cast<T&>(*this).graph[neighbor].color;
+                }
+            });
+            for(i=0; i<=lastColorFound + 1; i++){
+                if(C[i]==0 && color==-1) //colore non usato
+                    color=i;
+                else
+                    C[i]=0; //reset colori per il prossimo ciclo
+            }
+            return color;
+        };
         void clearGraph(){
             toColor_set.clear();
             total_set.clear();
@@ -86,34 +107,6 @@ namespace asa {
             total_set.resize(V); //riservo V posti
             toColor_set.resize(V/4);
             /***/
-        };
-        void sequential(){
-            int C[256];
-            int8_t color=-1;
-            for(int i=0; i<256; i++){
-                C[i]=0; //colore non usato
-            }
-            node current_vertex;
-            forEachVertex(&current_vertex,[this,&C,&color,&current_vertex](){
-                int i,lastColorFound=0;
-                node neighbor;
-                forEachNeighbor(current_vertex,&neighbor,[this,&current_vertex,&neighbor,&C, &lastColorFound](){
-                    if(static_cast<T&>(*this).graph[neighbor].color != -1) {
-                        C[static_cast<T &>(*this).graph[neighbor].color] = 1;
-                        if(static_cast<T&>(*this).graph[neighbor].color > lastColorFound)
-                            lastColorFound = static_cast<T&>(*this).graph[neighbor].color;
-                    }
-                });
-                for(i=0; i<=lastColorFound + 1; i++){
-                    if(C[i]==0 && color==-1) //colore non usato
-                        color=i;
-                    else
-                        C[i]=0; //reset colori per il prossimo ciclo
-                }
-                static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
-                color = -1;
-            });
-            printOutput("sequential-output.txt");
         };
         void printOutput(std::string&& name) {
             std::fstream fout(name.c_str(), std::ios::out);
@@ -135,6 +128,17 @@ namespace asa {
             });
             fout.close();
         }
+        /*** algoritmi colorazione ***/
+        void sequential(){
+            int8_t color=-1;
+            node current_vertex;
+            forEachVertex(&current_vertex,[this,&color,&current_vertex](){
+                color = searchColor(current_vertex);
+                static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
+                color = -1;
+            });
+            printOutput("sequential-output.txt");
+        };
         void largestDegree(){
             //riempio set
             node current_vertex;
@@ -195,8 +199,7 @@ namespace asa {
                 });
             }
             /////////////////////////////////////////////////////////////////////////////
-            int C[256]{}, i;
-            while(true) {
+            while(true){
                 std::unique_lock<std::shared_timed_mutex> ulk(mutex);
                 //cout << "--------->ottenuto unique" << endl;
                 cv.wait(ulk, [this]() { return toColor_set.size() != 0 || isEnded == true; });
@@ -204,22 +207,13 @@ namespace asa {
                     break;
                 current_vertex = toColor_set.front();
                 toColor_set.pop_front();
+                ulk.unlock();
                 //////////////////////////////////////////////////////////////////////////
-                int8_t color = -1, lastColorFound=0;
-                node neighbor;
-                forEachNeighbor(current_vertex, &neighbor, [this, &neighbor, &C, &lastColorFound]() {
-                    if (static_cast<T&>(*this).graph[neighbor].color != -1) { //se non colorato, confronto con il nodo corrente
-                        C[static_cast<T&>(*this).graph[neighbor].color] = 1;
-                        if(static_cast<T&>(*this).graph[neighbor].color > lastColorFound)
-                            lastColorFound = static_cast<T&>(*this).graph[neighbor].color;
-                    }
-                });
-                for (i = 0; i <= lastColorFound + 1; i++) {
-                    if (C[i] == 0 && color == -1) //colore non usato
-                        color = i;
-                    else
-                        C[i] = 0; //reset colori per il prossimo ciclo
-                }
+                std::shared_lock<std::shared_timed_mutex> slk(mutex);
+                int8_t color = -1;
+                color = searchColor(current_vertex);
+                slk.unlock();
+                //ulk.lock();  ---> no race conditions
                 static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
                 //cout << ">---------fine unique" << endl;
             }
@@ -227,7 +221,7 @@ namespace asa {
                 t.join();
             printOutput("largestDegree-output.txt");
         };
-        void JonesPlassmann(){
+        void jonesPlassmann(){
             //riempio set
             node current_vertex;
             forEachVertex(&current_vertex,[this,&current_vertex](){
@@ -298,7 +292,6 @@ namespace asa {
             }
             /////////////////////////////////////////////////////////////////////////////
             /*** main thread ***/
-            int C[256]{}, i;
             while(true) {
                 std::unique_lock<std::shared_timed_mutex> ulk(mutex);
                 //cout << "--------->ottenuto unique" << endl;
@@ -310,28 +303,14 @@ namespace asa {
                     //coloro tutti con stesso colore
                     current_vertex = toColor_set.front();
                     toColor_set.pop_front();
-                    //////////////////////////////////////////////////////////////////////////
-                    int8_t color = -1, lastColorFound = 0;
-                    node neighbor;
-                    forEachNeighbor(current_vertex, &neighbor, [this, &neighbor, &C, &lastColorFound](){
-                        if (static_cast<T&>(*this).graph[neighbor].color != -1) { //se non colorato, confronto con il nodo corrente
-                            C[static_cast<T&>(*this).graph[neighbor].color] = 1;
-                            if(static_cast<T&>(*this).graph[neighbor].color > lastColorFound)
-                                lastColorFound = static_cast<T&>(*this).graph[neighbor].color;
-                        }
-                    });
-                    for (i = 0; i <= lastColorFound + 1; i++) {
-                        if (C[i] == 0 && color == -1) //colore non usato
-                            color = i;
-                        else
-                            C[i] = 0; //reset colori per il prossimo ciclo
-                    }
+                    int8_t color = -1;
+                    color = searchColor(current_vertex);
                     static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
                     //if(graphCSR[current_vertex].color > 10)
                     //cout << "jp: " << static_cast<int>(graphCSR[current_vertex].color) << endl;
                 }
                 increase_numIteration = 0;
-                numIteration ++;
+                numIteration ++; //posso iniziare un nuovo giro
                 //cout << "rimanenti: " << total_set.size() << endl;
                 cv.notify_all();
                 //cout << ">---------fine unique" << endl;
@@ -448,27 +427,14 @@ namespace asa {
                 total_set.push_back(current_vertex);
             });
             int C[256]{},wei;
-            for(wei = current_weigth; wei>0; wei--){
+            for(wei = current_weigth; wei>=0; wei--){
                 forEachVertex(&current_vertex,[this,&current_vertex,current_weigth,wei,&C](){
                     current_vertex = total_set.front();
                     total_set.pop_front();
                     if(static_cast<T&>(*this).graph[current_vertex].weight == wei) {
                         /*** coloring ***/
-                        int8_t color = -1, lastColorFound = 0;
-                        node neighbor;
-                        forEachNeighbor(current_vertex, &neighbor, [this, &neighbor, &C, &lastColorFound](){
-                            if (static_cast<T&>(*this).graph[neighbor].color != -1) { //se non colorato, confronto con il nodo corrente
-                                C[static_cast<T&>(*this).graph[neighbor].color] = 1;
-                                if(static_cast<T&>(*this).graph[neighbor].color > lastColorFound)
-                                    lastColorFound = static_cast<T&>(*this).graph[neighbor].color;
-                            }
-                        });
-                        for (int i = 0; i <= lastColorFound + 1; i++) {
-                            if (C[i] == 0 && color == -1) //colore non usato
-                                color = i;
-                            else
-                                C[i] = 0; //reset colori per il prossimo ciclo
-                        }
+                        int8_t color = -1;
+                        color = searchColor(current_vertex);
                         static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
                     }
                     else

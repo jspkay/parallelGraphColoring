@@ -91,7 +91,7 @@ void bootstrap(){
 }
 
 int main(int argc, char* argv[]) {
-    //bootstrap();
+    bootstrap();
     const clock_t begin_time = clock();
     asa::GraphAdjL mygraph;
     const clock_t end_construction_time = clock();
@@ -100,7 +100,7 @@ int main(int argc, char* argv[]) {
     const clock_t end_seq_time = clock();
     mygraph.clearGraph();
     const clock_t begin_jp_time = clock();
-    mygraph.JonesPlassmann();
+    mygraph.jonesPlassmann();
     const clock_t end_jp_time = clock();
     mygraph.clearGraph();
     const clock_t begin_ld_time = clock();
