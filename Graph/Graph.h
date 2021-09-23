@@ -22,6 +22,7 @@
 #include <condition_variable>
 #include <thread>
 #include <shared_mutex>
+#include "../ThreadPool.h"
 
 namespace asa {
     struct vertexDescriptor { int id,random,num_it,weight; bool toBeDeleted; int8_t color; };
@@ -35,7 +36,9 @@ namespace asa {
     class Graph {
     private:
         friend T;
+        friend ThreadPool;
         Graph(){};
+        ThreadPool thread_pool;
     protected:
         unsigned long V;
         unsigned long E;
@@ -44,7 +47,6 @@ namespace asa {
         /*** variabili per algoritmi di colorazione ***/
         std::shared_timed_mutex mutex;
         std::condition_variable_any cv;
-        std::vector<std::thread> threads;
         std::deque<node> total_set, toColor_set;
         int active_threads;
         int numIteration, increase_numIteration;
@@ -64,8 +66,8 @@ namespace asa {
             int neighbour;
             /***  evito riallocazioni dinamiche multiple ***/
             edges.reserve(E); //riservo E posti,
-            total_set.resize(V); //riservo V posti
-            toColor_set.resize(V/4);
+            //total_set.resize(V); //riservo V posti
+            //toColor_set.resize(V/4);
             /***/
             for(int i=0; i <= V; i++){
                 getline(fin, line);
@@ -99,15 +101,12 @@ namespace asa {
         void clearGraph(){
             toColor_set.clear();
             total_set.clear();
-            for(std::thread& t : threads)
-                t.join();
-            threads.clear();
             active_threads = concurentThreadsAvailable;
             isEnded = false;
             ResetEachVertex();
             /***  evito riallocazioni dinamiche multiple ***/
-            total_set.resize(V); //riservo V posti
-            toColor_set.resize(V/4);
+            //total_set.resize(V); //riservo V posti
+            //toColor_set.resize(V/4);
             /***/
         };
         void printOutput(std::string&& name) {
@@ -147,79 +146,89 @@ namespace asa {
             forEachVertex(&current_vertex,[this,&current_vertex](){
                 total_set.push_back(current_vertex);
             });
-            ///////////////////////////////////////////////////////////////////////////
-            for(int n=0; n<concurentThreadsAvailable-1; n++){
-                threads.emplace_back([this](){
-                    //cout << "thread " << std::this_thread::get_id() << " avviato!"<< endl;
-                    node current_vertex;
-                    bool major = true;
-                    while (true) {
-                        std::unique_lock<std::shared_timed_mutex> ulk(mutex);
-                        //////////////////////////////////////////////////////////////////////
-                        //terminazione thread
-                        if(total_set.size()==0){
-                            active_threads--;
-                            if(active_threads==1){
-                                isEnded = true;
-                                cv.notify_one();
-                            }
-                            break;
-                        }
-                        current_vertex = total_set.front();
-                        total_set.pop_front();
-                        ulk.unlock();
-                        //////////////////////////////////////////////////////////////////////
-                        std::shared_lock<std::shared_timed_mutex> slk(mutex);
-                        node neighbor;
-                        forEachNeighbor(current_vertex, &neighbor, [this, &neighbor, current_vertex, &major]() {
-                            if(static_cast<T&>(*this).graph[neighbor].color == -1) {
-                                if (getDegree(current_vertex) < getDegree(neighbor)) {
-                                    major = false;
-                                    return;
-                                } else if (getDegree(current_vertex) == getDegree(neighbor))
-                                    if (static_cast<T&>(*this).graph[current_vertex].random < static_cast<T&>(*this).graph[neighbor].random) {
-                                        major = false;  //A PARITA' DI DEGREE VEDO RANDOM
-                                        return;
-                                    }
-                            }
-                        });
-                        slk.unlock();
-                        //////////////////////////////////////////////////////////////////////
-                        //cout << std::this_thread::get_id() << ": rilasciato shared" << endl;
-                        ulk.lock();
-                        //aggiungo a vertici da colorare se maggiore
-                        if(major) {
-                            toColor_set.push_back(current_vertex);
-                            //cout << "size: " << total_set.size() << endl;
-                        }
-                        else {
-                            total_set.push_back(current_vertex); //reinserisco in coda se non è stato colorato
-                            major=true;
-                        }
-                        cv.notify_all();
-                    }
-                });
-            }
             /////////////////////////////////////////////////////////////////////////////
-            while(true){
+            /***
+             * colorazione
+             ***/
+            thread_pool.addJob([this](){
+                node current_vertex;
+                while(true){
+                    std::cout << "aspetto col\n";
+                    std::unique_lock<std::shared_timed_mutex> ulk(mutex);
+                    std::cout << "ott col\n";
+                    cv.wait(ulk, [this]() { return toColor_set.size() != 0 || isEnded == true; });
+                    if(isEnded)
+                        break;
+                    current_vertex = toColor_set.front();
+                    toColor_set.pop_front();
+                    ulk.unlock();
+                    //////////////////////////////////////////////////////////////////////////
+                    std::shared_lock<std::shared_timed_mutex> slk(mutex);
+                    int8_t color;
+                    color = searchColor(current_vertex);
+                    std::cout << "lasciato shared\n";
+                    slk.unlock();
+                    std::cout << "aspet uni\n";
+                    ulk.lock();
+                    std::cout << "ottenuto uni\n";
+                    static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
+                }
+                printOutput("largestDegree-output.txt");
+            });
+            ///////////////////////////////////////////////////////////////////////////
+            /***
+             * aggiungo al pool un thread per ogni nodo da considerare
+             ***/
+            while (true) {
+                std::cout << "aspetto while\n";
                 std::unique_lock<std::shared_timed_mutex> ulk(mutex);
-                //cout << "--------->ottenuto unique" << endl;
-                cv.wait(ulk, [this]() { return toColor_set.size() != 0 || isEnded == true; });
-                if(isEnded)
+                std::cout << "ottenuto while\n";
+                /*** terminazione thread ***/
+                if (total_set.size() == 0) {
+                    isEnded = true;
                     break;
-                current_vertex = toColor_set.front();
-                toColor_set.pop_front();
+                }
+                current_vertex = total_set.front();
+                total_set.pop_front();
                 ulk.unlock();
-                //////////////////////////////////////////////////////////////////////////
-                std::shared_lock<std::shared_timed_mutex> slk(mutex);
-                int8_t color = -1;
-                color = searchColor(current_vertex);
-                slk.unlock();
-                //ulk.lock();  ---> no race conditions
-                static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
-                //cout << ">---------fine unique" << endl;
+                //////////////////////////////////////////////////////////////////////
+                thread_pool.addJob(std::bind([this](node current_vertex){
+                    std::cout << "aspetto shared\n";
+                    std::shared_lock<std::shared_timed_mutex> slk(mutex);
+                    std::cout << "ott sh\n";
+                    node neighbor;
+                    bool major = true;
+                    forEachNeighbor(current_vertex, &neighbor, [this, &neighbor, current_vertex, &major]() {
+                        if(static_cast<T&>(*this).graph[neighbor].color == -1) {
+                            if (getDegree(current_vertex) < getDegree(neighbor)) {
+                                major = false;
+                                return;
+                            } else if (getDegree(current_vertex) == getDegree(neighbor))
+                                if (static_cast<T&>(*this).graph[current_vertex].random < static_cast<T&>(*this).graph[neighbor].random) {
+                                    major = false;  //A PARITA' DI DEGREE VEDO RANDOM
+                                    return;
+                                }
+                        }
+                    });
+                    std::cout << "lasciato shared\n";
+                    slk.unlock();
+                    std::cout << "aspetto unique\n";
+                    std::unique_lock<std::shared_timed_mutex> ulk(mutex);
+                    std::cout << "ottenuto uniq\n";
+                    //aggiungo a vertici da colorare se maggiore
+                    if(major) {
+                        toColor_set.push_back(current_vertex);
+                        cout << "size: " << total_set.size() << endl;
+                    }
+                    else {
+                        total_set.push_back(current_vertex); //reinserisco in coda se non è stato colorato
+                        major=true;
+                    }
+                    cv.notify_all();
+                },current_vertex));
             }
-            printOutput("largestDegree-output.txt");
+            /*** thread padre deve aspettare ***/
+            thread_pool.wait();
         };
         void jonesPlassmann(){
             //riempio set
@@ -229,7 +238,7 @@ namespace asa {
             });
             ///////////////////////////////////////////////////////////////////////////
             for(int n=0; n<concurentThreadsAvailable-1; n++){
-                threads.emplace_back([this](){
+                thread_pool.addJob([this](){
                     //cout << "thread " << std::this_thread::get_id() << " avviato!"<< endl;
                     node current_vertex;
                     bool major = true;
@@ -332,7 +341,7 @@ namespace asa {
             });
             ///////////////////////////////////////////////////////////////////////////
             for(int n=0; n<concurentThreadsAvailable-1; n++){
-                threads.emplace_back([this](){
+                thread_pool.addJob([this](){
                     //std::cout << "thread " << std::this_thread::get_id() << " avviato!" << std::endl;
                     node current_vertex;
                     bool minor = false;

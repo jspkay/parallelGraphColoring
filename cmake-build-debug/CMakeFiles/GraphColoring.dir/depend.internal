@@ -4,6 +4,8 @@
 CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o
  /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/Graph.h
  /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjL.cpp
+ /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/MyPackagedTask.h
+ /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/ThreadPool.h
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/compare.hpp
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/concept.hpp
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/config.hpp
@@ -2761,6 +2763,8 @@ CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o
 CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o
  /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/Graph.h
  /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjM.cpp
+ /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/MyPackagedTask.h
+ /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/ThreadPool.h
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/compare.hpp
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/concept.hpp
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/config.hpp
@@ -5518,6 +5522,8 @@ CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o
 CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o
  /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/Graph.h
  /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphCSR.cpp
+ /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/MyPackagedTask.h
+ /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/ThreadPool.h
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/compare.hpp
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/concept.hpp
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/config.hpp
@@ -8272,8 +8278,14 @@ CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/xpressive/traits/detail/c_ctype.hpp
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/xpressive/xpressive_fwd.hpp
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/xpressive/xpressive_static.hpp
+CMakeFiles/GraphColoring.dir/ThreadPool.cpp.o
+ /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/MyPackagedTask.h
+ /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/ThreadPool.cpp
+ /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/ThreadPool.h
 CMakeFiles/GraphColoring.dir/main.cpp.o
  /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/Graph.h
+ /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/MyPackagedTask.h
+ /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/ThreadPool.h
  /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/main.cpp
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/compare.hpp
  /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/concept.hpp

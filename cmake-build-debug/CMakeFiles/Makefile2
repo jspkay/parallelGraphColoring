@@ -94,12 +94,12 @@ clean: CMakeFiles/GraphColoring.dir/clean
 CMakeFiles/GraphColoring.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5 "Built target GraphColoring"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target GraphColoring"
 .PHONY : CMakeFiles/GraphColoring.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/GraphColoring.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles 5
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/GraphColoring.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/GraphColoring.dir/rule

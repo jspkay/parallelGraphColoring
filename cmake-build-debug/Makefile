@@ -224,6 +224,33 @@ Graph/GraphCSR.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.s
 .PHONY : Graph/GraphCSR.cpp.s
 
+ThreadPool.o: ThreadPool.cpp.o
+
+.PHONY : ThreadPool.o
+
+# target to build an object file
+ThreadPool.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/ThreadPool.cpp.o
+.PHONY : ThreadPool.cpp.o
+
+ThreadPool.i: ThreadPool.cpp.i
+
+.PHONY : ThreadPool.i
+
+# target to preprocess a source file
+ThreadPool.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/ThreadPool.cpp.i
+.PHONY : ThreadPool.cpp.i
+
+ThreadPool.s: ThreadPool.cpp.s
+
+.PHONY : ThreadPool.s
+
+# target to generate assembly for a file
+ThreadPool.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GraphColoring.dir/build.make CMakeFiles/GraphColoring.dir/ThreadPool.cpp.s
+.PHONY : ThreadPool.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -269,6 +296,9 @@ help:
 	@echo "... Graph/GraphCSR.o"
 	@echo "... Graph/GraphCSR.i"
 	@echo "... Graph/GraphCSR.s"
+	@echo "... ThreadPool.o"
+	@echo "... ThreadPool.i"
+	@echo "... ThreadPool.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

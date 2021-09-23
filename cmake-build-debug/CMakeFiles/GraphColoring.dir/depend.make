@@ -3,6 +3,8 @@
 
 CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o: ../Graph/Graph.h
 CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o: ../Graph/GraphAdjL.cpp
+CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o: ../MyPackagedTask.h
+CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o: ../ThreadPool.h
 CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/compare.hpp
 CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/concept.hpp
 CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/config.hpp
@@ -2760,6 +2762,8 @@ CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o: /home/antonio_vespa/Document
 
 CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o: ../Graph/Graph.h
 CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o: ../Graph/GraphAdjM.cpp
+CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o: ../MyPackagedTask.h
+CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o: ../ThreadPool.h
 CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/compare.hpp
 CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/concept.hpp
 CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/config.hpp
@@ -5517,6 +5521,8 @@ CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o: /home/antonio_vespa/Document
 
 CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o: ../Graph/Graph.h
 CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o: ../Graph/GraphCSR.cpp
+CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o: ../MyPackagedTask.h
+CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o: ../ThreadPool.h
 CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/compare.hpp
 CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/concept.hpp
 CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/config.hpp
@@ -8272,7 +8278,13 @@ CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o: /home/antonio_vespa/Documenti
 CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/xpressive/xpressive_fwd.hpp
 CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/xpressive/xpressive_static.hpp
 
+CMakeFiles/GraphColoring.dir/ThreadPool.cpp.o: ../MyPackagedTask.h
+CMakeFiles/GraphColoring.dir/ThreadPool.cpp.o: ../ThreadPool.cpp
+CMakeFiles/GraphColoring.dir/ThreadPool.cpp.o: ../ThreadPool.h
+
 CMakeFiles/GraphColoring.dir/main.cpp.o: ../Graph/Graph.h
+CMakeFiles/GraphColoring.dir/main.cpp.o: ../MyPackagedTask.h
+CMakeFiles/GraphColoring.dir/main.cpp.o: ../ThreadPool.h
 CMakeFiles/GraphColoring.dir/main.cpp.o: ../main.cpp
 CMakeFiles/GraphColoring.dir/main.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/compare.hpp
 CMakeFiles/GraphColoring.dir/main.cpp.o: /home/antonio_vespa/Documenti/boost_1_77_0/boost/algorithm/string/concept.hpp

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Graph/Graph.h"
 #include <ctime>
+#include "ThreadPool.h"
 #define CMDTABLE_ROWS 5
 
 bool continue_loop = true;
@@ -65,7 +66,6 @@ void credits(){
    std::cout << " * Antonio Vespa\n";
    std::cout << "******************************************************************************************";
 }
-
 void start(){
     std::string str;
     std::cout << "\nInitialization Graph Coloring Project...\n";
@@ -83,7 +83,6 @@ void start(){
             throw std::logic_error("Argument not valid");
     }
 }
-
 void bootstrap(){
     credits();
     start();
@@ -91,24 +90,24 @@ void bootstrap(){
 }
 
 int main(int argc, char* argv[]) {
-    bootstrap();
+    //bootstrap();
     const clock_t begin_time = clock();
-    asa::GraphAdjL mygraph;
+    asa::GraphCSR mygraph;
     const clock_t end_construction_time = clock();
     const clock_t begin_seq_time = clock();
-    mygraph.sequential();
+    //mygraph.sequential();
     const clock_t end_seq_time = clock();
     mygraph.clearGraph();
     const clock_t begin_jp_time = clock();
     mygraph.jonesPlassmann();
     const clock_t end_jp_time = clock();
-    mygraph.clearGraph();
+    //mygraph.clearGraph();
     const clock_t begin_ld_time = clock();
-    mygraph.largestDegree();
+    //mygraph.largestDegree();
     const clock_t end_ld_time = clock();
     mygraph.clearGraph();
     const clock_t begin_sd_time = clock();
-    mygraph.smallestDegree();
+    //mygraph.smallestDegree();
     const clock_t end_sd_time = clock();
     mygraph.clearGraph(); //si fa join dei thread attivati, evita exception
     std::cout << "******************\n";

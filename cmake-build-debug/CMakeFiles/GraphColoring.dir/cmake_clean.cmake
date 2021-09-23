@@ -2,6 +2,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/GraphColoring.dir/Graph/GraphAdjL.cpp.o"
   "CMakeFiles/GraphColoring.dir/Graph/GraphAdjM.cpp.o"
   "CMakeFiles/GraphColoring.dir/Graph/GraphCSR.cpp.o"
+  "CMakeFiles/GraphColoring.dir/ThreadPool.cpp.o"
   "CMakeFiles/GraphColoring.dir/main.cpp.o"
   "GraphColoring"
   "GraphColoring.pdb"
