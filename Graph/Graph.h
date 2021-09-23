@@ -62,10 +62,8 @@ namespace asa {
             std::string line;
             std::stringstream lineStream;
             int neighbour;
-            /***  evito riallocazioni dinamiche multiple ***/
+            /***  evito riallocazioni dinamiche multiple ... nb: per deque è inutile una funzione reserve ***/
             edges.reserve(E); //riservo E posti,
-            total_set.resize(V); //riservo V posti
-            toColor_set.resize(V/4);
             /***/
             for(int i=0; i <= V; i++){
                 getline(fin, line);
@@ -105,10 +103,6 @@ namespace asa {
             active_threads = concurentThreadsAvailable;
             isEnded = false;
             ResetEachVertex();
-            /***  evito riallocazioni dinamiche multiple ***/
-            total_set.resize(V); //riservo V posti
-            toColor_set.resize(V/4);
-            /***/
         };
         void printOutput(std::string&& name) {
             std::fstream fout(name.c_str(), std::ios::out);

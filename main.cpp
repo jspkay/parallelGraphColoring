@@ -91,7 +91,7 @@ void bootstrap(){
 }
 
 int main(int argc, char* argv[]) {
-    bootstrap();
+    //bootstrap();
     const clock_t begin_time = clock();
     asa::GraphAdjL mygraph;
     const clock_t end_construction_time = clock();
