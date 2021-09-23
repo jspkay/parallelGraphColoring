@@ -133,7 +133,7 @@ namespace asa {
                 static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
                 color = -1;
             });
-            printOutput("sequential-output.txt");
+            //printOutput("sequential-output.txt");
         };
         void largestDegree(){
             //riempio set
@@ -213,7 +213,7 @@ namespace asa {
                 static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
                 //cout << ">---------fine unique" << endl;
             }
-            printOutput("largestDegree-output.txt");
+            //printOutput("largestDegree-output.txt");
         };
         void jonesPlassmann(){
             //riempio set
@@ -310,7 +310,7 @@ namespace asa {
                 //cout << ">---------fine unique" << endl;
             }
             //////////////////////////////////////////////////////////////////////////
-            printOutput("jp-output.txt");
+            //printOutput("jp-output.txt");
         };
         void smallestDegree(){
             /***
@@ -431,7 +431,7 @@ namespace asa {
                     //std::cout << "rimanenti: " << total_set.size() << std::endl;
                 });
             }
-            printOutput("smallestDegree-output.txt");
+            //printOutput("smallestDegree-output.txt");
         };
         /*** da specializzare in ogni rappresentazione interna ***/
         void forEachVertex(node* current_vertex, std::function<void()> f){

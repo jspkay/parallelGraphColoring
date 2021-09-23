@@ -91,9 +91,13 @@ void bootstrap(){
 }
 
 int main(int argc, char* argv[]) {
-    //bootstrap();
+    //se non ci sono argomenti stampo il menu, altrimenti eseguo direttamente
+    if(argc != -1)
+        ;
+    else
+        bootstrap();
     const clock_t begin_time = clock();
-    asa::GraphAdjL mygraph;
+    asa::GraphCSR mygraph;
     const clock_t end_construction_time = clock();
     const clock_t begin_seq_time = clock();
     mygraph.sequential();
