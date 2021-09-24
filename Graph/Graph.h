@@ -22,9 +22,10 @@
 #include <condition_variable>
 #include <thread>
 #include <shared_mutex>
-
+#include <filesystem>
+using namespace std;
 namespace asa {
-    struct vertexDescriptor { int id,random,num_it,weight; bool toBeDeleted; int8_t color; };
+    struct vertexDescriptor { int random,num_it,weight; bool toBeDeleted; int16_t color; };
     typedef unsigned long node;
     typedef boost::compressed_sparse_row_graph<boost::bidirectionalS,vertexDescriptor> graphCSR;
     typedef boost::adjacency_matrix<boost::undirectedS,vertexDescriptor> graphAdjM;
@@ -37,8 +38,9 @@ namespace asa {
         friend T;
         Graph(){};
     protected:
-        unsigned long V;
-        unsigned long E;
+        unsigned long V = 0;
+        unsigned long E = 0;
+        int startingNode = 0;
         std::vector<std::pair<node, node>> edges;
         unsigned concurentThreadsAvailable;
         /*** variabili per algoritmi di colorazione ***/
@@ -50,33 +52,120 @@ namespace asa {
         int numIteration, increase_numIteration;
         bool isEnded = false;
     public:
-        void readInput(std::string&& fname){
-            std::fstream fin(fname, std::ios::in);
+        void readInput(string&& fname) {
+            auto ext = std::filesystem::path(fname).extension();
+            if(ext == ".gra"){
+                startingNode = 0;
+                readInputGra(std::move(fname));
+            }
+            else
+                if(ext == ".graph" || ext == ".txt"){
+                    startingNode = 1;
+                    readInputGraph(std::move(fname));
+                }
+                else
+                    cout << "Wrong input format" << endl;
+        }
+        void readInputGraph(std::string&& fname) {
+            string line;
+            string buffer;
+            stringstream lineStream;
+            fstream fin(fname, ios::in);
             if(!fin.is_open()) {
-                std::cerr << "errore apertura file fin" << std::endl;
+                cout << "errore apertura file fin" << endl;
             }
-            fin >> V >> E;
-            if(!fin.good()) {
-                std::cerr << "errore lettura" << std::endl;
+
+            auto file_size = std::filesystem::file_size(fname);
+            buffer.resize(file_size);
+            fin.read(buffer.data(),buffer.size());
+            istringstream f(buffer);
+            getline(f, line);
+            lineStream = stringstream(line);
+            lineStream >> V >> E;
+            if(!f.good()) {
+                cout << "errore lettura" << endl;
             }
-            std::string line;
-            std::stringstream lineStream;
+
             int neighbour;
-            /***  evito riallocazioni dinamiche multiple ... nb: per deque è inutile una funzione reserve ***/
+            /***  evito riallocazioni dinamiche multiple ***/
             edges.reserve(E); //riservo E posti,
             /***/
-            for(int i=0; i <= V; i++){
-                getline(fin, line);
-                lineStream = std::stringstream(line);
+
+            for(int i=0; i<V; i++){
+                getline(f, line);
+                lineStream = stringstream(line);
                 while(lineStream >> neighbour)
-                    edges.emplace_back(std::pair<int, int>(i,neighbour));
+                    edges.emplace_back(std::pair<int, int>(i,neighbour-1));
             }
             fin.close();
-        };
+        }
+
+        void readInputGra(std::string && fname){
+            string line;
+            string buffer;
+            stringstream lineStream;
+            fstream fin(fname, ios::in);
+            if(!fin.is_open()) {
+                cout << "errore apertura file fin" << endl;
+            }
+
+            auto file_size = std::filesystem::file_size(fname);
+            buffer.resize(file_size);
+            fin.read(buffer.data(),buffer.size());
+            istringstream f(buffer);
+            getline(f, line);
+            lineStream = stringstream(line);
+            lineStream >> V;
+            if(!f.good()) {
+                cout << "errore lettura" << endl;
+            }
+
+            int neighbour;
+            string delimiter = ": ";
+            size_t pos = 0;
+            int j;
+            for(int i=0; i<V; i++){
+                getline(f, line);
+                lineStream = stringstream(line);
+                lineStream >> j;
+                pos = line.find(delimiter);
+                lineStream = stringstream(line.substr(pos+delimiter.length()));
+
+                while(lineStream >> neighbour){
+                    edges.emplace_back(std::pair<int, int>(j,neighbour));
+                    edges.emplace_back(std::pair<int, int>(neighbour,j));
+                    E += 2;
+                }
+            }
+            fin.close();
+        }
+//        void readInput(std::string&& fname){
+//            std::fstream fin(fname, std::ios::in);
+//            if(!fin.is_open()) {
+//                std::cerr << "errore apertura file fin" << std::endl;
+//            }
+//            fin >> V >> E;
+//            if(!fin.good()) {
+//                std::cerr << "errore lettura" << std::endl;
+//            }
+//            std::string line;
+//            std::stringstream lineStream;
+//            int neighbour;
+//            /***  evito riallocazioni dinamiche multiple ... nb: per deque è inutile una funzione reserve ***/
+//            edges.reserve(E); //riservo E posti,
+//            /***/
+//            for(int i=0; i <= V; i++){
+//                getline(fin, line);
+//                lineStream = std::stringstream(line);
+//                while(lineStream >> neighbour)
+//                    edges.emplace_back(std::pair<int, int>(i,neighbour));
+//            }
+//            fin.close();
+//        };
         int searchColor(node u){
             int i,lastColorFound=0;
-            int C[256]={};
-            int8_t color=-1;
+            int C[2048]={};
+            int16_t color=-1;
             node neighbor;
             node current_vertex = u;
             forEachNeighbor(current_vertex,&neighbor,[this,&current_vertex,&neighbor,&C, &lastColorFound](){
@@ -110,30 +199,47 @@ namespace asa {
                 std::cerr << "errore apertura file fout\n";
             }
             node current_vertex;
-            forEachVertex(&current_vertex,[this,&current_vertex,&fout](){
-                if (static_cast<T&>(*this).graph[current_vertex].id!= 0) {
-                    fout << "u:" << static_cast<T&>(*this).graph[current_vertex].id << ", color: " <<
-                         static_cast<int>(static_cast<T&>(*this).graph[current_vertex].color) << ", rand:" << static_cast<T&>(*this).graph[current_vertex].random << ", degree:" <<
-                         boost::out_degree(current_vertex, static_cast<T&>(*this).graph) << ", weight: " << static_cast<T&>(*this).graph[current_vertex].weight << ", neigh -> ";
+            if(startingNode == 0){
+                forEachVertex(&current_vertex,[this,&current_vertex,&fout](){
+                    fout << "u:" << current_vertex << ", color: " <<
+                    static_cast<int>(static_cast<T&>(*this).graph[current_vertex].color) << ", rand:" << static_cast<T&>(*this).graph[current_vertex].random << ", degree:" <<
+                    boost::out_degree(current_vertex, static_cast<T&>(*this).graph) << ", weight: " << static_cast<T&>(*this).graph[current_vertex].weight << ", neigh -> ";
                     node neighbor;
                     forEachNeighbor(current_vertex, &neighbor, [this, &neighbor, &fout]() {
-                        fout << "(" << static_cast<T&>(*this).graph[neighbor].id << "," << static_cast<int>(static_cast<T&>(*this).graph[neighbor].color) << ") ";
+                        fout << "(" << neighbor << "," << static_cast<int>(static_cast<T&>(*this).graph[neighbor].color) << ") ";
                     });
                     fout << "\n";
-                }
-            });
+
+                });
+            }
+            else
+            {
+                //per rgg
+                //ricorda di usare current_vertex+1 dato che gli indici partono da 1 nel file, mentre da 0 nella csr
+                forEachVertex(&current_vertex,[this,&current_vertex,&fout](){
+                    fout << "u:" << current_vertex+1 << ", color: " <<
+                    static_cast<int>(static_cast<T&>(*this).graph[current_vertex].color) << ", rand:" << static_cast<T&>(*this).graph[current_vertex].random << ", degree:" <<
+                    boost::out_degree(current_vertex, static_cast<T&>(*this).graph) << ", weight: " << static_cast<T&>(*this).graph[current_vertex].weight << ", neigh -> ";
+                    node neighbor;
+                    forEachNeighbor(current_vertex, &neighbor, [this, &neighbor, &fout]() {
+                        fout << "(" << neighbor+1 << "," << static_cast<int>(static_cast<T&>(*this).graph[neighbor].color) << ") ";
+                    });
+                    fout << "\n";
+
+                });
+            }
             fout.close();
         };
         /*** algoritmi colorazione ***/
         void sequential(){
-            int8_t color=-1;
+            int16_t color=-1;
             node current_vertex;
             forEachVertex(&current_vertex,[this,&color,&current_vertex](){
                 color = searchColor(current_vertex);
                 static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
                 color = -1;
             });
-            //printOutput("sequential-output.txt");
+            printOutput("sequential-output.txt");
         };
         void largestDegree(){
             //riempio set
@@ -206,7 +312,7 @@ namespace asa {
                 ulk.unlock();
                 //////////////////////////////////////////////////////////////////////////
                 std::shared_lock<std::shared_timed_mutex> slk(mutex);
-                int8_t color = -1;
+                int16_t color = -1;
                 color = searchColor(current_vertex);
                 slk.unlock();
                 //ulk.lock();  ---> no race conditions
@@ -297,7 +403,7 @@ namespace asa {
                     //coloro tutti con stesso colore
                     current_vertex = toColor_set.front();
                     toColor_set.pop_front();
-                    int8_t color = -1;
+                    int16_t color = -1;
                     color = searchColor(current_vertex);
                     static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
                     //if(graphCSR[current_vertex].color > 10)
@@ -422,7 +528,7 @@ namespace asa {
                     total_set.pop_front();
                     if(static_cast<T&>(*this).graph[current_vertex].weight == wei) {
                         /*** coloring ***/
-                        int8_t color = -1;
+                        int16_t color = -1;
                         color = searchColor(current_vertex);
                         static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
                     }

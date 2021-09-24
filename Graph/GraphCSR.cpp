@@ -35,11 +35,11 @@ int GraphCSR::getDegree(node v) {
 }
 
 GraphCSR::GraphCSR() {
+    const clock_t begin_time = clock();
     readInput("../Graph/benchmark/rgg_n_2_15_s0.txt");
-    graph = graphCSR(boost::edges_are_unsorted_multi_pass, std::begin(edges), edges.end(), V+1);
-    int cont = 0;// degree = 0;    //ci sarà un nodo 0, fittizio
+    std::cout << "Time needed to read the graph " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
+    graph = graphCSR(boost::edges_are_unsorted_multi_pass, std::begin(edges), edges.end(), V);
     BGL_FORALL_VERTICES(current_vertex, graph, graphCSR) {
-            graph[current_vertex].id = cont++;
             graph[current_vertex].color = -1;
             graph[current_vertex].num_it = 0;
             graph[current_vertex].random = rand() % 1000 + 1; //1-1000

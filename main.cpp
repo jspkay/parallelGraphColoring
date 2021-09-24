@@ -103,14 +103,17 @@ int main(int argc, char* argv[]) {
     mygraph.sequential();
     const clock_t end_seq_time = clock();
     mygraph.clearGraph();
+
     const clock_t begin_jp_time = clock();
     mygraph.jonesPlassmann();
     const clock_t end_jp_time = clock();
     mygraph.clearGraph();
+
     const clock_t begin_ld_time = clock();
     mygraph.largestDegree();
     const clock_t end_ld_time = clock();
     mygraph.clearGraph();
+
     const clock_t begin_sd_time = clock();
     mygraph.smallestDegree();
     const clock_t end_sd_time = clock();

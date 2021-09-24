@@ -36,10 +36,8 @@ int GraphAdjM::getDegree(node v) {
 
 GraphAdjM::GraphAdjM(){
     readInput("../Graph/benchmark/rgg_n_2_15_s0.txt");
-    graph = graphAdjM(std::begin(edges), edges.end(), V+1);
-    int cont = 0;// degree = 0;    //ci sarà un nodo 0, fittizio
+    graph = graphAdjM(std::begin(edges), edges.end(), V);
     BGL_FORALL_VERTICES(current_vertex, graph, graphAdjM) {
-            graph[current_vertex].id = cont++;
             graph[current_vertex].color = -1;
             graph[current_vertex].num_it = 0;
             graph[current_vertex].random = rand() % 1000 + 1; //1-1000
