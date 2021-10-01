@@ -50,7 +50,7 @@ namespace asa {
         std::deque<node> total_set, toColor_set;
         int active_threads;
         int numIteration, increase_numIteration;
-        bool isEnded = false;
+        bool isEnded = false, shutOff=false;
     public:
         void readInput(std::string&& fname){
             std::fstream fin(fname, std::ios::in);
@@ -153,6 +153,7 @@ namespace asa {
                         break;
                     current_vertex = toColor_set.front();
                     toColor_set.pop_front();
+                    //cout << "coloring "<< current_vertex << "!!!!! \n";
                     ulk.unlock();
                     //////////////////////////////////////////////////////////////////////////
                     int8_t color;
@@ -161,6 +162,7 @@ namespace asa {
                     slk.unlock();
                     ulk.lock();
                     static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
+                    cout << "colored "<< current_vertex << ", remaining to color: " << toColor_set.size() <<"\n";
                 }
                 printOutput("largestDegree-output.txt");
             });
@@ -170,11 +172,13 @@ namespace asa {
              ***/
             while (true) {
                 std::unique_lock<std::shared_timed_mutex> ulk(mutex);
+
+                cout << "inserisco nuovo thread!!!!!!!!!!!!!!!!\n";
                 /*** terminazione thread ***/
-                if (total_set.empty()) {
-                    /*** thread padre deve aspettare ***/
+                if (total_set.empty()){
+                    /*** thread padre (questo) deve aspettare ***/
                     ulk.unlock();
-                    thread_pool.wait();
+                    cv.wait(ulk,[this](){return shutOff;});
                     isEnded = true;
                     break;
                 }
@@ -183,6 +187,7 @@ namespace asa {
                 ulk.unlock();
                 //////////////////////////////////////////////////////////////////////
                 thread_pool.addJob(std::bind([this](node current_vertex){
+                    cout << "start new\n";
                     bool major = true;
                     {
                         std::shared_lock<std::shared_timed_mutex> slk(mutex);
@@ -205,9 +210,10 @@ namespace asa {
                     //aggiungo a vertici da colorare se maggiore
                     if(major) {
                         toColor_set.push_back(current_vertex);
-                        //cout << "size: " << total_set.size() << endl;
+                        cout << "size: " << toColor_set.size() << ", remaining: " << total_set.size() << endl;
                     }
                     else {
+                        //cout << "pushing" << endl;
                         total_set.push_back(current_vertex); //reinserisco in coda se non è stato colorato
                         major=true;
                     }

@@ -2,6 +2,7 @@
 // Created by antonio_vespa on 23/09/21.
 //
 
+#include <iostream>
 #include "ThreadPool.h"
 
 using namespace  std;
@@ -21,6 +22,7 @@ ThreadPool::ThreadPool() {
                 });
                 if(terminate_pool)
                     return;
+                std::cout << "thread in coda: " << queue.size()<<std::endl;
                 function<void()> Job = queue.back();
                 queue.pop_back();
                 lock.unlock();
@@ -30,14 +32,14 @@ ThreadPool::ThreadPool() {
 };
 
 void ThreadPool::shutdown() {
-    std::unique_lock<std::mutex> lock(mutex);
+    std::unique_lock<std::mutex> lock(queue_mutex);
     terminate_pool = true; // use this flag in condition.wait
     cv.notify_all(); // wake up all threads.
-
+    lock.unlock();
+    wait(); //for stopped
     // Join all threads.
     for(std::thread &th : pool)
         th.join();
-
     pool.clear();
     stopped = true;
 }
@@ -49,7 +51,7 @@ void ThreadPool::addJob(const function<void()>& new_Job) {
 }
 
 ThreadPool::~ThreadPool() {
-    wait();
+    shutdown();
 }
 
 void ThreadPool::wait() {
