@@ -256,8 +256,7 @@ namespace asa {
                     bool major = true;
                     while (true) {
                         std::unique_lock<std::shared_timed_mutex> ulk(mutex);
-                        //////////////////////////////////////////////////////////////////////
-                        //terminazione thread
+                        /*** terminazione thread ***/
                         if(total_set.size()==0){
                             active_threads--;
                             if(active_threads==1){
@@ -288,15 +287,17 @@ namespace asa {
                         //////////////////////////////////////////////////////////////////////
                         if(major) {
                             std::shared_lock<std::shared_timed_mutex> slk(mutex);
+                            /*** colorazione ***/
                             int16_t color = -1;
                             color = searchColor(current_vertex);
                             slk.unlock();
-                            //ulk.lock();  ---> no race conditions
+                            ulk.lock();
                             static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
                         }
                         else {
                             ulk.lock();
-                            total_set.push_back(current_vertex); //reinserisco in coda se non è stato colorato
+                            /*** reinserisco (nodo da colorare successivamente) ***/
+                            total_set.push_back(current_vertex);
                             major=true;
                         }
                         cv.notify_all();
@@ -304,13 +305,10 @@ namespace asa {
                 });
             }
             /////////////////////////////////////////////////////////////////////////////
-            while(true){
-                std::unique_lock<std::shared_timed_mutex> ulk(mutex);
-                //cout << "--------->ottenuto unique" << endl;
-                cv.wait(ulk, [this]() { return isEnded == true; });
-                if(isEnded)
-                    break;
-            }
+            /*** main thread ***/
+            std::unique_lock<std::shared_timed_mutex> ulk(mutex);
+            //cout << "--------->ottenuto unique" << endl;
+            cv.wait(ulk, [this]() { return isEnded == true; });
             printOutput("largestDegree-output.txt");
         };
         void jonesPlassmann(){
@@ -346,7 +344,9 @@ namespace asa {
                             increase_numIteration++;
                             cv.notify_all();
                         }
-                        cv.wait(ulk,[this,current_vertex](){ return static_cast<T&>(*this).graph[current_vertex].num_it == numIteration || !increase_numIteration; });
+                        //cout << static_cast<T&>(*this).graph[current_vertex].num_it << "-" << numIteration << " _____ thread: " << this_thread::get_id() << " aspetto!" << endl;
+                        cv.wait(ulk,[this,current_vertex](){ return static_cast<T&>(*this).graph[current_vertex].num_it <= numIteration || !increase_numIteration; });
+                        //cout << "thread: " << this_thread::get_id() << " riavviato!" << endl;
                         ulk.unlock();
                         //////////////////////////////////////////////////////////////////////
                         std::shared_lock<std::shared_timed_mutex> slk(mutex);
@@ -380,6 +380,7 @@ namespace asa {
                         }
                         cv.notify_all();
                     }
+                    //cout << "thread: " << this_thread::get_id() << " terminato!" << endl;
                 });
             }
             /////////////////////////////////////////////////////////////////////////////
@@ -387,7 +388,7 @@ namespace asa {
             while(true) {
                 std::unique_lock<std::shared_timed_mutex> ulk(mutex);
                 //cout << "--------->ottenuto unique" << endl;
-                cv.wait(ulk, [this]() { return isEnded == true || increase_numIteration == concurentThreadsAvailable - 1; });
+                cv.wait(ulk, [this]() { return isEnded == true || increase_numIteration == active_threads - 1; });  //NON concurrent !!!!
                 if(isEnded)
                     break;
                 //means -> increase_numIteration == true
@@ -447,13 +448,13 @@ namespace asa {
                             increase_numIteration++;
                             cv.notify_all();
                         }
-                        cv.wait(ulk,[this,current_vertex](){ return static_cast<T&>(*this).graph[current_vertex].num_it == numIteration || !increase_numIteration; });
+                        cv.wait(ulk,[this,current_vertex](){ return static_cast<T&>(*this).graph[current_vertex].num_it <= numIteration || !increase_numIteration; });
                         ulk.unlock();
                         //////////////////////////////////////////////////////////////////////
                         std::shared_lock<std::shared_timed_mutex> slk(mutex);
+                        /*** calcolo degree current_vertex (non posso usare getDegree) ***/
                         int degreeCurrVertex = 0;
                         node neighbor;
-                        /*** calcolo degree current_vertex ***/
                         forEachNeighbor(current_vertex, &neighbor, [this, &neighbor, &degreeCurrVertex](){
                             if(!static_cast<T&>(*this).graph[neighbor].toBeDeleted)
                                 degreeCurrVertex++;  //se non è marcato toBeDeleted, aumento degree
@@ -468,12 +469,13 @@ namespace asa {
                         ulk.lock();
                         //aggiungo a vertici da pesare se maggiore
                         if(minor){
+                            /*** peso ***/
                             toColor_set.push_back(current_vertex);
-                            //std::cout << "u: " << current_vertex << ", degree: " << getDegree(current_vertex) << ", curr_min: " << current_min_degree << std::endl;
                         }
                         else {
+                            /*** reinserisco in coda,valuto al prossimo giro ***/
                             static_cast<T&>(*this).graph[current_vertex].num_it++;
-                            total_set.push_back(current_vertex); //reinserisco in coda se non è stato pesato
+                            total_set.push_back(current_vertex);
                         }
                         minor = false;
                         cv.notify_all();
@@ -485,13 +487,13 @@ namespace asa {
             while(true) {
                 std::unique_lock<std::shared_timed_mutex> ulk(mutex);
                 //cout << "--------->ottenuto unique" << endl;
-                cv.wait(ulk, [this]() { return isEnded == true || increase_numIteration == concurentThreadsAvailable - 1; });
+                cv.wait(ulk, [this]() { return isEnded == true || increase_numIteration == active_threads - 1; });
                 if(isEnded)
                     break;
                 //arrivato qui means -> increase_numIteration == concurentThreadsAvailable - 1
                 bool doIHaveToIncreaseColor = toColor_set.size()!=0;
                 while(toColor_set.size()!=0){
-                    /*** pop da coda + weight ***/
+                    /*** pop da coda + weight + mark deleted ***/
                     current_vertex = toColor_set.front();
                     toColor_set.pop_front();
                     static_cast<T&>(*this).graph[current_vertex].weight = current_weigth; //peso il vertice corrente
@@ -525,7 +527,8 @@ namespace asa {
                         static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
                     }
                     else
-                        total_set.push_back(current_vertex); //reinserisco se weight minoreù
+                        /*** reinserisco se weight minore ***/
+                        total_set.push_back(current_vertex);
                     //std::cout << "rimanenti: " << total_set.size() << std::endl;
                 });
             };
