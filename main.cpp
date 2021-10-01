@@ -99,21 +99,22 @@ int main(int argc, char* argv[]) {
     const clock_t begin_time = clock();
     asa::GraphCSR mygraph;
     const clock_t end_construction_time = clock();
+    /*** sequential ***/
     const clock_t begin_seq_time = clock();
     mygraph.sequential();
     const clock_t end_seq_time = clock();
     mygraph.clearGraph();
-
+    /*** jones plassman ***/
     const clock_t begin_jp_time = clock();
     mygraph.jonesPlassmann();
     const clock_t end_jp_time = clock();
     mygraph.clearGraph();
-
+    /*** largest degree ***/
     const clock_t begin_ld_time = clock();
     mygraph.largestDegree();
     const clock_t end_ld_time = clock();
     mygraph.clearGraph();
-
+    /*** smallest degree ***/
     const clock_t begin_sd_time = clock();
     mygraph.smallestDegree();
     const clock_t end_sd_time = clock();

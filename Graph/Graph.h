@@ -23,6 +23,7 @@
 #include <thread>
 #include <shared_mutex>
 #include <filesystem>
+
 using namespace std;
 namespace asa {
     struct vertexDescriptor { int random,num_it,weight; bool toBeDeleted; int16_t color; };
@@ -285,14 +286,16 @@ namespace asa {
                         });
                         slk.unlock();
                         //////////////////////////////////////////////////////////////////////
-                        //cout << std::this_thread::get_id() << ": rilasciato shared" << endl;
-                        ulk.lock();
-                        //aggiungo a vertici da colorare se maggiore
                         if(major) {
-                            toColor_set.push_back(current_vertex);
-                            //cout << "size: " << total_set.size() << endl;
+                            std::shared_lock<std::shared_timed_mutex> slk(mutex);
+                            int16_t color = -1;
+                            color = searchColor(current_vertex);
+                            slk.unlock();
+                            //ulk.lock();  ---> no race conditions
+                            static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
                         }
                         else {
+                            ulk.lock();
                             total_set.push_back(current_vertex); //reinserisco in coda se non è stato colorato
                             major=true;
                         }
@@ -304,22 +307,11 @@ namespace asa {
             while(true){
                 std::unique_lock<std::shared_timed_mutex> ulk(mutex);
                 //cout << "--------->ottenuto unique" << endl;
-                cv.wait(ulk, [this]() { return toColor_set.size() != 0 || isEnded == true; });
+                cv.wait(ulk, [this]() { return isEnded == true; });
                 if(isEnded)
                     break;
-                current_vertex = toColor_set.front();
-                toColor_set.pop_front();
-                ulk.unlock();
-                //////////////////////////////////////////////////////////////////////////
-                std::shared_lock<std::shared_timed_mutex> slk(mutex);
-                int16_t color = -1;
-                color = searchColor(current_vertex);
-                slk.unlock();
-                //ulk.lock();  ---> no race conditions
-                static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
-                //cout << ">---------fine unique" << endl;
             }
-            //printOutput("largestDegree-output.txt");
+            printOutput("largestDegree-output.txt");
         };
         void jonesPlassmann(){
             //riempio set
@@ -416,7 +408,7 @@ namespace asa {
                 //cout << ">---------fine unique" << endl;
             }
             //////////////////////////////////////////////////////////////////////////
-            //printOutput("jp-output.txt");
+            printOutput("jp-output.txt");
         };
         void smallestDegree(){
             /***
@@ -536,8 +528,8 @@ namespace asa {
                         total_set.push_back(current_vertex); //reinserisco se weight minoreù
                     //std::cout << "rimanenti: " << total_set.size() << std::endl;
                 });
-            }
-            //printOutput("smallestDegree-output.txt");
+            };
+            printOutput("smallestDegree-output.txt");
         };
         /*** da specializzare in ogni rappresentazione interna ***/
         void forEachVertex(node* current_vertex, std::function<void()> f){

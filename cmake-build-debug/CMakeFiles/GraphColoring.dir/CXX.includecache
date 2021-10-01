@@ -41,6 +41,26 @@ thread
 -
 shared_mutex
 -
+filesystem
+-
+
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjL.cpp
+Graph.h
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/Graph.h
+iostream
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/iostream
+
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphAdjM.cpp
+Graph.h
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/Graph.h
+iostream
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/iostream
+
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/GraphCSR.cpp
+Graph.h
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/Graph.h
+iostream
+/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/iostream
 
 /home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/main.cpp
 iostream
