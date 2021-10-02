@@ -42,6 +42,7 @@ namespace asa {
         unsigned long V = 0;
         unsigned long E = 0;
         int startingNode = 0;
+        int doColor = 0; //semaforo
         std::vector<std::pair<node, node>> edges;
         unsigned concurentThreadsAvailable;
         /*** variabili per algoritmi di colorazione ***/
@@ -332,12 +333,26 @@ namespace asa {
                         total_set.pop_front();
                         /*** sincronizzazione thread a fine di un giro completo sui nodi ***/
                         /* SE STO INIZIANDO UN NUOVO GIRO, ALLORA ASPETTO CHE TUTTI I NODI NEL SET DA COLORARE LO SIANO */
-                        if(static_cast<T&>(*this).graph[current_vertex].num_it > numIteration){
+                        if(static_cast<T&>(*this).graph[current_vertex].num_it > numIteration && !doColor){
                             increase_numIteration++;
                             cv.notify_all();
                         }
                         /* QUANDO THREAD CHE COLORA FINISCE DI FARLO, AUMENTA numIteration */
-                        cv.wait(ulk,[this,current_vertex](){ return static_cast<T&>(*this).graph[current_vertex].num_it <= numIteration || !increase_numIteration; });
+                        cv.wait(ulk,[this,current_vertex](){ return static_cast<T&>(*this).graph[current_vertex].num_it <= numIteration || !increase_numIteration || doColor; });
+                        if(doColor){
+                            /*** COLORAZIONE MULTITHREADING ***/
+                            doColor--;
+                            /*** undo pop ***/
+                            total_set.push_front(current_vertex);
+                            /*** coloro tutti con stesso colore ***/
+                            current_vertex = toColor_set.front();
+                            toColor_set.pop_front();
+                            int16_t color = -1;
+                            color = searchColor(current_vertex);
+                            static_cast<T&>(*this).graph[current_vertex].color = color;
+                            cv.notify_all();
+                            continue;
+                        }
                         ulk.unlock();
                         /*** ricerca massimo ***/
                         std::shared_lock<std::shared_timed_mutex> slk(mutex);
@@ -383,14 +398,9 @@ namespace asa {
                 if(isEnded)
                     break;
                 //means -> increase_numIteration == true
-                while(!toColor_set.empty()){
-                    /*** coloro tutti con stesso colore ***/
-                    current_vertex = toColor_set.front();
-                    toColor_set.pop_front();
-                    int16_t color = -1;
-                    color = searchColor(current_vertex);
-                    static_cast<T&>(*this).graph[current_vertex].color = color;
-                }
+                doColor = toColor_set.size();
+                cv.notify_all();
+                cv.wait(ulk,[this](){return !doColor; });
                 increase_numIteration = 0;
                 numIteration ++; //posso iniziare un nuovo giro
                 //cout << "rimanenti: " << total_set.size() << endl;
