@@ -53,116 +53,6 @@ namespace asa {
         int numIteration, increase_numIteration;
         bool isEnded = false;
     public:
-        void readInput(string&& fname) {
-            auto ext = std::filesystem::path(fname).extension();
-            if(ext == ".gra"){
-                startingNode = 0;
-                readInputGra(std::move(fname));
-            }
-            else
-                if(ext == ".graph" || ext == ".txt"){
-                    startingNode = 1;
-                    readInputGraph(std::move(fname));
-                }
-                else
-                    cout << "Wrong input format" << endl;
-        }
-        void readInputGraph(std::string&& fname) {
-            string line;
-            string buffer;
-            stringstream lineStream;
-            fstream fin(fname, ios::in);
-            if(!fin.is_open()) {
-                cout << "errore apertura file fin" << endl;
-            }
-
-            auto file_size = std::filesystem::file_size(fname);
-            buffer.resize(file_size);
-            fin.read(buffer.data(),buffer.size());
-            istringstream f(buffer);
-            getline(f, line);
-            lineStream = stringstream(line);
-            lineStream >> V >> E;
-            if(!f.good()) {
-                cout << "errore lettura" << endl;
-            }
-
-            int neighbour;
-            /***  evito riallocazioni dinamiche multiple ***/
-            edges.reserve(E); //riservo E posti,
-            /***/
-
-            for(int i=0; i<V; i++){
-                getline(f, line);
-                lineStream = stringstream(line);
-                while(lineStream >> neighbour)
-                    edges.emplace_back(std::pair<int, int>(i,neighbour-1));
-            }
-            fin.close();
-        }
-
-        void readInputGra(std::string && fname){
-            string line;
-            string buffer;
-            stringstream lineStream;
-            fstream fin(fname, ios::in);
-            if(!fin.is_open()) {
-                cout << "errore apertura file fin" << endl;
-            }
-
-            auto file_size = std::filesystem::file_size(fname);
-            buffer.resize(file_size);
-            fin.read(buffer.data(),buffer.size());
-            istringstream f(buffer);
-            getline(f, line);
-            lineStream = stringstream(line);
-            lineStream >> V;
-            if(!f.good()) {
-                cout << "errore lettura" << endl;
-            }
-
-            int neighbour;
-            string delimiter = ": ";
-            size_t pos = 0;
-            int j;
-            for(int i=0; i<V; i++){
-                getline(f, line);
-                lineStream = stringstream(line);
-                lineStream >> j;
-                pos = line.find(delimiter);
-                lineStream = stringstream(line.substr(pos+delimiter.length()));
-
-                while(lineStream >> neighbour){
-                    edges.emplace_back(std::pair<int, int>(j,neighbour));
-                    edges.emplace_back(std::pair<int, int>(neighbour,j));
-                    E += 2;
-                }
-            }
-            fin.close();
-        }
-//        void readInput(std::string&& fname){
-//            std::fstream fin(fname, std::ios::in);
-//            if(!fin.is_open()) {
-//                std::cerr << "errore apertura file fin" << std::endl;
-//            }
-//            fin >> V >> E;
-//            if(!fin.good()) {
-//                std::cerr << "errore lettura" << std::endl;
-//            }
-//            std::string line;
-//            std::stringstream lineStream;
-//            int neighbour;
-//            /***  evito riallocazioni dinamiche multiple ... nb: per deque è inutile una funzione reserve ***/
-//            edges.reserve(E); //riservo E posti,
-//            /***/
-//            for(int i=0; i <= V; i++){
-//                getline(fin, line);
-//                lineStream = std::stringstream(line);
-//                while(lineStream >> neighbour)
-//                    edges.emplace_back(std::pair<int, int>(i,neighbour));
-//            }
-//            fin.close();
-//        };
         int searchColor(node u){
             int i,lastColorFound=0;
             int C[2048]={};
@@ -194,6 +84,121 @@ namespace asa {
             isEnded = false;
             ResetEachVertex();
         };
+        void fillTotalSet(){
+            node current_vertex;
+            forEachVertex(&current_vertex,[this,&current_vertex](){
+                total_set.push_back(current_vertex);
+            });
+        };
+        /*** IO ***/
+        void readInput(string&& fname) {
+            auto ext = std::filesystem::path(fname).extension();
+            if(ext == ".gra"){
+                startingNode = 0;
+                readInputGra(std::move(fname));
+            }
+            else
+                if(ext == ".graph" || ext == ".txt"){
+                    startingNode = 1;
+                    readInputGraph(std::move(fname));
+                }
+                else
+                    cerr << "Wrong input format" << endl;
+        }
+        void readInputGraph(std::string&& fname) {
+            string line;
+            string buffer;
+            stringstream lineStream;
+            fstream fin(fname, ios::in);
+            if(!fin.is_open()) {
+                cerr << "errore apertura file fin" << endl;
+            }
+
+            auto file_size = std::filesystem::file_size(fname);
+            buffer.resize(file_size);
+            fin.read(buffer.data(),buffer.size());
+            istringstream f(buffer);
+            getline(f, line);
+            lineStream = stringstream(line);
+            lineStream >> V >> E;
+            if(!f.good()) {
+                cerr << "errore lettura" << endl;
+            }
+
+            int neighbour;
+            /***  evito riallocazioni dinamiche multiple ***/
+            edges.reserve(E); //riservo E posti,
+            /***/
+
+            for(int i=0; i<V; i++){
+                getline(f, line);
+                lineStream = stringstream(line);
+                while(lineStream >> neighbour)
+                    edges.emplace_back(std::pair<int, int>(i,neighbour-1));
+            }
+            fin.close();
+        }
+        void readInputGra(std::string && fname){
+            string line;
+            string buffer;
+            stringstream lineStream;
+            fstream fin(fname, ios::in);
+            if(!fin.is_open()) {
+                cerr << "errore apertura file fin" << endl;
+            }
+
+            auto file_size = std::filesystem::file_size(fname);
+            buffer.resize(file_size);
+            fin.read(buffer.data(),buffer.size());
+            istringstream f(buffer);
+            getline(f, line);
+            lineStream = stringstream(line);
+            lineStream >> V;
+            if(!f.good()) {
+                cerr << "errore lettura" << endl;
+            }
+
+            int neighbour;
+            string delimiter = ": ";
+            size_t pos = 0;
+            int j;
+            for(int i=0; i<V; i++){
+                getline(f, line);
+                lineStream = stringstream(line);
+                lineStream >> j;
+                pos = line.find(delimiter);
+                lineStream = stringstream(line.substr(pos+delimiter.length()));
+
+                while(lineStream >> neighbour){
+                    edges.emplace_back(std::pair<int, int>(j,neighbour));
+                    edges.emplace_back(std::pair<int, int>(neighbour,j));
+                    E += 2;
+                }
+            }
+            fin.close();
+        }
+        /*void readInput(std::string&& fname){
+            std::fstream fin(fname, std::ios::in);
+            if(!fin.is_open()) {
+                std::cerr << "errore apertura file fin" << std::endl;
+            }
+            fin >> V >> E;
+            if(!fin.good()) {
+               std::cerr << "errore lettura" << std::endl;
+            }
+            std::string line;
+            std::stringstream lineStream;
+            int neighbour;
+            // evito riallocazioni dinamiche multiple ... nb: per deque è inutile una funzione reserve
+            edges.reserve(E); //riservo E posti,
+            for(int i=0; i <= V; i++){
+                getline(fin, line);
+                lineStream = std::stringstream(line);
+                while(lineStream >> neighbour)
+                    edges.emplace_back(std::pair<int, int>(i,neighbour));
+            }
+            fin.close();
+        };*/
         void printOutput(std::string&& name) {
             std::fstream fout(name.c_str(), std::ios::out);
             if (!fout.is_open()) {
@@ -243,15 +248,10 @@ namespace asa {
             printOutput("sequential-output.txt");
         };
         void largestDegree(){
-            //riempio set
-            node current_vertex;
-            forEachVertex(&current_vertex,[this,&current_vertex](){
-                total_set.push_back(current_vertex);
-            });
-            ///////////////////////////////////////////////////////////////////////////
+            fillTotalSet();
+            /*** creazione thread ***/
             for(int n=0; n<concurentThreadsAvailable-1; n++){
                 threads.emplace_back([this](){
-                    //cout << "thread " << std::this_thread::get_id() << " avviato!"<< endl;
                     node current_vertex;
                     bool major = true;
                     while (true) {
@@ -268,7 +268,7 @@ namespace asa {
                         current_vertex = total_set.front();
                         total_set.pop_front();
                         ulk.unlock();
-                        //////////////////////////////////////////////////////////////////////
+                        /*** ricerca massimo locale ***/
                         std::shared_lock<std::shared_timed_mutex> slk(mutex);
                         node neighbor;
                         forEachNeighbor(current_vertex, &neighbor, [this, &neighbor, current_vertex, &major]() {
@@ -284,7 +284,7 @@ namespace asa {
                             }
                         });
                         slk.unlock();
-                        //////////////////////////////////////////////////////////////////////
+                        /*** azione in base all'esito ***/
                         if(major) {
                             std::shared_lock<std::shared_timed_mutex> slk(mutex);
                             /*** colorazione ***/
@@ -304,28 +304,20 @@ namespace asa {
                     }
                 });
             }
-            /////////////////////////////////////////////////////////////////////////////
             /*** main thread ***/
             std::unique_lock<std::shared_timed_mutex> ulk(mutex);
-            //cout << "--------->ottenuto unique" << endl;
             cv.wait(ulk, [this]() { return isEnded == true; });
             printOutput("largestDegree-output.txt");
         };
         void jonesPlassmann(){
-            //riempio set
-            node current_vertex;
-            forEachVertex(&current_vertex,[this,&current_vertex](){
-                total_set.push_back(current_vertex);
-            });
-            ///////////////////////////////////////////////////////////////////////////
+            fillTotalSet();
+            /*** creazione thread ***/
             for(int n=0; n<concurentThreadsAvailable-1; n++){
                 threads.emplace_back([this](){
-                    //cout << "thread " << std::this_thread::get_id() << " avviato!"<< endl;
                     node current_vertex;
                     bool major = true;
                     while (true) {
                         std::unique_lock<std::shared_timed_mutex> ulk(mutex);
-                        //////////////////////////////////////////////////////////////////////
                         /*** terminazione thread ***/
                         if(total_set.size()==0){
                             active_threads--;
@@ -335,20 +327,19 @@ namespace asa {
                             }
                             break;
                         }
-                        //////////////////////////////////////////////////////////////////////
+                        /*** pop da coda ***/
                         current_vertex = total_set.front();
                         total_set.pop_front();
-                        //SE STO INIZIANDO UN NUOVO GIRO, ALLORA ASPETTO CHE TUTTI PRIMA SIANO COLORATI
-                        //QUANDO FINISCE DI COLORARE IL NUOVO SET, THREAD CHE COLORA AUMENTA numIteration
+                        /*** sincronizzazione thread a fine di un giro completo sui nodi ***/
+                        /* SE STO INIZIANDO UN NUOVO GIRO, ALLORA ASPETTO CHE TUTTI I NODI NEL SET DA COLORARE LO SIANO */
                         if(static_cast<T&>(*this).graph[current_vertex].num_it > numIteration){
                             increase_numIteration++;
                             cv.notify_all();
                         }
-                        //cout << static_cast<T&>(*this).graph[current_vertex].num_it << "-" << numIteration << " _____ thread: " << this_thread::get_id() << " aspetto!" << endl;
+                        /* QUANDO THREAD CHE COLORA FINISCE DI FARLO, AUMENTA numIteration */
                         cv.wait(ulk,[this,current_vertex](){ return static_cast<T&>(*this).graph[current_vertex].num_it <= numIteration || !increase_numIteration; });
-                        //cout << "thread: " << this_thread::get_id() << " riavviato!" << endl;
                         ulk.unlock();
-                        //////////////////////////////////////////////////////////////////////
+                        /*** ricerca massimo ***/
                         std::shared_lock<std::shared_timed_mutex> slk(mutex);
                         /*** confronto con i vicini ***/
                         node neighbor;
@@ -367,23 +358,23 @@ namespace asa {
                             }
                         });
                         slk.unlock();
-                        //////////////////////////////////////////////////////////////////////
+                        /*** azione in base all'esito ***/
                         ulk.lock();
-                        //aggiungo a vertici da colorare se maggiore
                         if(major) {
+                            /*** da colorare ***/
                             toColor_set.push_back(current_vertex);
                         }
                         else {
+                            /*** reinserisco (nodo da colorare successivamente) ***/
                             static_cast<T&>(*this).graph[current_vertex].num_it++;
-                            total_set.push_back(current_vertex); //reinserisco in coda se non è stato colorato
+                            total_set.push_back(current_vertex);
                             major=true;
                         }
                         cv.notify_all();
                     }
-                    //cout << "thread: " << this_thread::get_id() << " terminato!" << endl;
                 });
             }
-            /////////////////////////////////////////////////////////////////////////////
+            node current_vertex;
             /*** main thread ***/
             while(true) {
                 std::unique_lock<std::shared_timed_mutex> ulk(mutex);
@@ -392,21 +383,18 @@ namespace asa {
                 if(isEnded)
                     break;
                 //means -> increase_numIteration == true
-                while(toColor_set.size()!=0){
-                    //coloro tutti con stesso colore
+                while(!toColor_set.empty()){
+                    /*** coloro tutti con stesso colore ***/
                     current_vertex = toColor_set.front();
                     toColor_set.pop_front();
                     int16_t color = -1;
                     color = searchColor(current_vertex);
-                    static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
-                    //if(graphCSR[current_vertex].color > 10)
-                    //cout << "jp: " << static_cast<int>(graphCSR[current_vertex].color) << endl;
+                    static_cast<T&>(*this).graph[current_vertex].color = color;
                 }
                 increase_numIteration = 0;
                 numIteration ++; //posso iniziare un nuovo giro
                 //cout << "rimanenti: " << total_set.size() << endl;
                 cv.notify_all();
-                //cout << ">---------fine unique" << endl;
             }
             //////////////////////////////////////////////////////////////////////////
             printOutput("jp-output.txt");
@@ -416,17 +404,13 @@ namespace asa {
                  weighting phase
                  k = numIteration - i = current_color
              ***/
-            //riempio set
-            node current_vertex;
             numIteration = 1;
             int current_weigth = 0;
-            forEachVertex(&current_vertex,[this,&current_vertex](){
-                total_set.push_back(current_vertex);
-            });
-            ///////////////////////////////////////////////////////////////////////////
+            node current_vertex;
+            fillTotalSet();
+            /*** creazione thread ***/
             for(int n=0; n<concurentThreadsAvailable-1; n++){
                 threads.emplace_back([this](){
-                    //std::cout << "thread " << std::this_thread::get_id() << " avviato!" << std::endl;
                     node current_vertex;
                     bool minor = false;
                     while (true) {
@@ -448,9 +432,10 @@ namespace asa {
                             increase_numIteration++;
                             cv.notify_all();
                         }
+                        //SE TUTTI SONO STATI PESATI, increase_numIteration = 0
                         cv.wait(ulk,[this,current_vertex](){ return static_cast<T&>(*this).graph[current_vertex].num_it <= numIteration || !increase_numIteration; });
                         ulk.unlock();
-                        //////////////////////////////////////////////////////////////////////
+                        /*** confronto con i vicini ***/
                         std::shared_lock<std::shared_timed_mutex> slk(mutex);
                         /*** calcolo degree current_vertex (non posso usare getDegree) ***/
                         int degreeCurrVertex = 0;
@@ -465,11 +450,10 @@ namespace asa {
                             minor = true;
                         }
                         slk.unlock();
-                        //////////////////////////////////////////////////////////////////////
+                        /*** azione in base all'esito ***/
                         ulk.lock();
-                        //aggiungo a vertici da pesare se maggiore
                         if(minor){
-                            /*** peso ***/
+                            /*** aggiungo a nodi da pesare se minore tra i vicini ***/
                             toColor_set.push_back(current_vertex);
                         }
                         else {
@@ -482,15 +466,12 @@ namespace asa {
                     }
                 });
             }
-            /////////////////////////////////////////////////////////////////////////////
             /*** main thread ***/
             while(true) {
                 std::unique_lock<std::shared_timed_mutex> ulk(mutex);
-                //cout << "--------->ottenuto unique" << endl;
                 cv.wait(ulk, [this]() { return isEnded == true || increase_numIteration == active_threads - 1; });
                 if(isEnded)
                     break;
-                //arrivato qui means -> increase_numIteration == concurentThreadsAvailable - 1
                 bool doIHaveToIncreaseColor = toColor_set.size()!=0;
                 while(toColor_set.size()!=0){
                     /*** pop da coda + weight + mark deleted ***/
@@ -499,23 +480,21 @@ namespace asa {
                     static_cast<T&>(*this).graph[current_vertex].weight = current_weigth; //peso il vertice corrente
                     static_cast<T&>(*this).graph[current_vertex].toBeDeleted = true;
                 }
-                if(doIHaveToIncreaseColor)  //se almeno un nodo aveva il current_weigth, allora devo incrementarlo per il prossimo giro
+                //se almeno un nodo aveva il current_weigth, allora devo incrementarlo per il prossimo giro
+                if(doIHaveToIncreaseColor)
                     current_weigth++;
                 increase_numIteration = 0;
                 numIteration ++;
                 cv.notify_all();
                 //std::cout << "rimanenti: " << total_set.size() << std::endl;
-                //cout << ">---------fine unique" << endl;
             }
             total_set.clear();
-            //////////////////////////////////////////////////////////////////////////
             /***
                  coloring phase
              ***/
-            forEachVertex(&current_vertex,[this,&current_vertex](){
-                total_set.push_back(current_vertex);
-            });
+            fillTotalSet();
             int C[256]{},wei;
+            /*** coloro per peso decrescente ***/
             for(wei = current_weigth; wei>=0; wei--){
                 forEachVertex(&current_vertex,[this,&current_vertex,current_weigth,wei,&C](){
                     current_vertex = total_set.front();

@@ -92,10 +92,15 @@ void bootstrap(){
 
 int main(int argc, char* argv[]) {
     //se non ci sono argomenti stampo il menu, altrimenti eseguo direttamente
-    if(argc != -1)
-        ;
-    else
-        bootstrap();
+    if(argc != 1){
+        /*** <.exe> <.txt> <internal repres> <alg> ***/
+        fin_name = argv[1];
+        int_rep = atoi(argv[2]);
+        alg = atoi(argv[3]);
+    }
+    else {
+        //bootstrap();
+    }
     const clock_t begin_time = clock();
     asa::GraphCSR mygraph;
     const clock_t end_construction_time = clock();
