@@ -8,7 +8,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="761688dc-058a-4786-b61a-461d0b708e04" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Graph/Graph.h" beforeDir="false" afterPath="$PROJECT_DIR$/Graph/Graph.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/GraphColoring" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/GraphColoring" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/largestDegree-output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/largestDegree-output.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,9 +41,9 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -53,6 +56,7 @@
       <option name="presentableId" value="Default" />
       <updated>1631621844137</updated>
       <workItem from="1631621853135" duration="52000" />
+      <workItem from="1633341615831" duration="43000" />
     </task>
     <servers />
   </component>
