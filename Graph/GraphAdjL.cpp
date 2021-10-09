@@ -9,13 +9,6 @@ using namespace asa;
 using namespace  std;
 #define LEAVE_FREE 1
 
-void GraphAdjL::ResetEachVertex(){
-    BGL_FORALL_VERTICES(current_vertex, graph, graphAdjL) {
-            graph[current_vertex].color = -1;
-            graph[current_vertex].num_it = 0;
-        }
-}
-
 void GraphAdjL::forEachVertex(node* current_vertex, std::function<void()> f){
     BGL_FORALL_VERTICES(curr, graph, graphAdjL){
             *current_vertex = curr;
