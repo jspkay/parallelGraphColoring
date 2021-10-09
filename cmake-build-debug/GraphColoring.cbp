@@ -99,6 +99,9 @@
 		<Unit filename="/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/Graph/benchmark/rgg_n_2_15_s0.txt">
 			<Option target="GraphColoring"/>
 		</Unit>
+		<Unit filename="/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/PrintMenu.h">
+			<Option target="GraphColoring"/>
+		</Unit>
 		<Unit filename="/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/main.cpp">
 			<Option target="GraphColoring"/>
 		</Unit>
