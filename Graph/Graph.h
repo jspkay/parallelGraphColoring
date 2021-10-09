@@ -367,8 +367,8 @@ namespace asa {
                                     }
                                 }
                                 isEnded = true;
-                                cv.notify_one();
                             }
+                            cv.notify_all();
                             doContinueWhile = false;
                         } else {
                             /*** pop da coda ***/
@@ -381,9 +381,8 @@ namespace asa {
                                 cv.notify_all();
                             }
                             /* QUANDO THREAD CHE COLORA FINISCE DI FARLO, AUMENTA numIteration */
-                            cv.wait(ulk, [this, current_vertex]() {
-                                return static_cast<T &>(*this).graph[current_vertex].num_it <= numIteration ||
-                                       !increase_numIteration || doColor;
+                            cv.wait(ulk, [this, current_vertex](){
+                                return static_cast<T &>(*this).graph[current_vertex].num_it <= numIteration || !increase_numIteration || doColor;
                             });
                             if (doColor) {
                                 /*** COLORAZIONE MULTITHREADING ***/
@@ -440,7 +439,7 @@ namespace asa {
             while(doContinueWhile) {
                 std::unique_lock<std::shared_timed_mutex> ulk(mutex);
                 //cout << "--------->ottenuto unique" << endl;
-                cv.wait(ulk, [this]() { return isEnded == true || increase_numIteration == active_threads; });  //NON concurrent !!!!
+                cv.wait(ulk, [this]() { return isEnded || increase_numIteration == active_threads; });  //NON concurrent !!!!
                 if(isEnded)
                     doContinueWhile = false;
                 //means -> increase_numIteration == true
