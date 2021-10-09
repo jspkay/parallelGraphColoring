@@ -27,8 +27,8 @@ int GraphAdjM::getDegree(node v) {
     return boost::out_degree(v, graph);
 }
 
-GraphAdjM::GraphAdjM(){
-    readInput("../Graph/benchmark/rgg_n_2_15_s0.txt");
+GraphAdjM::GraphAdjM(string fin_name){
+    readInput(fin_name);
     graph = graphAdjM(std::begin(edges), edges.end(), V);
     BGL_FORALL_VERTICES(current_vertex, graph, graphAdjM) {
             graph[current_vertex].color = -1;
@@ -41,7 +41,7 @@ GraphAdjM::GraphAdjM(){
     increase_numIteration = 0;
     concurentThreadsAvailable = std::thread::hardware_concurrency() - LEAVE_FREE;
     active_threads = concurentThreadsAvailable;
-    cout << "Fine costruzione grafo in formato CSR!\n";
+    cout << "Fine costruzione grafo in formato ADJ MATRIX!\n";
     cout << "******************\n";
     cout << "V:" << V << ", E:" << E;
     cout << "\n******************\n";

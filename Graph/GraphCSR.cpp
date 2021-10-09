@@ -27,9 +27,9 @@ int GraphCSR::getDegree(node v) {
     return boost::out_degree(v, graph);
 }
 
-GraphCSR::GraphCSR() {
+GraphCSR::GraphCSR(string fin_name) {
     const clock_t begin_time = clock();
-    readInput("../Graph/benchmark/rgg_n_2_15_s0.txt");
+    readInput(fin_name);
     std::cout << "Time needed to read the graph " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
     graph = graphCSR(boost::edges_are_unsorted_multi_pass, std::begin(edges), edges.end(), V);
     BGL_FORALL_VERTICES(current_vertex, graph, graphCSR) {

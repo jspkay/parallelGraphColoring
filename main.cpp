@@ -3,9 +3,12 @@
 #include <ctime>
 #define CMDTABLE_ROWS 5
 
+enum algoritmi {sequential, jones, largest, smallest};
+enum int_rep {csr, adjl, adjm};
+enum file_input {rgg_15, rgg_16, v100, v1000};
 bool continue_loop = true;
 std::string fin_name;
-int int_rep = -1, alg = -1;
+int int_rep = -1, alg = -1, fin = -1;
 
 void printMenu(){
     std::cout << "\nGraph Coloring Project menu: \n";
@@ -14,7 +17,7 @@ void printMenu(){
     std::cout << "[a] Select coloring algorithm\n";
     std::cout << "[cc] Compute colors (not implemented yet!)\n";
     std::cout << "[ps] Print stats (not implemented yet!)\n";
-    std::cout << "[q] Quit\n" << std::endl;
+    std::cout << "[start] Start\n" << std::endl;
 }
 
 /*** Command table ***/
@@ -25,21 +28,27 @@ static struct {
         /*** menu ***/
         {"?", printMenu},
         /*** operations ***/
-        {"q", [](){ continue_loop = false; }},
+        {"start", [](){ continue_loop = false; }},
         {"fin", [](){
-                      std::cout << "\nDigit the name: " ;
-                      std::cin >> fin_name;
-                      }},
+            std::cout << "\nChoose one of the follower: \n";
+            std::cout << " * 0 - rgg_15\n";
+            std::cout << " * 1 - rgg_16\n";
+            std::cout << " * 2 - v100\n";
+            std::cout << " * 3 - v1000\n";
+            std::cout << "Digit the number: " ;
+            std::cin >> fin;
+        }},
         {"ir", [](){
             std::cout << "\nChoose one of the follower: \n";
-            std::cout << " * 1 - CSR\n";
-            std::cout << " * 2 - Adjacency Matrix\n";
-            std::cout << " * 3 - Adjacency List\n";
+            std::cout << " * 0 - CSR\n";
+            std::cout << " * 1 - Adjacency Matrix\n";
+            std::cout << " * 2 - Adjacency List\n";
             std::cout << "Digit the number: " ;
             std::cin >> int_rep;
         }},
         {"a", [](){
             std::cout << "\nChoose one of the follower: \n";
+            std::cout << " * 0 - Sequential \n";
             std::cout << " * 1 - Jones Plassmann \n";
             std::cout << " * 2 - Largest Degree\n";
             std::cout << " * 3 - Smallest Degree\n";
@@ -90,46 +99,127 @@ void bootstrap(){
     return;
 }
 
+void startGraphAlg(){
+    boost::any object;
+    switch(fin){
+        case rgg_15:{
+            fin_name = "rgg_n_2_15_s0.txt";
+            break;
+        }
+        case rgg_16:{
+            fin_name = "rgg_n_2_16_s0.txt";
+            break;
+        }
+        case v100:{
+            fin_name = "v100.gra";
+            break;
+        }
+        case v1000:{
+            fin_name = "v1000.gra";
+            break;
+        }
+    }
+    switch(int_rep){
+        case csr: {
+            asa::GraphCSR myGraph(fin_name);
+            switch(alg){
+                case sequential: {
+                    myGraph.sequential();
+                    myGraph.clearGraph();
+                    break;
+                }
+                case jones: {
+                    myGraph.jonesPlassmann();
+                    myGraph.clearGraph();
+                    break;
+                }
+                case largest: {
+                    myGraph.largestDegree();
+                    myGraph.clearGraph();
+                    break;
+                }
+                case smallest: {
+                    myGraph.smallestDegree();
+                    myGraph.clearGraph();
+                    break;
+                }
+                default: break;
+            }
+            break;
+        }
+        case adjl: {
+            asa::GraphAdjL myGraph(fin_name);
+            switch(alg){
+                case sequential: {
+                    myGraph.sequential();
+                    myGraph.clearGraph();
+                    break;
+                }
+                case jones: {
+                    myGraph.jonesPlassmann();
+                    myGraph.clearGraph();
+                    break;
+                }
+                case largest: {
+                    myGraph.largestDegree();
+                    myGraph.clearGraph();
+                    break;
+                }
+                case smallest: {
+                    myGraph.smallestDegree();
+                    myGraph.clearGraph();
+                    break;
+                }
+                default: break;
+            }
+            break;
+        }
+        case adjm: {
+            asa::GraphAdjM myGraph(fin_name);
+            switch(alg){
+                case sequential: {
+                    myGraph.sequential();
+                    myGraph.clearGraph();
+                    break;
+                }
+                case jones: {
+                    myGraph.jonesPlassmann();
+                    myGraph.clearGraph();
+                    break;
+                }
+                case largest: {
+                    myGraph.largestDegree();
+                    myGraph.clearGraph();
+                    break;
+                }
+                case smallest: {
+                    myGraph.smallestDegree();
+                    myGraph.clearGraph();
+                    break;
+                }
+                default: break;
+            }
+            break;
+        }
+        default: break;
+    }
+}
+
 int main(int argc, char* argv[]) {
     //se non ci sono argomenti stampo il menu, altrimenti eseguo direttamente
     if(argc != 1){
-        /*** <.exe> <.txt> <internal repres> <alg> ***/
-        fin_name = argv[1];
+        /*** <.exe> <fin> <internal repres> <alg> ***/
+        fin = atoi(argv[1]);
         int_rep = atoi(argv[2]);
         alg = atoi(argv[3]);
     }
     else {
-        //bootstrap();
+        bootstrap();
     }
-    const clock_t begin_time = clock();
-    asa::GraphCSR mygraph;
-    const clock_t end_construction_time = clock();
-    /*** sequential ***/
-    const clock_t begin_seq_time = clock();
-    mygraph.sequential();
-    const clock_t end_seq_time = clock();
-    mygraph.clearGraph();
-    /*** jones plassman ***/
-    const clock_t begin_jp_time = clock();
-    mygraph.jonesPlassmann();
-    const clock_t end_jp_time = clock();
-    mygraph.clearGraph();
-    /*** largest degree ***/
-    const clock_t begin_ld_time = clock();
-    mygraph.largestDegree();
-    const clock_t end_ld_time = clock();
-    mygraph.clearGraph();
-    /*** smallest degree ***/
-    const clock_t begin_sd_time = clock();
-    mygraph.smallestDegree();
-    const clock_t end_sd_time = clock();
-    mygraph.clearGraph(); //si fa join dei thread attivati, evita exception
-    std::cout << "******************\n";
-    std::cout << "Time needed to create the graph without coloring " << float( end_construction_time - begin_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
-    std::cout << "Time sequential: " << float( end_seq_time - begin_seq_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
-    std::cout << "Time jp: " << float( end_jp_time -begin_jp_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
-    std::cout << "Time ld: " << float( end_ld_time -begin_ld_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
-    std::cout << "Time sd: " << float( end_sd_time -begin_sd_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
+    const clock_t begin_alg_time = clock();
+    startGraphAlg();
+    const clock_t end_alg_time = clock();
+    std::cout << "Time alg " << alg << ": " << float( end_alg_time -begin_alg_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
     EXIT_SUCCESS;
 }
 
