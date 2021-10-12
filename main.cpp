@@ -31,6 +31,7 @@ void startGraphAlg(){
     switch(int_rep){
         case csr: {
             asa::GraphCSR myGraph(fin_name);
+            if(threads != -1) myGraph.setConcurentThreadsActive(threads);
             switch(alg){
                 case sequential: {
                     myGraph.sequential();
@@ -38,7 +39,7 @@ void startGraphAlg(){
                     break;
                 }
                 case jones: {
-                    myGraph.jonesPlassmann();
+                    myGraph.JP_mod();
                     myGraph.clearGraph();
                     break;
                 }
@@ -58,6 +59,7 @@ void startGraphAlg(){
         }
         case adjl: {
             asa::GraphAdjL myGraph(fin_name);
+            if(threads != -1) myGraph.setConcurentThreadsActive(threads);
             switch(alg){
                 case sequential: {
                     myGraph.sequential();
@@ -65,7 +67,7 @@ void startGraphAlg(){
                     break;
                 }
                 case jones: {
-                    myGraph.jonesPlassmann();
+                    myGraph.JP_mod();
                     myGraph.clearGraph();
                     break;
                 }
@@ -85,6 +87,7 @@ void startGraphAlg(){
         }
         case adjm: {
             asa::GraphAdjM myGraph(fin_name);
+            if(threads != -1) myGraph.setConcurentThreadsActive(threads);
             switch(alg){
                 case sequential: {
                     myGraph.sequential();
@@ -112,16 +115,22 @@ void startGraphAlg(){
         }
         default: break;
     }
+
 }
 
 int main(int argc, char* argv[]) {
     credits();
     //se non ci sono argomenti stampo il menu, altrimenti eseguo direttamente
-    if(argc != 1){
+    if(argc != 1 && argc != 5){
+        cerr << "Usare 0 argomenti oppure 5!";
+        exit(-1);
+    }
+    if(argc == 5){
         /*** <.exe> <fin> <internal repres> <alg> ***/
         fin = atoi(argv[1]);
         int_rep = atoi(argv[2]);
         alg = atoi(argv[3]);
+        threads = atoi(argv[4]);
     }
     else {
         bootstrap();

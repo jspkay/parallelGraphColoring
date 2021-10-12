@@ -23,6 +23,8 @@
 #include <thread>
 #include <shared_mutex>
 #include <filesystem>
+#define LEAVE_FREE 1
+
 
 using namespace std;
 namespace asa {
@@ -44,7 +46,9 @@ namespace asa {
         int startingNode = 0;
         int doColor = 0; //semaforo
         std::vector<std::pair<node, node>> edges;
-        unsigned concurentThreadsAvailable;
+        unsigned concurrentThreadsActive;
+
+    protected:
         /*** variabili per algoritmi di colorazione ***/
         std::shared_timed_mutex mutex;
         std::condition_variable_any cv;
@@ -56,24 +60,21 @@ namespace asa {
     public:
         int searchColor(node u){
             //seleziona il colore minimo e non usato dai nodi vicini al nodo scelto u
-            int i,lastColorFound=0;
-            int C[2048]={};
-            int16_t color=-1;
+            int color = 0;
+            set<int16_t> colors;
             node neighbor;
             node current_vertex = u;
-            forEachNeighbor(current_vertex,&neighbor,[this,&current_vertex,&neighbor,&C, &lastColorFound](){
-                if(static_cast<T&>(*this).graph[neighbor].color != -1) {
-                    C[static_cast<T &>(*this).graph[neighbor].color] = 1; //segno il colore del vicino
-                    if(static_cast<T&>(*this).graph[neighbor].color > lastColorFound)
-                        lastColorFound = static_cast<T&>(*this).graph[neighbor].color;
-                }
+            // Metto i colori in un set ordinato.
+            forEachNeighbor(current_vertex,&neighbor,[this, &current_vertex, &neighbor, &colors](){
+                uint16_t c = static_cast<T&>(*this).graph[neighbor].color;
+                if(c != -1) colors.insert(c);
             });
-            for(i=0; i<=lastColorFound + 1; i++){
-                if(C[i]==0 && color==-1) //colore i-esimo non usato
-                    color=i;
-                else
-                    C[i]=0; //reset colori per il prossimo ciclo
-            }
+            // scorro tutti i colori. Il primo che non corrisponde
+            // al conto è il più piccolo disponibile
+            for(int16_t c : colors){
+                if(c == color) color++;
+                else break;
+            };
             return color;
         };
         void clearGraph(){
@@ -83,7 +84,7 @@ namespace asa {
             for(std::thread& t : threads)
                 t.join();
             threads.clear();
-            active_threads = concurentThreadsAvailable;
+            active_threads = concurrentThreadsActive;
             isEnded = false;
             resetEachVertex();
         };
@@ -114,6 +115,9 @@ namespace asa {
                     degreeCurrVertex++;  //se non è marcato toBeDeleted, aumento degree
             });
             return degreeCurrVertex;
+        }
+        void setConcurentThreadsActive(unsigned int concurentThreadsActive) {
+            Graph::concurrentThreadsActive = concurentThreadsActive;
         }
         /*** IO ***/
         void readInput(string& fname) {
@@ -266,21 +270,12 @@ namespace asa {
             fout.close();
         };
         /*** algoritmi colorazione ***/
-        void sequential(){
-            int16_t color=-1;
-            node current_vertex;
-            forEachVertex(&current_vertex,[this,&color,&current_vertex](){
-                //ciclo su ogni vertice e cerco il colore da usare
-                color = searchColor(current_vertex);
-                static_cast<T&>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
-                color = -1;
-            });
-            printOutput("sequential-output.txt");
-        };
+        void sequential();
+        void JP_mod();
         void largestDegree(){
             fillTotalSet();
             /*** creazione thread ***/
-            for(int n=0; n<concurentThreadsAvailable; n++){
+            for(int n=0; n < concurrentThreadsActive; n++){
                 threads.emplace_back([this](){
                     node current_vertex;
                     bool major = true, doContinueWhile = true;
@@ -348,7 +343,7 @@ namespace asa {
         void jonesPlassmann(){
             fillTotalSet();
             /*** creazione thread ***/
-            for(int n=0; n<concurentThreadsAvailable; n++){
+            for(int n=0; n < concurrentThreadsActive; n++){
                 threads.emplace_back([this](){
                     node current_vertex;
                     bool major = true, doContinueWhile = true;
@@ -464,7 +459,7 @@ namespace asa {
             node current_vertex;
             fillTotalSet();
             /*** creazione thread ***/
-            for (int n = 0; n < concurentThreadsAvailable; n++) {
+            for (int n = 0; n < concurrentThreadsActive; n++) {
                 threads.emplace_back([this]() {
                     node current_vertex;
                     bool minor, doContinueWhile = true;
@@ -545,7 +540,7 @@ namespace asa {
             for (std::thread &t : threads)
                 t.join();
             threads.clear();
-            active_threads = concurentThreadsAvailable;
+            active_threads = concurrentThreadsActive;
             isEnded = false;
             /***
                  coloring phase
@@ -553,7 +548,7 @@ namespace asa {
             fillTotalSet();
             int C[256]{}, wei;
             /*** creazione thread ***/
-            for (int n = 0; n < concurentThreadsAvailable; n++) {
+            for (int n = 0; n < concurrentThreadsActive; n++) {
                 threads.emplace_back([this, &wei]() {
                                          node current_vertex;
                                          bool doContinueWhile = true;

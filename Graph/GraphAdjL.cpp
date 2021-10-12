@@ -7,7 +7,6 @@
 
 using namespace asa;
 using namespace  std;
-#define LEAVE_FREE 1
 
 void GraphAdjL::forEachVertex(node* current_vertex, std::function<void()> f){
     BGL_FORALL_VERTICES(curr, graph, graphAdjL){
@@ -39,11 +38,11 @@ GraphAdjL::GraphAdjL(string fin_name){
         }
     numIteration = 0;
     increase_numIteration = 0;
-    concurentThreadsAvailable = std::thread::hardware_concurrency() - LEAVE_FREE;
-    active_threads = concurentThreadsAvailable;
+    concurrentThreadsActive = std::thread::hardware_concurrency() - LEAVE_FREE;
+    active_threads = concurrentThreadsActive;
     cout << "Fine costruzione grafo in formato ADJ LIST!\n";
     cout << "******************\n";
     cout << "V:" << V << ", E:" << E;
     cout << "\n******************\n";
-    cout << concurentThreadsAvailable << " core available" << std::endl;
+    cout << concurrentThreadsActive << " core available" << std::endl;
 }

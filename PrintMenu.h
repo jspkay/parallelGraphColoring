@@ -4,13 +4,14 @@
 
 #ifndef GRAPHCOLORING_PRINTMENU_H
 #define GRAPHCOLORING_PRINTMENU_H
-#define CMDTABLE_ROWS 5
+#define CMDTABLE_ROWS 6
 
 bool continue_loop = true;
-int int_rep = -1, alg = -1, fin = -1;
+int int_rep = -1, alg = -1, fin = -1, threads = std::thread::hardware_concurrency() - LEAVE_FREE;
 
 void printMenu(){
     std::cout << "\nGraph Coloring Project menu: \n";
+    std::cout << "[ct] Select the number of concurrent threads \n";
     std::cout << "[fin] Select input file\n";
     std::cout << "[ir] Select internal graph representation\n";
     std::cout << "[a] Select coloring algorithm\n";
@@ -28,6 +29,12 @@ static struct {
         {"?", printMenu},
         /*** operations ***/
         {"start", [](){ continue_loop = false; }},
+        {"ct", [](){
+            int max = std::thread::hardware_concurrency();
+            std::cout << "Digit the number of concurrent threads."
+                         " (Default: " << max-LEAVE_FREE  << ", Max: " << max << ")";
+            std::cin >> threads;
+        }},
         {"fin", [](){
             std::cout << "\nChoose one of the follower: \n";
             std::cout << " * 0 - rgg_15\n";
@@ -62,7 +69,7 @@ void credits(){
     time_t current_time;
     time(&current_time);
     std::cout << "**************************************CREDITS*********************************************\n";
-    std::cout << "Graph Coloring Project release 1.3.1, compiled " <<  asctime(localtime(&current_time));
+    std::cout << "Graph Coloring Project release 1.3.1, compiled " << __DATE__ << ' ' << __TIME__ << '\n';//<<  asctime(localtime(&current_time));
     std::cout << "Fellows of PDS, Politenico di Torino 2020/2021\n";
     std::cout << "Professors:\n";
     std::cout << " * Alessandro Savino\n";
@@ -88,7 +95,7 @@ void start(){
             }
         }
         if(i >= CMDTABLE_ROWS)
-            throw std::logic_error("Argument not valid");
+            cout << "Argument not valid\n";
     }
 }
 

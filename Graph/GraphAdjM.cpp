@@ -39,11 +39,11 @@ GraphAdjM::GraphAdjM(string fin_name){
         }
     numIteration = 0;
     increase_numIteration = 0;
-    concurentThreadsAvailable = std::thread::hardware_concurrency() - LEAVE_FREE;
-    active_threads = concurentThreadsAvailable;
+    concurrentThreadsActive = std::thread::hardware_concurrency() - LEAVE_FREE;
+    active_threads = concurrentThreadsActive;
     cout << "Fine costruzione grafo in formato ADJ MATRIX!\n";
     cout << "******************\n";
     cout << "V:" << V << ", E:" << E;
     cout << "\n******************\n";
-    cout << concurentThreadsAvailable << " core available" << std::endl;
+    cout << concurrentThreadsActive << " core available" << std::endl;
 }
