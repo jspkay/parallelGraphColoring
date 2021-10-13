@@ -9,6 +9,37 @@ enum file_input {rgg_15, rgg_16, v100, v1000};
 extern int alg, fin, int_rep;
 std::string fin_name;
 
+template <typename T>
+void startGraphAlgII(T& myGraph){
+    switch(alg){
+        case sequential: {
+            cout << "Algo: sequential\n";
+            myGraph.sequential();
+            myGraph.clearGraph();
+            break;
+        }
+        case jones: {
+            cout << "Algo: JP_mod\n";
+            myGraph.JP_mod();
+            myGraph.clearGraph();
+            break;
+        }
+        case largest: {
+            cout << "Algo: largest degree first\n";
+            myGraph.largestDegree();
+            myGraph.clearGraph();
+            break;
+        }
+        case smallest: {
+            cout << "Algo: smallest degree first\n";
+            myGraph.smallestDegree();
+            myGraph.clearGraph();
+            break;
+        }
+        default: break;
+    }
+}
+
 void startGraphAlg(){
     switch(fin){
         case rgg_15:{
@@ -28,94 +59,31 @@ void startGraphAlg(){
             break;
         }
     }
+    cout << "File: " << fin_name << '\n';
     switch(int_rep){
         case csr: {
             asa::GraphCSR myGraph(fin_name);
-            if(threads != -1) myGraph.setConcurentThreadsActive(threads);
-            switch(alg){
-                case sequential: {
-                    myGraph.sequential();
-                    myGraph.clearGraph();
-                    break;
-                }
-                case jones: {
-                    myGraph.JP_mod();
-                    myGraph.clearGraph();
-                    break;
-                }
-                case largest: {
-                    myGraph.largestDegree();
-                    myGraph.clearGraph();
-                    break;
-                }
-                case smallest: {
-                    myGraph.smallestDegree();
-                    myGraph.clearGraph();
-                    break;
-                }
-                default: break;
-            }
+            cout << "Internal representation: CSR\n";
+            myGraph.setConcurentThreadsActive(threads);
+            startGraphAlgII<asa::GraphCSR>(myGraph);
             break;
         }
         case adjl: {
             asa::GraphAdjL myGraph(fin_name);
-            if(threads != -1) myGraph.setConcurentThreadsActive(threads);
-            switch(alg){
-                case sequential: {
-                    myGraph.sequential();
-                    myGraph.clearGraph();
-                    break;
-                }
-                case jones: {
-                    myGraph.JP_mod();
-                    myGraph.clearGraph();
-                    break;
-                }
-                case largest: {
-                    myGraph.largestDegree();
-                    myGraph.clearGraph();
-                    break;
-                }
-                case smallest: {
-                    myGraph.smallestDegree();
-                    myGraph.clearGraph();
-                    break;
-                }
-                default: break;
-            }
+            cout << "Internal representation: adjL\n";
+            myGraph.setConcurentThreadsActive(threads);
+            startGraphAlgII<asa::GraphAdjL>(myGraph);
             break;
         }
         case adjm: {
             asa::GraphAdjM myGraph(fin_name);
-            if(threads != -1) myGraph.setConcurentThreadsActive(threads);
-            switch(alg){
-                case sequential: {
-                    myGraph.sequential();
-                    myGraph.clearGraph();
-                    break;
-                }
-                case jones: {
-                    myGraph.jonesPlassmann();
-                    myGraph.clearGraph();
-                    break;
-                }
-                case largest: {
-                    myGraph.largestDegree();
-                    myGraph.clearGraph();
-                    break;
-                }
-                case smallest: {
-                    myGraph.smallestDegree();
-                    myGraph.clearGraph();
-                    break;
-                }
-                default: break;
-            }
+            cout << "Internal representation: adjM\n";
+            myGraph.setConcurentThreadsActive(threads);
+            startGraphAlgII<asa::GraphAdjM>(myGraph);
             break;
         }
         default: break;
     }
-
 }
 
 int main(int argc, char* argv[]) {

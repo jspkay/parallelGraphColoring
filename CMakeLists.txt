@@ -6,7 +6,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 
 include_directories("./boost_1_77_0")
 set(CMAKE_CXX_FLAGS -pthread)
-add_definitions(-DMULTITHREAD_DEBUG)
+#add_definitions(-DMULTITHREAD_DEBUG)
+#add_definitions(-DMTD=1)
 
 add_executable(GraphColoring main.cpp
         Graph/Graph.h
