@@ -273,6 +273,8 @@ namespace asa {
         /*** algoritmi colorazione ***/
         void sequential();
         void JP_mod();
+        void largest_mod();
+        void smallest_mod();
         void largestDegree();
         void jonesPlassmann();
         void smallestDegree();

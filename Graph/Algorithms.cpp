@@ -210,6 +210,400 @@ void asa::Graph<T>::JP_mod() {
 }
 
 template <typename T>
+void asa::Graph<T>::largest_mod() {
+    int done = 0, range;
+    bool firstStepDone = false, secondStepDone = false;
+
+    set<int> verteces, toColor_set;
+    for(int i=0; i<V; i++) verteces.insert(i);
+
+
+
+    std::function<void(int)> threadFn = [&](int id){
+        int i=0;
+        while(true) {
+            unique_lock<shared_timed_mutex> ulk(mutex, std::defer_lock);
+            shared_lock<shared_timed_mutex> slk(mutex, std::defer_lock);
+
+            // decido quali sono i vertici assegnati al thread (bilanciamento)
+            auto begin = verteces.begin();
+            auto min = verteces.begin(),
+                    max = verteces.begin();
+            advance(min, id*range);
+            advance(max, (id+1)*range);
+            // l'ultimo thread prende anche l'eccesso
+            if (id == concurrentThreadsActive - 1) max = verteces.end();
+
+#ifdef MULTITHREAD_DEBUG
+            i++;
+            cout << '[' << i << "][" << id << "]m\n";
+#endif
+            // Find the verteces to be colored
+            for (; min != max; min++) { // per ogni vertice assegnato al thread
+                //cout << "Giro[" << id << "]";
+                node neighbor;
+                bool major = true;
+                int i = *min;
+                forEachNeighbor(i, &neighbor, [this, &neighbor, i, &major, &id]() {
+                    // Non necessito lock: i thread agiscono su porzioni di
+                    // memoria disgiunte
+                    if( static_cast<T&>(*this).graph[neighbor].color == -1 &&
+                        ( getDegree(i) < getDegree(neighbor) ||
+                            ( getDegree(i) == getDegree(neighbor) &&
+                            static_cast<T&>(*this).graph[i].random < static_cast<T&>(*this).graph[neighbor].random
+                            )
+                        )){
+                        major = false;
+                        return;
+                    }
+                });
+                if (major) {
+                    ulk.lock();
+                    toColor_set.insert(i);
+                    ulk.unlock();
+                }
+            }
+
+            /// SINCRONIZZAZIONE - aspetto il main thread
+            ulk.lock();
+            done++;
+            firstStepDone = false;
+            ulk.unlock();
+            cv.notify_all(); // main thread
+
+#ifdef MULTITHREAD_DEBUG
+            cout << '[' << i << "][" << id << "]w1\n";
+#endif
+            // The shared_lock is acquired before the notify in or
+            slk.lock();
+            cv.wait(slk, [&firstStepDone](){return firstStepDone;});
+            if(done < 0) break;
+            slk.unlock();
+
+#ifdef MULTITHREAD_DEBUG
+            cout << '[' << i << "][" << id << "]a1\n";
+#endif
+            /// SINCRONIZZAZIONE END
+
+            // inizio la colorazione
+            min = toColor_set.begin();
+            max = toColor_set.begin();
+            advance(min, id*range);
+            advance(max, (id+1)*range);
+            if (id == concurrentThreadsActive - 1) max = toColor_set.end();
+
+#ifdef MULTITHREAD_DEBUG
+            cout << '[' << i << "]Thread " << id << "start coloring!" << endl;
+#endif
+
+            // coloro i vertici
+            for (; min != max; min++) {
+                int i = *min;
+
+                slk.lock();
+                int16_t color = searchColor(i);
+                slk.unlock();
+
+                ulk.lock();
+                static_cast<T&>(*this).graph[i].color = color;
+                ulk.unlock();
+            }
+#ifdef MULTITHREAD_DEBUG
+            cout << '[' << i << "][" << id << "]ac\n";
+#endif
+            /// SINCRONIZZAZIONE
+            ulk.lock();
+            done++;
+            secondStepDone = false;
+            ulk.unlock();
+            cv.notify_all();
+
+#ifdef MULTITHREAD_DEBUG
+            cout << '[' << i << "][ " << id << "]w2\n";
+#endif
+
+            slk.lock();
+#if MTD == 1
+            cout << id << "s\n";
+#endif
+            cv.wait(slk, [&secondStepDone](){return secondStepDone;});
+            if(done < 0) break;
+            slk.unlock();
+        }
+        cv.notify_all(); // necessary for the other threads to finish
+#if MULTITHREAD_DEBUG || MTD == 1
+        cout << id << "r"<< secondStepDone<<'\n';
+#endif
+        return;
+    };
+
+    // attivo i threads
+    range = V / concurrentThreadsActive;
+    for(int i = 0; i < concurrentThreadsActive; i++) {
+        threads.emplace_back(threadFn, i);
+    }
+
+    unique_lock<shared_timed_mutex> ulk(mutex, std::defer_lock);
+    shared_lock<shared_timed_mutex> slk(mutex, std::defer_lock);
+
+    // main thread
+    while(verteces.size() > 0){
+
+#ifdef MULTITHREAD_DEBUG
+        static int i = 0;
+        cout << "[ " << ++i << "]MAIN THREAD i " << range << " = V(" << verteces.size() << ") / t(" << concurrentThreadsActive << ")" << endl;
+        cout << "[ " << i << "]Main thread waiting for the threads" << endl;
+#endif
+
+        slk.lock();
+        cv.wait(slk, [&done, this]() { return done == concurrentThreadsActive; });
+        range = toColor_set.size() / concurrentThreadsActive;
+        done = 0;
+        firstStepDone = true;
+        slk.unlock();
+        cv.notify_all(); // sblocco gli altri thread che iniziano la colorazione
+
+#ifdef MULTITHREAD_DEBUG
+        cout << "MAIN THREAD ii " << range << " = V(" << toColor_set.size() << ") / t(" << concurrentThreadsActive << ")" << endl;
+        cout << "Main thread updating verteces" << endl;
+#endif
+
+        // tolgo i vertici di toColor_set da verteces
+        for (auto el: toColor_set){
+            //unique_lock<shared_timed_mutex> lk(mutex);
+            // Non ho bisogno del lock perché nessuno accede a verteces a parte questo thread
+            verteces.erase(el);
+        }
+
+        //cout << "Rimanenti: " << verteces.size() << endl;
+
+#ifdef MULTITHREAD_DEBUG
+        cout << "Main thread waiting for others! " << endl;
+#endif
+
+        //aspetto gli altri thread
+        slk.lock();
+        cv.wait(slk, [&done, this](){return done == concurrentThreadsActive;});
+        toColor_set.clear();
+        secondStepDone = true;
+        if(verteces.size() == 0) done = -1;
+        else done = 0;
+        slk.unlock();
+        cv.notify_all();
+    }
+
+#ifdef MULTITHREAD_DEBUG
+    cout << "Finished!" << endl;
+#endif
+
+    for(auto &el : threads) {
+        el.join();
+#ifdef MULTITHREAD_DEBUG
+        static int i=0;
+        cout << i++ << " joined!" << endl;
+#endif
+    }
+
+}
+
+template <typename T>
+void asa::Graph<T>::smallest_mod() {
+    int done = 0, range;
+    bool firstStepDone = false, secondStepDone = false;
+
+    set<int> verteces, toColor_set;
+    for(int i=0; i<V; i++) verteces.insert(i);
+
+
+
+    std::function<void(int)> threadFn = [&](int id){
+        int i=0;
+        while(true) {
+            unique_lock<shared_timed_mutex> ulk(mutex, std::defer_lock);
+            shared_lock<shared_timed_mutex> slk(mutex, std::defer_lock);
+
+            // decido quali sono i vertici assegnati al thread (bilanciamento)
+            auto begin = verteces.begin();
+            auto min = verteces.begin(),
+                    max = verteces.begin();
+            advance(min, id*range);
+            advance(max, (id+1)*range);
+            // l'ultimo thread prende anche l'eccesso
+            if (id == concurrentThreadsActive - 1) max = verteces.end();
+
+#ifdef MULTITHREAD_DEBUG
+            i++;
+            cout << '[' << i << "][" << id << "]m\n";
+#endif
+            // Find the verteces to be colored
+            for (; min != max; min++) { // per ogni vertice assegnato al thread
+                //cout << "Giro[" << id << "]";
+                node neighbor;
+                bool minor = true;
+                int i = *min;
+                forEachNeighbor(i, &neighbor, [this, &neighbor, i, &minor]() {
+                    // Non necessito lock: i thread agiscono su porzioni di
+                    // memoria disgiunte
+                    if( static_cast<T&>(*this).graph[neighbor].color == -1 &&
+                        ( getDegree(i) > getDegree(neighbor) ||
+                          ( getDegree(i) == getDegree(neighbor) &&
+                            static_cast<T&>(*this).graph[i].random < static_cast<T&>(*this).graph[neighbor].random
+                          )
+                        )){
+                        minor = false;
+                        return;
+                    }
+                });
+                if (minor) {
+                    ulk.lock();
+                    toColor_set.insert(i);
+                    ulk.unlock();
+                }
+            }
+
+            /// SINCRONIZZAZIONE - aspetto il main thread
+            ulk.lock();
+            done++;
+            firstStepDone = false;
+            ulk.unlock();
+            cv.notify_all(); // main thread
+
+#ifdef MULTITHREAD_DEBUG
+            cout << '[' << i << "][" << id << "]w1\n";
+#endif
+            // The shared_lock is acquired before the notify in or
+            slk.lock();
+            cv.wait(slk, [&firstStepDone](){return firstStepDone;});
+            if(done < 0) break;
+            slk.unlock();
+
+#ifdef MULTITHREAD_DEBUG
+            cout << '[' << i << "][" << id << "]a1\n";
+#endif
+            /// SINCRONIZZAZIONE END
+
+            // inizio la colorazione
+            min = toColor_set.begin();
+            max = toColor_set.begin();
+            advance(min, id*range);
+            advance(max, (id+1)*range);
+            if (id == concurrentThreadsActive - 1) max = toColor_set.end();
+
+#ifdef MULTITHREAD_DEBUG
+            cout << '[' << i << "]Thread " << id << "start coloring!" << endl;
+#endif
+
+            // coloro i vertici
+            for (; min != max; min++) {
+                int i = *min;
+
+                slk.lock();
+                int16_t color = searchColor(i);
+                slk.unlock();
+
+                ulk.lock();
+                static_cast<T&>(*this).graph[i].color = color;
+                ulk.unlock();
+            }
+#ifdef MULTITHREAD_DEBUG
+            cout << '[' << i << "][" << id << "]ac\n";
+#endif
+            /// SINCRONIZZAZIONE
+            ulk.lock();
+            done++;
+            secondStepDone = false;
+            ulk.unlock();
+            cv.notify_all();
+
+#ifdef MULTITHREAD_DEBUG
+            cout << '[' << i << "][ " << id << "]w2\n";
+#endif
+
+            slk.lock();
+#if MTD == 1
+            cout << id << "s\n";
+#endif
+            cv.wait(slk, [&secondStepDone](){return secondStepDone;});
+            if(done < 0) break;
+            slk.unlock();
+        }
+        cv.notify_all(); // necessary for the other threads to finish
+#if MULTITHREAD_DEBUG || MTD == 1
+        cout << id << "r"<< secondStepDone<<'\n';
+#endif
+        return;
+    };
+
+    // attivo i threads
+    range = V / concurrentThreadsActive;
+    for(int i = 0; i < concurrentThreadsActive; i++) {
+        threads.emplace_back(threadFn, i);
+    }
+
+    unique_lock<shared_timed_mutex> ulk(mutex, std::defer_lock);
+    shared_lock<shared_timed_mutex> slk(mutex, std::defer_lock);
+
+    // main thread
+    while(verteces.size() > 0){
+
+#ifdef MULTITHREAD_DEBUG
+        static int i = 0;
+        cout << "[ " << ++i << "]MAIN THREAD i " << range << " = V(" << verteces.size() << ") / t(" << concurrentThreadsActive << ")" << endl;
+        cout << "[ " << i << "]Main thread waiting for the threads" << endl;
+#endif
+
+        slk.lock();
+        cv.wait(slk, [&done, this]() { return done == concurrentThreadsActive; });
+        range = toColor_set.size() / concurrentThreadsActive;
+        done = 0;
+        firstStepDone = true;
+        slk.unlock();
+        cv.notify_all(); // sblocco gli altri thread che iniziano la colorazione
+
+#ifdef MULTITHREAD_DEBUG
+        cout << "MAIN THREAD ii " << range << " = V(" << toColor_set.size() << ") / t(" << concurrentThreadsActive << ")" << endl;
+        cout << "Main thread updating verteces" << endl;
+#endif
+
+        // tolgo i vertici di toColor_set da verteces
+        for (auto el: toColor_set){
+            //unique_lock<shared_timed_mutex> lk(mutex);
+            // Non ho bisogno del lock perché nessuno accede a verteces a parte questo thread
+            verteces.erase(el);
+        }
+
+        //cout << "Rimanenti: " << verteces.size() << endl;
+
+#ifdef MULTITHREAD_DEBUG
+        cout << "Main thread waiting for others! " << endl;
+#endif
+
+        //aspetto gli altri thread
+        slk.lock();
+        cv.wait(slk, [&done, this](){return done == concurrentThreadsActive;});
+        toColor_set.clear();
+        secondStepDone = true;
+        if(verteces.size() == 0) done = -1;
+        else done = 0;
+        slk.unlock();
+        cv.notify_all();
+    }
+
+#ifdef MULTITHREAD_DEBUG
+    cout << "Finished!" << endl;
+#endif
+
+    for(auto &el : threads) {
+        el.join();
+#ifdef MULTITHREAD_DEBUG
+        static int i=0;
+        cout << i++ << " joined!" << endl;
+#endif
+    }
+
+}
+
+template <typename T>
 void asa::Graph<T>::largestDegree(){
     fillTotalSet();
     /*** creazione thread ***/
@@ -592,6 +986,7 @@ void asa::Graph<T>::smallestDegree() {
     printOutput("smallestDegree-output.txt");
 }
 
+// Necessari perché i template non sono negli header
 template class asa::Graph<asa::GraphCSR>;
 template class asa::Graph<asa::GraphAdjL>;
 template class asa::Graph<asa::GraphAdjM>;

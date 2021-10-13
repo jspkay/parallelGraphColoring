@@ -26,13 +26,13 @@ void startGraphAlgII(T& myGraph){
         }
         case largest: {
             cout << "Algo: largest degree first\n";
-            myGraph.largestDegree();
+            myGraph.largest_mod();
             myGraph.clearGraph();
             break;
         }
         case smallest: {
             cout << "Algo: smallest degree first\n";
-            myGraph.smallestDegree();
+            myGraph.smallest_mod();
             myGraph.clearGraph();
             break;
         }
