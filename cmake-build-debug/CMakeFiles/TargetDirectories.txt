@@ -1,3 +1,0 @@
-/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/antonio_vespa/Documenti/GitHub/parallelGraphColoring/cmake-build-debug/CMakeFiles/GraphColoring.dir
