@@ -14,12 +14,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d54090b9-9dc9-4cb8-8c60-87e61631eefa" name="Changes" comment="- Improved performances">
+    <list default="true" id="d54090b9-9dc9-4cb8-8c60-87e61631eefa" name="Changes" comment="- Minor improvements">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Graph/Algorithms.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Graph/Algorithms.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Graph/Graph.h" beforeDir="false" afterPath="$PROJECT_DIR$/Graph/Graph.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,7 +104,7 @@
       <workItem from="1634281117922" duration="12481000" />
       <workItem from="1634301299215" duration="2036000" />
       <workItem from="1634303679887" duration="916000" />
-      <workItem from="1634306551862" duration="1969000" />
+      <workItem from="1634306551862" duration="2375000" />
     </task>
     <task id="LOCAL-00001" summary="Modified algo">
       <created>1634064725072</created>
@@ -137,7 +134,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634303917806</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="- Minor improvements">
+      <created>1634308894742</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1634308894742</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -172,7 +176,8 @@
     <MESSAGE value="- Added jp_mod (another version of the jp algorithm)&#10;- fixed related bugs&#10;- added function in main" />
     <MESSAGE value="- Added smallest_mod, largest_mod" />
     <MESSAGE value="- Improved performances" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Improved performances" />
+    <MESSAGE value="- Minor improvements" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Minor improvements" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

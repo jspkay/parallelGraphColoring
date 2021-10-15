@@ -5,15 +5,12 @@ set(CMAKE_CXX_STANDARD 17)
 
 ########## Boost set up
 #include_directories("./boost_1_77_0")
-set(BOOST_ROOT boost_1_77_0)
-#set(Boost_NO_WARN_NEW_VERSIONS ON)
-set(Boost_NO_SYSTEM_PATH ON)
-set(Boost_USE_STATIC_LIBS ON)
-#find_package(Boost 1.77.0)
+#set(BOOST_ROOT boost_1_77_0)
 # Need to install boost from the system or compile
 # program_options separately
 find_package(Boost COMPONENTS program_options REQUIRED)
 
+message(${Boost_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIR})
 
 ########## COMPILE MACROs
