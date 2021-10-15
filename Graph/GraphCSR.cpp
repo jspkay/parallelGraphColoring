@@ -29,7 +29,7 @@ int GraphCSR::getDegree(node v) {
 GraphCSR::GraphCSR(string fin_name) {
     const clock_t begin_time = clock();
     readInput(fin_name);
-    std::cout << "Time needed to read the graph " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
+    //std::cout << "Time needed to read the graph " << float( clock () - begin_time ) /  CLOCKS_PER_SEC << " sec" << std::endl;
     graph = graphCSR(boost::edges_are_unsorted_multi_pass, std::begin(edges), edges.end(), V);
     BGL_FORALL_VERTICES(current_vertex, graph, graphCSR) {
             graph[current_vertex].color = -1;
@@ -42,9 +42,9 @@ GraphCSR::GraphCSR(string fin_name) {
     increase_numIteration = 0;
     //concurrentThreadsActive = std::thread::hardware_concurrency() - LEAVE_FREE;
     //active_threads = concurrentThreadsActive;
-    cout << "Fine costruzione grafo in formato CSR!\n";
+    /*cout << "Fine costruzione grafo in formato CSR!\n";
     cout << "******************\n";
     cout << "V:" << V << ", E:" << E;
-    cout << "\n******************\n";
+    cout << "\n******************\n"; */
     //cout << concurrentThreadsActive << " core available" << std::endl;
 }

@@ -4,7 +4,7 @@
 
 #ifndef GRAPHCOLORING_PRINTMENU_H
 #define GRAPHCOLORING_PRINTMENU_H
-#define CMDTABLE_ROWS 6
+#define CMDTABLE_ROWS 7
 
 bool continue_loop = true;
 int int_rep = -1, alg = -1, fin = -1, threads = std::thread::hardware_concurrency() - LEAVE_FREE;
@@ -17,7 +17,8 @@ void printMenu(){
     std::cout << "[a] Select coloring algorithm\n";
     std::cout << "[cc] Compute colors (not implemented yet!)\n";
     std::cout << "[ps] Print stats (not implemented yet!)\n";
-    std::cout << "[start] Start\n" << std::endl;
+    std::cout << "[start] Start the algorithm and color the graph\n";
+    std::cout << "[q] Quit the program" << std::endl;
 }
 
 /*** Command table ***/
@@ -27,6 +28,7 @@ static struct {
 } cmdTable[] = {
         /*** menu ***/
         {"?", printMenu},
+        {"q", [](){ exit(0); }},
         /*** operations ***/
         {"start", [](){ continue_loop = false; }},
         {"ct", [](){
@@ -84,9 +86,11 @@ void credits(){
 void start(){
     std::string str;
     std::cout << "\nInitialization Graph Coloring Project...\n";
+    std::cout << "It's possibile to run the program with arguments. Try running the program "
+                 "with the -h option.\n";
     int i;
     while(continue_loop){
-        std::cout << "\nGraph Coloring Project [-? for menu] [-start to start]: ";
+        std::cout << "\nGraph Coloring Project [? for menu] [start to start]: ";
         std::cin >> str;
         for(i=0; i<CMDTABLE_ROWS; i++) {
             if(cmdTable[i].name.compare(str)==0) {
