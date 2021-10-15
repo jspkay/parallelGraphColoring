@@ -14,12 +14,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d54090b9-9dc9-4cb8-8c60-87e61631eefa" name="Changes" comment="- Added smallest_mod, largest_mod">
+    <list default="true" id="d54090b9-9dc9-4cb8-8c60-87e61631eefa" name="Changes" comment="- Improved performances">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Graph/Algorithms.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Graph/Algorithms.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Graph/GraphCSR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Graph/GraphCSR.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PrintMenu.h" beforeDir="false" afterPath="$PROJECT_DIR$/PrintMenu.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Graph/Graph.h" beforeDir="false" afterPath="$PROJECT_DIR$/Graph/Graph.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -65,14 +64,19 @@
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="GraphColoring" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="2 0 1 1" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GraphColoring" TARGET_NAME="GraphColoring" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="GraphColoring" RUN_TARGET_NAME="GraphColoring">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -102,7 +106,8 @@
       <workItem from="1634229901097" duration="3866000" />
       <workItem from="1634281117922" duration="12481000" />
       <workItem from="1634301299215" duration="2036000" />
-      <workItem from="1634303679887" duration="1000" />
+      <workItem from="1634303679887" duration="916000" />
+      <workItem from="1634306551862" duration="1969000" />
     </task>
     <task id="LOCAL-00001" summary="Modified algo">
       <created>1634064725072</created>
@@ -125,7 +130,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634159791168</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="- Improved performances">
+      <created>1634303917806</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1634303917806</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -159,14 +171,15 @@
     <MESSAGE value="Modified algo" />
     <MESSAGE value="- Added jp_mod (another version of the jp algorithm)&#10;- fixed related bugs&#10;- added function in main" />
     <MESSAGE value="- Added smallest_mod, largest_mod" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Added smallest_mod, largest_mod" />
+    <MESSAGE value="- Improved performances" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Improved performances" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/main.cpp</url>
-          <line>51</line>
+          <line>47</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">

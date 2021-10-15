@@ -17,11 +17,8 @@ find_package(Boost COMPONENTS program_options REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
 ########## COMPILE MACROs
-add_definitions(-DVERSION=2)
 #add_definitions(-DMULTITHREAD_DEBUG)
 #add_definitions(-DMTD=1)
-add_definitions(-DTCS=2) #TCS = 2 is slightly faster than TCS=1
-add_definitions(-DVERTEX_MODE=2)
 
 ########## COMPILE libraries
 add_executable(GraphColoring main.cpp

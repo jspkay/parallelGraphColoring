@@ -4,10 +4,6 @@
 #include "PrintMenu.h"
 #include "boost/program_options.hpp"
 
-#ifndef VERSION
-#error "HEY! You have to define the version to compile!"
-#endif
-
 enum algoritmi {sequential, jones, largest, smallest, N_ALGO};
 enum int_rep {csr, adjl, adjm, N_REP};
 enum file_input {rgg_15, rgg_16, v100, v1000};
@@ -32,7 +28,7 @@ inline void startGraphAlgII(T& myGraph){
         }
         case largest: {
             cout << "Algo: largest degree first\n";
-            myGraph.largest_mod();
+            myGraph.jonesPlassmann();
             myGraph.clearGraph();
             break;
         }
@@ -50,23 +46,6 @@ namespace po = boost::program_options;
 
 int main(int argc, char* argv[]) {
     credits();
-#if VERSION == 1
-    //se non ci sono argomenti stampo il menu, altrimenti eseguo direttamente
-    if(argc != 1 && argc != 5){
-        cerr << "Usare 0 argomenti oppure 5!";
-        exit(-1);
-    }
-    if(argc == 5){
-        /*** <.exe> <fin> <internal repres> <alg> ***/
-        fin = atoi(argv[1]);
-        int_rep = atoi(argv[2]);
-        alg = atoi(argv[3]);
-        threads = atoi(argv[4]);
-    }
-    else {
-        bootstrap();
-    }
-#elif VERSION == 2
     po::options_description cmd_options("If the program is executed without "
                                         "an input file, an interactive "
                                         "version will run.\n"
@@ -92,7 +71,12 @@ int main(int argc, char* argv[]) {
     positionals.add("trials", 1);
 
     po::variables_map ao; // active options
-    po::store(po::command_line_parser(argc, argv).options(cmd_options).positional(positionals).run(), ao);
+    try{
+        po::store(po::command_line_parser(argc, argv).options(cmd_options).positional(positionals).run(), ao);
+    }catch(std::exception e){
+        cout << "ERROR! Parameter not recognized\n";
+        exit(-2);
+    }
     po::notify(ao);
 
     if(ao.count("help")){
@@ -120,8 +104,6 @@ int main(int argc, char* argv[]) {
         cout << "Can't run 0 trials. Running just one.";
         n_trials = 1;
     }
-
-#endif
 
     float totalTime = 0;
     for(int i=0; i<n_trials; i++) {

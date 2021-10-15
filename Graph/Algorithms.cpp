@@ -27,7 +27,7 @@ void asa::Graph<T>::JP_mod() {
     int tcs_length = 0;
 
     std::function<void(int)> threadFn = [&](int id){
-        while(true) {
+        while(done >= 0) {
             static int i=0;
             unique_lock<shared_timed_mutex> ulk(mutex, std::defer_lock);
             shared_lock<shared_timed_mutex> slk(mutex, std::defer_lock);
@@ -75,7 +75,6 @@ void asa::Graph<T>::JP_mod() {
             // The shared_lock is acquired before the notify in or
             slk.lock();
             cv.wait(slk, [&firstStepDone](){return firstStepDone;});
-            if(done < 0) break;
             slk.unlock();
 
 #ifdef MULTITHREAD_DEBUG
@@ -119,7 +118,6 @@ void asa::Graph<T>::JP_mod() {
             cout << id << "s\n";
 #endif
             cv.wait(slk, [&secondStepDone](){return secondStepDone;});
-            if(done < 0) break;
             slk.unlock();
         }
         cv.notify_all(); // necessary for the other threads to finish

@@ -60,21 +60,24 @@ namespace asa {
     public:
         int searchColor(node u){
             //seleziona il colore minimo e non usato dai nodi vicini al nodo scelto u
-            int color = 0;
-            set<int16_t> colors;
+            int i,lastColorFound=0;
+            int C[2048]={};
+            int16_t color=-1;
             node neighbor;
             node current_vertex = u;
-            // Metto i colori in un set ordinato.
-            forEachNeighbor(current_vertex,&neighbor,[this, &current_vertex, &neighbor, &colors](){
-                uint16_t c = static_cast<T&>(*this).graph[neighbor].color;
-                if(c != -1) colors.insert(c);
+            forEachNeighbor(current_vertex,&neighbor,[this,&current_vertex,&neighbor,&C, &lastColorFound](){
+                if(static_cast<T&>(*this).graph[neighbor].color != -1) {
+                    C[static_cast<T &>(*this).graph[neighbor].color] = 1; //segno il colore del vicino
+                    if(static_cast<T&>(*this).graph[neighbor].color > lastColorFound)
+                        lastColorFound = static_cast<T&>(*this).graph[neighbor].color;
+                }
             });
-            // scorro tutti i colori. Il primo che non corrisponde
-            // al conto è il più piccolo disponibile
-            for(int16_t c : colors){
-                if(c == color) color++;
-                else break;
-            };
+            for(i=0; i<=lastColorFound + 1; i++){
+                if(C[i]==0 && color==-1) //colore i-esimo non usato
+                    color=i;
+                else
+                    C[i]=0; //reset colori per il prossimo ciclo
+            }
             return color;
         };
         void clearGraph(){
