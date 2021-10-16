@@ -57,6 +57,9 @@ namespace asa {
         int active_threads;
         int numIteration, increase_numIteration;
         bool isEnded = false;
+
+        void jp_structure(std::function<bool(int,node)>);
+
     public:
         int searchColor(node u){
             //seleziona il colore minimo e non usato dai nodi vicini al nodo scelto u
@@ -275,11 +278,11 @@ namespace asa {
         };
         /*** algoritmi colorazione ***/
         void sequential();
-        void JP_mod();
-        void largest_mod();
+        void jonesPlassmann();
+        void ldf();
+        void ldf_mod();
         void smallest_mod();
         void largestDegree();
-        void jonesPlassmann();
         void smallestDegree();
         /*** da specializzare in ogni rappresentazione interna ***/
         void forEachVertex(node* current_vertex, std::function<void()> f){

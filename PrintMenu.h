@@ -4,21 +4,35 @@
 
 #ifndef GRAPHCOLORING_PRINTMENU_H
 #define GRAPHCOLORING_PRINTMENU_H
-#define CMDTABLE_ROWS 7
+#define CMDTABLE_ROWS 8
+
+#include "definitions.hpp"
+
+enum algoritmi {sequential, jones, largest, smallest, l_mod, N_ALGO};
+string algo_names[] = {"Sequential", "Jones Plassmann",
+                       "Largest Degree First", "Smallest Degree First",
+                       "Largest Degree First Modified"};
+
+enum int_rep {csr, adjl, adjm, N_REP};
+string rep_names[] = {"CSR", "Adjacency Matrix", "Adjacency List"};
+
+enum file_input {rgg_15, rgg_16, v100, v1000};
 
 bool continue_loop = true;
-int int_rep = -1, alg = -1, fin = -1, threads = std::thread::hardware_concurrency() - LEAVE_FREE;
+int n_trials, int_rep = -1, alg = -1, fin = -1,
+        threads = std::thread::hardware_concurrency() - LEAVE_FREE;
 
 void printMenu(){
-    std::cout << "\nGraph Coloring Project menu: \n";
-    std::cout << "[ct] Select the number of concurrent threads \n";
-    std::cout << "[fin] Select input file\n";
-    std::cout << "[ir] Select internal graph representation\n";
-    std::cout << "[a] Select coloring algorithm\n";
-    std::cout << "[cc] Compute colors (not implemented yet!)\n";
-    std::cout << "[ps] Print stats (not implemented yet!)\n";
-    std::cout << "[start] Start the algorithm and color the graph\n";
-    std::cout << "[q] Quit the program" << std::endl;
+    std::cout << "\nGraph Coloring Project menu: \n"
+        "[fin] Select input file\n"
+        "[ir] Select internal graph representation\n"
+        "[a] Select coloring algorithm\n"
+        "[cc] Compute colors (not implemented yet!)\n"
+        "[ps] Print stats (not implemented yet!)\n"
+        "[ct] Select the number of concurrent threads \n"
+        "[nt] Select the number of trials to be executed\n"
+        "[start] Start the algorithm and color the graph\n"
+        "[q] Quit the program" << std::endl;
 }
 
 /*** Command table ***/
@@ -48,18 +62,17 @@ static struct {
         }},
         {"ir", [](){
             std::cout << "\nChoose one of the follower: \n";
-            std::cout << " * 0 - CSR\n";
-            std::cout << " * 1 - Adjacency Matrix\n";
-            std::cout << " * 2 - Adjacency List\n";
+            for(int i=0; i<N_REP; i++){
+                std::cout << " * " << i << " - " << rep_names[i] << '\n';
+            }
             std::cout << "Digit the number: " ;
             std::cin >> int_rep;
         }},
         {"a", [](){
             std::cout << "\nChoose one of the follower: \n";
-            std::cout << " * 0 - Sequential \n";
-            std::cout << " * 1 - Jones Plassmann \n";
-            std::cout << " * 2 - Largest Degree\n";
-            std::cout << " * 3 - Smallest Degree\n";
+            for(int i=0; i<N_ALGO; i++){
+                std::cout << " * " << i << " - " << algo_names[i] << '\n';
+            }
             std::cout << "Digit the number: " ;
             std::cin >> alg;
         }}

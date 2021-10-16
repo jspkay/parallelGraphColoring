@@ -4,11 +4,7 @@
 #include "PrintMenu.h"
 #include "boost/program_options.hpp"
 
-enum algoritmi {sequential, jones, largest, smallest, N_ALGO};
-enum int_rep {csr, adjl, adjm, N_REP};
-enum file_input {rgg_15, rgg_16, v100, v1000};
 extern int alg, fin, int_rep;
-int n_trials;
 std::string fin_name;
 
 template <typename T>
@@ -22,19 +18,25 @@ inline void startGraphAlgII(T& myGraph){
         }
         case jones: {
             cout << "Algo: JP_mod\n";
-            myGraph.JP_mod();
+            myGraph.jonesPlassmann();
             myGraph.clearGraph();
             break;
         }
         case largest: {
             cout << "Algo: largest degree first\n";
-            myGraph.jonesPlassmann();
+            myGraph.ldf();
+            myGraph.clearGraph();
+            break;
+        }
+        case l_mod:{
+            cout << "Algo: largest degree first modified\n";
+            myGraph.ldf_mod();
             myGraph.clearGraph();
             break;
         }
         case smallest: {
             cout << "Algo: smallest degree first\n";
-            myGraph.smallest_mod();
+            myGraph.smallestDegree();
             myGraph.clearGraph();
             break;
         }
