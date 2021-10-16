@@ -10,12 +10,12 @@
   </component>
   <component name="CMakeSettings" AUTO_RELOAD="true">
     <configurations>
-      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d54090b9-9dc9-4cb8-8c60-87e61631eefa" name="Changes" comment="- Added again largestDegree()">
-      <change beforePath="$PROJECT_DIR$/PrintMenu.h" beforeDir="false" afterPath="$PROJECT_DIR$/PrintMenu.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,7 +25,6 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -60,17 +59,12 @@
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunManager">
-    <configuration name="GraphColoring" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="2 0 1 4" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GraphColoring" TARGET_NAME="GraphColoring" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="GraphColoring" RUN_TARGET_NAME="GraphColoring">
+    <configuration name="GraphColoring" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="2 0 1 4" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GraphColoring" TARGET_NAME="GraphColoring" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="GraphColoring" RUN_TARGET_NAME="GraphColoring">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -107,6 +101,7 @@
       <workItem from="1634309452313" duration="58000" />
       <workItem from="1634314974097" duration="7700000" />
       <workItem from="1634395748550" duration="7320000" />
+      <workItem from="1634404747848" duration="15000" />
     </task>
     <task id="LOCAL-00001" summary="Modified algo">
       <created>1634064725072</created>
