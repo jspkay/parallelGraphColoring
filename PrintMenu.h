@@ -73,8 +73,11 @@ static struct {
                 std::cout << " * " << i << " - " << algo_names[i] << '\n';
             }
             std::cout << "Digit the number: " ;
-            std::cin >> alg;
-            cout << alg << endl;
+            cin >> alg;
+            while(cin.fail()) {
+                cout << "Insert a number!";
+                cin >> alg;
+            }
             if( alg > N_ALGO )
                 cout << "Impossble choice.\n";
         }}
