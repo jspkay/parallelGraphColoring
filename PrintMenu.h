@@ -6,12 +6,11 @@
 #define GRAPHCOLORING_PRINTMENU_H
 #define CMDTABLE_ROWS 8
 
-#include "definitions.hpp"
-
-enum algoritmi {sequential, jones, largest, smallest, l_mod, N_ALGO};
+enum algoritmi {sequential, jones, largest, smallest, l_mod_salvo, l_mod_anto, N_ALGO};
 string algo_names[] = {"Sequential", "Jones Plassmann",
                        "Largest Degree First", "Smallest Degree First",
-                       "Largest Degree First Modified"};
+                       "Largest Degree First Modified(salvo)",
+                       "Largest Degree First Modified(anto)"};
 
 enum int_rep {csr, adjl, adjm, N_REP};
 string rep_names[] = {"CSR", "Adjacency Matrix", "Adjacency List"};
@@ -75,6 +74,9 @@ static struct {
             }
             std::cout << "Digit the number: " ;
             std::cin >> alg;
+            cout << alg << endl;
+            if( alg > N_ALGO )
+                cout << "Impossble choice.\n";
         }}
         /*** stats ***/
 };

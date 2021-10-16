@@ -28,8 +28,14 @@ inline void startGraphAlgII(T& myGraph){
             myGraph.clearGraph();
             break;
         }
-        case l_mod:{
-            cout << "Algo: largest degree first modified\n";
+        case l_mod_anto:{
+            cout << "Algo: largest degree first modified_anto\n";
+            myGraph.largestDegree();
+            myGraph.clearGraph();
+            break;
+        }
+        case l_mod_salvo:{
+            cout << "Algo: largest degree first modified_salvo\n";
             myGraph.ldf_mod();
             myGraph.clearGraph();
             break;
