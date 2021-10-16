@@ -59,6 +59,7 @@ namespace asa {
         bool isEnded = false;
 
         void jp_structure(std::function<bool(int,node)>);
+        void jp_structure_old(std::function<bool(int,node)>);
 
     public:
         int searchColor(node u){
@@ -279,6 +280,7 @@ namespace asa {
         /*** algoritmi colorazione ***/
         void sequential();
         void jonesPlassmann();
+        void jonesPlassmann_old();
         void ldf();
         void ldf_mod();
         void smallest_mod();

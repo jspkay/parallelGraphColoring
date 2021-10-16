@@ -6,11 +6,11 @@
 #define GRAPHCOLORING_PRINTMENU_H
 #define CMDTABLE_ROWS 8
 
-enum algoritmi {sequential, jones, largest, smallest, l_mod_salvo, l_mod_anto, N_ALGO};
+enum algoritmi {sequential, jones, largest, smallest, l_mod_salvo, l_mod_anto, jp_mod_old, N_ALGO};
 string algo_names[] = {"Sequential", "Jones Plassmann",
                        "Largest Degree First", "Smallest Degree First",
                        "Largest Degree First Modified(salvo)",
-                       "Largest Degree First Modified(anto)"};
+                       "Largest Degree First Modified(anto)", "jp_mod_old"};
 
 enum int_rep {csr, adjl, adjm, N_REP};
 string rep_names[] = {"CSR", "Adjacency Matrix", "Adjacency List"};

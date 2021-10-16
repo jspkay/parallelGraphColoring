@@ -22,6 +22,12 @@ inline void startGraphAlgII(T& myGraph){
             myGraph.clearGraph();
             break;
         }
+        case jp_mod_old: {
+            cout << "Algo: JP_mod_OLD\n";
+            myGraph.jonesPlassmann_old();
+            myGraph.clearGraph();
+            break;
+        }
         case largest: {
             cout << "Algo: largest degree first\n";
             myGraph.ldf();
