@@ -22,6 +22,6 @@ add_executable(GraphColoring main.cpp
         Graph/Algorithms.cpp
         Graph/Graph.h
         Graph/GraphCSR.cpp Graph/GraphAdjL.cpp Graph/GraphAdjM.cpp
-        PrintMenu.h )
+        PrintMenu.h)
 
 target_link_libraries(GraphColoring boost_program_options boost_filesystem pthread)

@@ -20,18 +20,15 @@ void asa::Graph<T>::sequential() {
 /// START JP, LDF Section
 template<typename T>
 void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
-    int done=0, done2=0;
+    int done = 0;
     int roundMain = 0;
-    bool secondStepDone = false;
-    condition_variable_any firstStepCV;
-
     int range = V / concurrentThreadsActive;
-
     int v_length = V; // No need for any vector
     int tcs_length[concurrentThreadsActive];
+    bool toTerminate = false;
     std::function<void(int)> threadFn = [&](int id) {
-        int round=0;
-        while (done >= 0) {
+        int round = 0;
+        while (!toTerminate) {
             unique_lock<shared_timed_mutex> ulk(mutex, std::defer_lock);
             shared_lock<shared_timed_mutex> slk(mutex, std::defer_lock);
 
@@ -41,7 +38,7 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
             if (id == concurrentThreadsActive - 1) max = V;
 
             // allocazione dinamica
-            unique_ptr<int[]> toColor_set(new int[max-min]);
+            unique_ptr<int[]> toColor_set(new int[max - min]);
             tcs_length[id] = 0;
 
 
@@ -53,23 +50,16 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
                 node neighbor;
                 bool major = true;
                 if (static_cast<T &>(*this).graph[i].color != -1) major = false;
-                else forEachNeighbor(i, &neighbor, [this, &neighbor, i, &major, &isMinor]() {
+                else
+                    forEachNeighbor(i, &neighbor, [this, &neighbor, i, &major, &isMinor]() {
                         // Non necessito lock: i thread agiscono su porzioni di memoria disgiunte
-                        if (
-                            static_cast<T &>(*this).graph[neighbor].color == -1 && isMinor(i, neighbor)
-                            )
+                        if (static_cast<T &>(*this).graph[neighbor].color == -1 && isMinor(i, neighbor))
                             major = false;
                     });
                 if (major) {
                     toColor_set[tcs_length[id]++] = i;
                 }
             }
-
-            /// SINCRONIZZAZIONE - aspetto il main thread
-            ulk.lock();
-            done++;
-            ulk.unlock();
-            firstStepCV.notify_one(); // main thread
 
 #ifdef MULTITHREAD_DEBUG
             cout << '[' << round << "]Thread " << id << "start coloring!" << endl;
@@ -81,17 +71,15 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
                 int16_t color = searchColor(i);
                 //non serve il lock perchè i vicini non sono stati selezionati per essere colorati
                 //ulk.lock();
-                static_cast<T&>(*this).graph[i].color = color;
+                static_cast<T &>(*this).graph[i].color = color;
                 //ulk.unlock();
             }
 #ifdef MULTITHREAD_DEBUG
             cout << '[' << round << "][" << id << "]ac\n";
 #endif
-
-            /// SINCRONIZZAZIONE
+            /// SINCRONIZZAZIONE FINE GIRO
             ulk.lock();
-            done2++;
-            secondStepDone = false;
+            done++;
             ulk.unlock();
             cv.notify_all();
 
@@ -109,9 +97,8 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
         }
         cv.notify_all(); // necessary for the other threads to finish
 #if MULTITHREAD_DEBUG || MTD == 1
-        cout << id << "r"<< secondStepDone<<'\n';
+        cout << id ;
 #endif
-        return;
     };
 
     // attivo i threads dopo averli definiti
@@ -130,19 +117,10 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
         cout << "[ " << roundMain << "]Main thread waiting for the threads" << endl;
 #endif
 
-        ulk.lock();
-        firstStepCV.wait(ulk, [&done, this]() { return done == concurrentThreadsActive; });
-        done = 0;
-        ulk.unlock();
-
 #ifdef MULTITHREAD_DEBUG
         //cout << "MAIN THREAD ii " << range << " = V(" << tcs_length << ") / t(" << concurrentThreadsActive << ")" << endl;
         cout << "Main thread updating verteces" << endl;
 #endif
-
-        // tolgo i vertici di toColor_set da verteces
-        for(int i=0; i<concurrentThreadsActive; i++)
-            v_length -= tcs_length[i];
 
 #ifdef MULTITHREAD_DEBUG
         cout << "Main thread waiting for others! " << endl;
@@ -150,11 +128,14 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
 
         //aspetto gli altri thread
         slk.lock();
-        cv.wait(slk, [&done2, this]() { return done2 == concurrentThreadsActive; });
-        secondStepDone = true;
+        cv.wait(slk, [&done, this]() { return done == concurrentThreadsActive; });
+        // tolgo i vertici di toColor_set da verteces
+        for (int i = 0; i < concurrentThreadsActive; i++)
+            v_length -= tcs_length[i];
+        if (v_length == 0)
+            toTerminate = true;
         roundMain++;
-        if (v_length == 0) done = -1;
-        done2 = 0;
+        done= 0;
         slk.unlock();
 
 #ifdef MULTITHREAD_DEBUG
@@ -176,8 +157,8 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
     }
 }
 
-template <typename T>
-void asa::Graph<T>::jp_structure_old(function<bool(int,node)> isMinor) {
+template<typename T>
+void asa::Graph<T>::jp_structure_old(function<bool(int, node)> isMinor) {
     int done = 0, range;
     bool firstStepDone = false, secondStepDone = false;
 
@@ -185,13 +166,13 @@ void asa::Graph<T>::jp_structure_old(function<bool(int,node)> isMinor) {
     unique_ptr<int[]> toColor_set(new int[V]);
     int tcs_length = 0;
 
-    std::function<void(int)> threadFn = [&](int id){
-        while(done >= 0) {
+    std::function<void(int)> threadFn = [&](int id) {
+        while (done >= 0) {
             unique_lock<shared_timed_mutex> ulk(mutex, std::defer_lock);
             shared_lock<shared_timed_mutex> slk(mutex, std::defer_lock);
 
             // decido quali sono i vertici assegnati al thread (bilanciamento)
-            int min = id*range, max = (id+1)*range;
+            int min = id * range, max = (id + 1) * range;
             // l'ultimo thread prende anche l'eccesso
             if (id == concurrentThreadsActive - 1) max = V;
 
@@ -201,14 +182,15 @@ void asa::Graph<T>::jp_structure_old(function<bool(int,node)> isMinor) {
             cout << '[' << i << "][" << id << "]m\n";
 #endif
             // Find the verteces to be colored
-            for(int i=min; i<max; i++){
+            for (int i = min; i < max; i++) {
                 node neighbor;
                 bool major = true;
-                if (static_cast<T&>(*this).graph[i].color != -1 ) major = false;
-                else forEachNeighbor(i, &neighbor, [this, &neighbor, i, &major, &isMinor]() {
+                if (static_cast<T &>(*this).graph[i].color != -1) major = false;
+                else
+                    forEachNeighbor(i, &neighbor, [this, &neighbor, i, &major, &isMinor]() {
                         // Non necessito lock: i thread agiscono su porzioni di
                         // memoria disgiunte
-                        if( static_cast<T&>(*this).graph[neighbor].color == -1 &&
+                        if (static_cast<T &>(*this).graph[neighbor].color == -1 &&
                             isMinor(i, neighbor)
                             //&&  (static_cast<T&>(*this).graph[i].random < static_cast<T&>(*this).graph[neighbor].random)
                                 )
@@ -233,7 +215,7 @@ void asa::Graph<T>::jp_structure_old(function<bool(int,node)> isMinor) {
 #endif
             // The shared_lock is acquired before the notify in or
             slk.lock();
-            cv.wait(slk, [&firstStepDone](){return firstStepDone;});
+            cv.wait(slk, [&firstStepDone]() { return firstStepDone; });
             slk.unlock();
 
 #ifdef MULTITHREAD_DEBUG
@@ -242,20 +224,20 @@ void asa::Graph<T>::jp_structure_old(function<bool(int,node)> isMinor) {
 
             // inizio la colorazione
             min = id * range;
-            max = (id+1) * range;
-            if(id == concurrentThreadsActive - 1) max = tcs_length;
+            max = (id + 1) * range;
+            if (id == concurrentThreadsActive - 1) max = tcs_length;
 
 #ifdef MULTITHREAD_DEBUG
             cout << '[' << i << "]Thread " << id << "start coloring!" << endl;
 #endif
 
             // coloro i vertici
-            for(int j=min; j<max; j++){
+            for (int j = min; j < max; j++) {
                 int i = toColor_set[j];
                 int16_t color = searchColor(i);
 
                 ulk.lock();
-                static_cast<T&>(*this).graph[i].color = color;
+                static_cast<T &>(*this).graph[i].color = color;
                 ulk.unlock();
             }
 #ifdef MULTITHREAD_DEBUG
@@ -276,7 +258,7 @@ void asa::Graph<T>::jp_structure_old(function<bool(int,node)> isMinor) {
 #if MTD == 1
             cout << id << "s\n";
 #endif
-            cv.wait(slk, [&secondStepDone](){return secondStepDone;});
+            cv.wait(slk, [&secondStepDone]() { return secondStepDone; });
             slk.unlock();
         }
         cv.notify_all(); // necessary for the other threads to finish
@@ -288,7 +270,7 @@ void asa::Graph<T>::jp_structure_old(function<bool(int,node)> isMinor) {
 
     // attivo i threads
     range = V / concurrentThreadsActive;
-    for(int i = 0; i < concurrentThreadsActive; i++) {
+    for (int i = 0; i < concurrentThreadsActive; i++) {
         threads.emplace_back(threadFn, i);
     }
 
@@ -296,7 +278,7 @@ void asa::Graph<T>::jp_structure_old(function<bool(int,node)> isMinor) {
     shared_lock<shared_timed_mutex> slk(mutex, std::defer_lock);
 
     // main thread
-    while(v_length > 0){
+    while (v_length > 0) {
 
 #ifdef MULTITHREAD_DEBUG
         static int i = 0;
@@ -328,11 +310,11 @@ void asa::Graph<T>::jp_structure_old(function<bool(int,node)> isMinor) {
 
         //aspetto gli altri thread
         slk.lock();
-        cv.wait(slk, [&done, this](){return done == concurrentThreadsActive;});
+        cv.wait(slk, [&done, this]() { return done == concurrentThreadsActive; });
         tcs_length = 0;
         secondStepDone = true;
-        range = V/concurrentThreadsActive;
-        if(v_length == 0) done = -1;
+        range = V / concurrentThreadsActive;
+        if (v_length == 0) done = -1;
         else done = 0;
         slk.unlock();
 #ifdef MULTITHREAD_DEBUG
@@ -345,7 +327,7 @@ void asa::Graph<T>::jp_structure_old(function<bool(int,node)> isMinor) {
     cout << "Finished!" << endl;
 #endif
 
-    for(auto &el : threads) {
+    for (auto &el : threads) {
         el.join();
 #ifdef MULTITHREAD_DEBUG
         static int i=0;
@@ -363,6 +345,7 @@ void asa::Graph<T>::jonesPlassmann() {
                (static_cast<T &>(*this).graph[i].random < static_cast<T &>(*this).graph[neighbor].random);
     });
 }
+
 template<typename T>
 void asa::Graph<T>::jonesPlassmann_old() {
     cout << "I am the old algorithm!" << endl;

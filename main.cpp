@@ -183,7 +183,8 @@ void readPath(string path){
         }
 
         for (auto& el: fs::directory_iterator(p)) {
-            if(is_regular_file(p)) files.emplace_back(el);
+            //cout << el << endl;
+            if(is_regular_file(el)) files.emplace_back(el);
         }
         std::sort(files.begin(), files.end());
     }

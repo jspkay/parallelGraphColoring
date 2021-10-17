@@ -7,10 +7,10 @@
 #define CMDTABLE_ROWS 8
 
 #include "boost/program_options.hpp"
-#include "boost/filesystem.hpp"
+#include <filesystem>
 
 enum file_input {rgg_15, rgg_16, v100, v1000};
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 namespace po = boost::program_options;
 
 // Global variables
