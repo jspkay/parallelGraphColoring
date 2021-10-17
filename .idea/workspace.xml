@@ -14,15 +14,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d54090b9-9dc9-4cb8-8c60-87e61631eefa" name="Changes" comment="- fixed infinite wait buf on jp">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Graph/Algorithms.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Graph/Algorithms.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Graph/Graph.h" beforeDir="false" afterPath="$PROJECT_DIR$/Graph/Graph.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PrintMenu.h" beforeDir="false" afterPath="$PROJECT_DIR$/PrintMenu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-    </list>
+    <list default="true" id="d54090b9-9dc9-4cb8-8c60-87e61631eefa" name="Changes" comment="- Added generic files&#10;- Added benchmarks" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -115,7 +107,7 @@
       <workItem from="1634395748550" duration="7607000" />
       <workItem from="1634414828460" duration="5635000" />
       <workItem from="1634420719636" duration="1716000" />
-      <workItem from="1634478740838" duration="10331000" />
+      <workItem from="1634478740838" duration="10838000" />
     </task>
     <task id="LOCAL-00001" summary="Modified algo">
       <created>1634064725072</created>
@@ -187,7 +179,21 @@
       <option name="project" value="LOCAL" />
       <updated>1634422408772</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="- Added generic files&#10;- Added benchmarks">
+      <created>1634489141015</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1634489141016</updated>
+    </task>
+    <task id="LOCAL-00012" summary="- Added generic files&#10;- Added benchmarks">
+      <created>1634489196276</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1634489196276</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -228,7 +234,8 @@
     <MESSAGE value="- Added again largestDegree()" />
     <MESSAGE value="- fixed menu choice" />
     <MESSAGE value="- fixed infinite wait buf on jp" />
-    <option name="LAST_COMMIT_MESSAGE" value="- fixed infinite wait buf on jp" />
+    <MESSAGE value="- Added generic files&#10;- Added benchmarks" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Added generic files&#10;- Added benchmarks" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
