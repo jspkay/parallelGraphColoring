@@ -3,7 +3,41 @@
 This project aim to compare different algorithms for graph coloring. 
 
 ## Usage
-The program can be run both in interactive mode and stand-alone mode.
+The program can be run both in interactive mode and stand-alone mode. There is, though, a mandatory option which is the path of the benchmarks. The files in the specified directory are then numbered in alphabetical order.
+
+### Example
+Directory organization:
+```
+.
+`-- The
+    `-- Powerpuff
+        `-- Girls
+            |-- Molly
+            |-- Dolly
+            `-- Lolly
+
+```
+```
+$ GraphColoring 
+the option '--path' is required but missing
+
+$ GraphColoring -p The/Powerpuff/Girls
+> You will prompt to the interactive version
+```
+It's possibile to use the option -l to show a complete list of the file in the chosen path  numbered in alphabetical order. This is needed because the file is chosen through a number with the option 
+
+```
+$ GraphColoring The/Powerpuff/Girls --list
+0 - Dolly
+1 - Lolly
+2 - Molly
+```
+So it's possible to run the program on a specific file:
+```
+$ GraphColoring The/Powerpuff/Girls -fin 1 
+```
+This way the program will run with the default settings.
+For the other settings, please refer to the next sections.
 
 ### Interactive mode
 Simply run the program without any command line option. The program will prompt a simple interactive interface to choose the input file, the algorithm and so on.
@@ -22,7 +56,7 @@ Lastly, it's possibile to use "positional arguments", without explicitly write t
 The last option, trials, is not mandatory and by default the number of trials executed is 1.
 
 As examples:
-```
+```bash
 GraphColoring 0 1 2 2;
 GraphColoring 1 1 1 2 5;
 GraphColoring -i 0 -t 5

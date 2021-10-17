@@ -130,7 +130,6 @@ namespace asa {
         /*** IO ***/
         void readInput(string& fname) {
             //redirige alla funzione che legge l'estensione specifica
-            fname = "../Graph/benchmark/" + fname;
             auto ext = std::filesystem::path(fname).extension();
             if(ext == ".gra"){
                 startingNode = 0;

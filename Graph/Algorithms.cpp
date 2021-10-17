@@ -20,10 +20,12 @@ void asa::Graph<T>::sequential() {
 /// START JP, LDF Section
 template<typename T>
 void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
-    int done=0, done2=0, range;
+    int done=0, done2=0;
     int roundMain = 0;
     bool secondStepDone = false;
     condition_variable_any firstStepCV;
+
+    int range = V / concurrentThreadsActive;
 
     int v_length = V; // No need for any vector
     int tcs_length[concurrentThreadsActive];
@@ -38,8 +40,8 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
             // l'ultimo thread prende anche l'eccesso
             if (id == concurrentThreadsActive - 1) max = V;
 
+            // allocazione dinamica
             unique_ptr<int[]> toColor_set(new int[max-min]);
-            //int toColor_set[max-min]; //si potrebbero creare più corti per risparmio memoria
             tcs_length[id] = 0;
 
 
@@ -51,12 +53,11 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
                 node neighbor;
                 bool major = true;
                 if (static_cast<T &>(*this).graph[i].color != -1) major = false;
-                else
-                    forEachNeighbor(i, &neighbor, [this, &neighbor, i, &major, &isMinor]() {
+                else forEachNeighbor(i, &neighbor, [this, &neighbor, i, &major, &isMinor]() {
                         // Non necessito lock: i thread agiscono su porzioni di memoria disgiunte
-                        if (static_cast<T &>(*this).graph[neighbor].color == -1 && isMinor(i, neighbor)
-                            //&&  (static_cast<T&>(*this).graph[i].random < static_cast<T&>(*this).graph[neighbor].random)
-                                )
+                        if (
+                            static_cast<T &>(*this).graph[neighbor].color == -1 && isMinor(i, neighbor)
+                            )
                             major = false;
                     });
                 if (major) {
@@ -70,20 +71,6 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
             ulk.unlock();
             firstStepCV.notify_one(); // main thread
 
-            /*
-#ifdef MULTITHREAD_DEBUG
-            cout << '[' << i << "][" << id << "]w1\n";
-#endif
-            // The shared_lock is acquired before the notify in order to unblock
-            // the main thread when it's time
-            slk.lock();
-            cv.wait(slk, [&firstStepDone]() { return firstStepDone; });
-            slk.unlock();
-
-#ifdef MULTITHREAD_DEBUG
-            cout << '[' << i << "][" << id << "]a1\n";
-#endif
-*/
 #ifdef MULTITHREAD_DEBUG
             cout << '[' << round << "]Thread " << id << "start coloring!" << endl;
 #endif
@@ -94,7 +81,7 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
                 int16_t color = searchColor(i);
                 //non serve il lock perchè i vicini non sono stati selezionati per essere colorati
                 //ulk.lock();
-                static_cast<T &>(*this).graph[i].color = color;
+                static_cast<T&>(*this).graph[i].color = color;
                 //ulk.unlock();
             }
 #ifdef MULTITHREAD_DEBUG
@@ -128,7 +115,6 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
     };
 
     // attivo i threads dopo averli definiti
-    range = V / concurrentThreadsActive;
     for (int i = 0; i < concurrentThreadsActive; i++) {
         threads.emplace_back(threadFn, i);
     }
@@ -158,8 +144,6 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
         for(int i=0; i<concurrentThreadsActive; i++)
             v_length -= tcs_length[i];
 
-        //cout << "Rimanenti: " << verteces.size() << endl;
-
 #ifdef MULTITHREAD_DEBUG
         cout << "Main thread waiting for others! " << endl;
 #endif
@@ -172,6 +156,7 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
         if (v_length == 0) done = -1;
         done2 = 0;
         slk.unlock();
+
 #ifdef MULTITHREAD_DEBUG
         cout << "Rimanenti: " << v_length << endl;
 #endif
