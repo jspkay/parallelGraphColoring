@@ -1,6 +1,11 @@
 # parallelGraphColoring
 ###### an implementation in C++
-This project aim to compare different algorithms for graph coloring. 
+This project aim to compare different algorithms for graph coloring.
+
+## How to build
+
+The program is built with cmake, so it's 
+
 
 ## Usage
 The program can be run both in interactive mode and stand-alone mode. There is, though, a mandatory option which is the path of the benchmarks. The files in the specified directory are then numbered in alphabetical order.
