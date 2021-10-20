@@ -135,7 +135,7 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
         if (v_length == 0)
             toTerminate = true;
         roundMain++;
-        done= 0;
+        done = 0;
         slk.unlock();
 
 #ifdef MULTITHREAD_DEBUG
@@ -147,8 +147,6 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
 #ifdef MULTITHREAD_DEBUG
     cout << "Finished!" << endl;
 #endif
-
-    int j = 0;
     for (auto &el : threads) {
         el.join();
 #ifdef MULTITHREAD_DEBUG

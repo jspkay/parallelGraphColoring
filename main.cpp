@@ -2,6 +2,7 @@
 #include "Graph/Graph.h"
 #include <ctime>
 #include "PrintMenu.h"
+#include "Graph/readInput/ReadInput.h"
 
 
 int main(int argc, char* argv[]) {
@@ -80,28 +81,34 @@ int main(int argc, char* argv[]) {
     }
 
     float totalTime = 0;
+    int V, E;
+    std::vector<std::pair<node, node>> edges;
+    fin_name = files[fin].string();
+    cout << "File: " << fin_name << '\n';
+    ReadInput read(fin_name);
+    V = read.getV();
+    E = read.getE();
+    edges = read.getEdges();
     for(int i=0; i<n_trials; i++) {
         const clock_t begin_alg_time = clock();
-        fin_name = files[fin].string();
-        cout << "File: " << fin_name << '\n';
         cout << int_rep;
         switch (int_rep) {
             case csr: {
-                asa::GraphCSR myGraph(fin_name);
+                asa::GraphCSR myGraph(edges, V, E);
                 cout << "Internal representation: CSR\n";
                 myGraph.setConcurentThreadsActive(threads);
                 startGraphAlgII<asa::GraphCSR>(myGraph);
                 break;
             }
             case adjl: {
-                asa::GraphAdjL myGraph(fin_name);
+                asa::GraphAdjL myGraph(edges, V, E);
                 cout << "Internal representation: adjL\n";
                 myGraph.setConcurentThreadsActive(threads);
                 startGraphAlgII<asa::GraphAdjL>(myGraph);
                 break;
             }
             case adjm: {
-                asa::GraphAdjM myGraph(fin_name);
+                asa::GraphAdjM myGraph(edges, V, E);
                 cout << "Internal representation: adjM\n";
                 myGraph.setConcurentThreadsActive(threads);
                 startGraphAlgII<asa::GraphAdjM>(myGraph);

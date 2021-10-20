@@ -26,8 +26,9 @@ int GraphAdjL::getDegree(node v) {
     return boost::out_degree(v, graph);
 }
 
-GraphAdjL::GraphAdjL(string fin_name){
-    readInput(fin_name);
+GraphAdjL::GraphAdjL(vector<std::pair<node, node>>& edges, int V, int E){
+    this->V = V;
+    this->E = E;
     graph = graphAdjL(std::begin(edges), edges.end(), V);
     BGL_FORALL_VERTICES(current_vertex, graph, graphAdjL) {
             graph[current_vertex].color = -1;

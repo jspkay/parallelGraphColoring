@@ -10,11 +10,20 @@
   </component>
   <component name="CMakeSettings" AUTO_RELOAD="true">
     <configurations>
-      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d54090b9-9dc9-4cb8-8c60-87e61631eefa" name="Changes" comment="- Added generic files&#10;- Added benchmarks" />
+    <list default="true" id="d54090b9-9dc9-4cb8-8c60-87e61631eefa" name="Changes" comment="- Added generic files&#10;- Added benchmarks">
+      <change afterPath="$PROJECT_DIR$/Graph/readInput/ReadInput.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Graph/readInput/ReadInput.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Graph/Graph.h" beforeDir="false" afterPath="$PROJECT_DIR$/Graph/Graph.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Graph/GraphAdjL.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Graph/GraphAdjL.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Graph/GraphAdjM.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Graph/GraphAdjM.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Graph/GraphCSR.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Graph/GraphCSR.cpp" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,7 +32,6 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -58,17 +66,12 @@
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="GraphColoring" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../Graph/benchmark 2 0 1 4" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GraphColoring" TARGET_NAME="GraphColoring" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="GraphColoring" RUN_TARGET_NAME="GraphColoring">
+    <configuration name="GraphColoring" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../Graph/benchmark 2 0 1 4" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GraphColoring" TARGET_NAME="GraphColoring" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="GraphColoring" RUN_TARGET_NAME="GraphColoring">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -108,6 +111,8 @@
       <workItem from="1634414828460" duration="5635000" />
       <workItem from="1634420719636" duration="1716000" />
       <workItem from="1634478740838" duration="10838000" />
+      <workItem from="1634763616125" duration="57000" />
+      <workItem from="1634764463739" duration="41000" />
     </task>
     <task id="LOCAL-00001" summary="Modified algo">
       <created>1634064725072</created>
@@ -267,18 +272,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Graph/Algorithms.cpp</url>
-          <line>79</line>
+          <line>80</line>
           <option name="timeStamp" value="28" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Graph/Algorithms.cpp</url>
-          <line>78</line>
+          <line>79</line>
           <option name="timeStamp" value="29" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Graph/Graph.h</url>
-          <line>145</line>
-          <option name="timeStamp" value="31" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/main.cpp</url>
