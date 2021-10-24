@@ -114,15 +114,6 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
 
 #ifdef MULTITHREAD_DEBUG
         cout << "[ " << roundMain << "]MAIN THREAD i " << range << " = V(" << v_length << ") / t(" << concurrentThreadsActive << ")" << endl;
-        cout << "[ " << roundMain << "]Main thread waiting for the threads" << endl;
-#endif
-
-#ifdef MULTITHREAD_DEBUG
-        //cout << "MAIN THREAD ii " << range << " = V(" << tcs_length << ") / t(" << concurrentThreadsActive << ")" << endl;
-        cout << "Main thread updating verteces" << endl;
-#endif
-
-#ifdef MULTITHREAD_DEBUG
         cout << "Main thread waiting for others! " << endl;
 #endif
 
@@ -146,6 +137,7 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
 
 #ifdef MULTITHREAD_DEBUG
     cout << "Finished!" << endl;
+    int j=0;
 #endif
     for (auto &el : threads) {
         el.join();
@@ -333,7 +325,6 @@ void asa::Graph<T>::jp_structure_old(function<bool(int, node)> isMinor) {
 #endif
     }
 }
-
 
 template<typename T>
 void asa::Graph<T>::jonesPlassmann() {
