@@ -16,7 +16,7 @@ namespace po = boost::program_options;
 // Global variables
 vector<fs::path> files;
 bool continue_loop = true;
-int n_trials, int_rep = -1, alg = -1, fin = -1,
+int n_trials=1, int_rep = 0, alg = 0, fin = 0,
         threads = std::thread::hardware_concurrency() - LEAVE_FREE;
 std::string fin_name;
 

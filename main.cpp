@@ -5,23 +5,22 @@
 #include "Graph/readInput/ReadInput.h"
 
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     string pathName;
     credits();
     po::variables_map ao; // active options
-
     po::options_description cmd_options("If the program is executed without "
                                         "an input file, an interactive "
                                         "version will run.\n"
                                         "It is also possibile to run the program "
                                         "without explicit indication, using the "
                                         "following order: input, internal_representation, algorithm, threads[, trials].\n"
-                                        "e.g. GraphColoring 0 1 2 2; GraphColoring 1 1 1 2 5\n"
+                                        "e.g. GraphColoring INPUT_PATH 0 1 2 2, GraphColoring INPUT_PATH 1 1 1 2 5\n"
                                         "Available options");
     cmd_options.add_options()
             ("help,h", "outputs this info message")
-            ("input,i", po::value<int>(&fin), "graph to read")
-            ("path,p", po::value<string>(&pathName)->required(), "path for the benchmark")
+            ("input,i", po::value<int>(&fin)->default_value(0), "graph to read")
+            ("path,p", po::value<string>(&pathName)->default_value("../Graph/benchmark"), "path for the benchmark")
             ("list-files,l", "list files of the path with numbers")
             ("internal-representation,r", po::value<int>(&int_rep)->default_value(0), "internal representation")
             ("algorithm,a", po::value<int>(&alg)->default_value(0), "algorithm to use")
@@ -36,23 +35,28 @@ int main(int argc, char* argv[]) {
     positionals.add("threads", 1);
     positionals.add("trials", 1);
 
-    try{
+    try {
         po::store(po::command_line_parser(argc, argv).options(cmd_options).positional(positionals).run(), ao);
         po::notify(ao);
     }
-    catch(po::error &e){
-        if(ao.count("help")){
+    catch (po::error &e) {
+        if (ao.count("help")) {
             cout << cmd_options;
             exit(0);
         }
         cout << e.what() << endl;
         exit(-2);
     }
-
     readPath(pathName);
-    if(ao.count("help")){
+    if (ao.count("help")) {
         cout << cmd_options;
-        exit(0);
+        cout << "\nDo you want to start the program in the interactive mode? Press [yes] or [no]\n";
+        string in;
+        cin >> in;
+        if(in.compare("y") || in.compare("yes"))
+            bootstrap();
+        else
+            return 0;
     }
     if (ao.count("list-files")) {
         cout << "File list:\n";
@@ -79,19 +83,19 @@ int main(int argc, char* argv[]) {
         cout << "Can't run 0 trials. Running just one.";
         n_trials = 1;
     }
-
     float totalTime = 0;
     int V, E;
     std::vector<std::pair<node, node>> edges;
     fin_name = files[fin].string();
     cout << "File: " << fin_name << '\n';
+    if(alg>0)
+        cout << "Num threads: " << threads << '\n';
     ReadInput read(fin_name);
     V = read.getV();
     E = read.getE();
     edges = read.getEdges();
-    for(int i=0; i<n_trials; i++) {
+    for (int i = 0; i < n_trials; i++) {
         const clock_t begin_alg_time = clock();
-        cout << int_rep;
         switch (int_rep) {
             case csr: {
                 asa::GraphCSR myGraph(edges, V, E);
@@ -122,13 +126,13 @@ int main(int argc, char* argv[]) {
         std::cout << "Time trial " << i << ": " << t << " sec" << std::endl;
         totalTime += t;
     }
-    std::cout << "Average time: " << totalTime/static_cast<float>(n_trials) << std::endl;
+    std::cout << "Average time: " << totalTime / static_cast<float>(n_trials) << std::endl;
     EXIT_SUCCESS;
 }
 
-template <typename T>
-inline void startGraphAlgII(T& myGraph){
-    switch(alg){
+template<typename T>
+inline void startGraphAlgII(T &myGraph) {
+    switch (alg) {
         case sequential: {
             cout << "Algo: sequential\n";
             myGraph.sequential();
@@ -153,13 +157,13 @@ inline void startGraphAlgII(T& myGraph){
             myGraph.clearGraph();
             break;
         }
-        case l_mod_anto:{
+        case l_mod_anto: {
             cout << "Algo: largest degree first modified_anto\n";
             myGraph.largestDegree();
             myGraph.clearGraph();
             break;
         }
-        case l_mod_salvo:{
+        case l_mod_salvo: {
             cout << "Algo: largest degree first modified_salvo\n";
             myGraph.ldf_mod();
             myGraph.clearGraph();
@@ -171,41 +175,45 @@ inline void startGraphAlgII(T& myGraph){
             myGraph.clearGraph();
             break;
         }
-        default: break;
+        default:
+            break;
     }
 }
 
-void listFiles(){
+void listFiles() {
     int i = 0;
-    for (auto& el: files) cout << i++ << " - " << el.filename().string() << '\n';
+    for (auto &el: files) cout << i++ << " - " << el.filename().string() << '\n';
     cout.flush();
 }
-void readPath(string path){
+
+void readPath(string path) {
     try {
         fs::path p(path);
 
-        if(!fs::exists(p)){
+        if (!fs::exists(p)) {
             cout << "Not valid path!\n";
             exit(-3);
         }
 
-        for (auto& el: fs::directory_iterator(p)) {
+        for (auto &el: fs::directory_iterator(p)) {
             //cout << el << endl;
-            if(is_regular_file(el)) files.emplace_back(el);
+            if (is_regular_file(el)) files.emplace_back(el);
         }
         std::sort(files.begin(), files.end());
     }
-    catch(fs::filesystem_error &ex){
+    catch (fs::filesystem_error &ex) {
         cout << ex.what();
         throw ex; // il programma si pianta
     }
 }
-void credits(){
+
+void credits() {
     //std::cout << << std::endl;
     time_t current_time;
     time(&current_time);
     std::cout << "**************************************CREDITS*********************************************\n";
-    std::cout << "Graph Coloring Project release 1.3.1, compiled " << __DATE__ << ' ' << __TIME__ << '\n';//<<  asctime(localtime(&current_time));
+    std::cout << "Graph Coloring Project release 1.3.1, compiled " << __DATE__ << ' ' << __TIME__
+              << '\n';//<<  asctime(localtime(&current_time));
     std::cout << "Fellows of PDS, Politenico di Torino 2020/2021\n";
     std::cout << "Professors:\n";
     std::cout << " * Alessandro Savino\n";
@@ -216,36 +224,37 @@ void credits(){
     std::cout << " * Antonio Vespa\n";
     std::cout << "******************************************************************************************\n";
 }
-void start(){
+
+void start() {
     std::string str;
     std::cout << "\nInitialization Graph Coloring Project...\n";
     std::cout << "It's possibile to run the program with arguments. Try running the program "
                  "with the -h option.\n";
     int i;
-    while(continue_loop){
+    while (continue_loop) {
         std::cout << "\nGraph Coloring Project [? for menu] [start to start]: ";
         std::cin >> str;
-        for(i=0; i<CMDTABLE_ROWS; i++) {
-            if(cmdTable[i].name.compare(str)==0) {
+        for (i = 0; i < CMDTABLE_ROWS; i++) {
+            if (cmdTable[i].name.compare(str) == 0) {
                 cmdTable[i].func();
                 break;
             }
         }
-        if(i >= CMDTABLE_ROWS)
+        if (i >= CMDTABLE_ROWS)
             cout << "Argument not valid\n";
     }
 }
-void bootstrap(){
+
+void bootstrap() {
     start();
     return;
 }
-void printMenu(){
+
+void printMenu() {
     std::cout << "\nGraph Coloring Project menu: \n"
                  "[fin] Select input file\n"
                  "[ir] Select internal graph representation\n"
                  "[a] Select coloring algorithm\n"
-                 "[cc] Compute colors (not implemented yet!)\n"
-                 "[ps] Print stats (not implemented yet!)\n"
                  "[ct] Select the number of concurrent threads \n"
                  "[nt] Select the number of trials to be executed\n"
                  "[start] Start the algorithm and color the graph\n"

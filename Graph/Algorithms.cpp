@@ -14,7 +14,6 @@ void asa::Graph<T>::sequential() {
         static_cast<T &>(*this).graph[current_vertex].color = color; //coloro il vertice corrente
         color = -1;
     });
-    printOutput("sequential-output.txt");
 };
 
 /// START JP, LDF Section
@@ -357,25 +356,22 @@ void asa::Graph<T>::ldf() {
 
 template<typename T>
 void asa::Graph<T>::ldf_mod() {
-    int done = 0, range;
-    bool firstStepDone = false, secondStepDone = false;
-
-    int v_length = V; // No need for any vector
-    unique_ptr<int[]> toColor_set(new int[V]);
-    int tcs_length = 0;
-
+    int range = V / concurrentThreadsActive;
+    ///funzione thread
     std::function<void(int)> threadFn = [&](int id) {
         unique_lock<shared_timed_mutex> ulk(mutex, std::defer_lock);
-
-        int v = rand() % V;
-        int c;
-        bool major = true;
-        while (v_length > 0) {
-            c = static_cast<T &>(*this).graph[v].color;
-            if (c == -1) { // se non è colorato
+        shared_lock<shared_timed_mutex> slk(mutex, std::defer_lock);
+        int color_v;
+        bool major = true, finished = false, remaining = false;
+        int min = id * range, max = (id + 1) * range; // decido quali sono i vertici assegnati al thread (bilanciamento)
+        if (id == concurrentThreadsActive - 1) max = V; //l'ultimo thread prende anche l'eccesso
+        for (int v = min; v < max && !finished; v++) {
+            color_v = static_cast<T &>(*this).graph[v].color;
+            if (color_v == -1){ // se non è colorato
                 node neighbor;
                 major = true;
                 int d = getDegree(v);
+                //slk.lock(); non serve aspettare i vicini, al prossimo giro se devono essere selezionati, lo saranno
                 forEachNeighbor(v, &neighbor, [d, v, &neighbor, &major, this]() {
                     if (static_cast<T &>(*this).graph[neighbor].color != -1) return;
                     if (d < getDegree(neighbor))
@@ -385,26 +381,25 @@ void asa::Graph<T>::ldf_mod() {
                             )
                         major = false;
                 });
-                if (major) {
-                    ulk.lock();
-                    if (static_cast<T &>(*this).graph[v].color == -1) {
-                        int color = searchColor(v);
-                        static_cast<T &>(*this).graph[v].color = color;
-                        v_length--;
-                    }
-                    ulk.unlock();
-                }
+                //slk.unlock();
+                if (major){
+                    //ulk.lock(); coloro direttamente, non mi preoccupo dei vicini
+                    static_cast<T &>(*this).graph[v].color = searchColor(v);
+                    //ulk.unlock();
+                } else
+                    remaining = true;
             }
-            v++;
-            v %= V;
+            if (v == max - 1) {
+                v = min - 1;
+                !remaining? finished = true : remaining = false;
+            }
         }
-        return;
     };
-
+    ///avvio threads
     for (int i = 0; i < concurrentThreadsActive; i++) {
         threads.emplace_back(threadFn, i);
     }
-
+    ///fine
     for (auto &el : threads) {
         el.join();
 #ifdef MULTITHREAD_DEBUG
