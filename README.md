@@ -65,7 +65,7 @@ For the other settings, please refer to the next sections.
 
 *(\*) For the default values of existing options, see interactive mode.*
 
-###Command line setup
+### Command line setup
 Command line parameters are handled as "positional arguments", therefore it is necessary to write them down in a fixed order:
 ``` input, internal_representation, algorithm, threads[, trials] ```.<br>
 It should be noted that in principle the corresponding options should not be written explicitly as they are "positional", but still possible:
@@ -81,4 +81,4 @@ GraphColoring -l;                       #to list input files in the predefined i
 GraphColoring ../input-directory -l;    #to list input files in the chosen input directory
 ```
 
-#Benchmark
+# Benchmark
