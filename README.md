@@ -1,14 +1,52 @@
 # ParallelGraphColoring
 ###### An implementation in C++
-This educational project aims to compare the performances of different multithreaded graph coloring algorithms, having as a reference point a sequential greedy algorithm, which, although trivial, can have its benefits on small graphs.
-## How to build
-CMakeLists.txt file, in the root directory, contains a set of directives and instructions describing the project's source files and targets (executable, library, or both). For the sources of this project, refer to that file.
-Directly linked to the latter, there is the cmake_install.cmake file in the /cmake-build-debug folder, where you can type the command "cmake" to build the program executable with all the necessary components.
 
-## Usage
+---
+
+This educational project aims to compare the performances of different multithreaded graph coloring algorithms, having as a reference point a sequential greedy algorithm, which, although trivial, can have its benefits on small graphs.
+
+## Contents
+1. [How to build](#building)
+   1. [Linux](#linux_build)
+   2. [Windows](#windows_build)
+2. [Usage](#usage)
+   1. [Interactive Mode](#interactive_mode)
+   2. [Stand-alone Mode](#standalone_mode)
+   3. [List-files option](#list_files_option)
+   4. [Command line parameters](#cmd_setup)
+3. [Benchmark and results]()
+
+---
+
+## Build instructions <a name="building"></a>
+The project is developed using cmake. Platform specific instructions are available.
+### Linux <a name="linux_build"></a>
+It is necessary to install the following software:
+- cmake (>=3.17),
+- make,
+- boost program-options library,
+- boost filesystem library.
+
+On ubuntu it's possibile to execute the following command:
+```
+# apt install cmake libboost-program-options-dev libboost-filesystem-dev
+```
+
+Then, in the directory of the project:
+```
+$ cmake . && make
+```
+The binary will be copied in the root directory as well, ready to execute.
+
+### Windows
+Instructions.
+
+---
+
+## Usage <a name="usage"></a>
 The program can be run both in interactive mode and in "stand-alone" mode, ie by entering the necessary parameters from the command line. 
 
-## Interactive mode
+### Interactive mode <a name="interactive_mode"></a>
 To start the program in interactive mode, i.e. without selecting the desired options from the command line, but through a stdin and stdout, you must select the help option and then press yes.
 The program will prompt a simple interactive interface to choose the input graph, the algorithm and so on.
 Note that in this case, the input folder where you can select the input file will be "./Graph/benchmark", **fixed**.
@@ -32,11 +70,11 @@ Note that in this case, the input folder where you can select the input file wil
 ``` float(end_alg_time - begin_alg_time) / CLOCKS_PER_SEC;  ``` <br>
 *(\*\*\*) You should choose this option only at the end, when you have already selected the necessary parameters.*<br>
 
-## Stand-alone mode
+### Stand-alone mode <a name="standalone_mode"></a>
 It is also possible to run the program through command line options. To consult the program details directly from the terminal, you can print an infos window using the -h command (or --help).
 The available options are the same as explained above, to which the command -l (--list-files) must be added.
 
-### List-files option
+### List-files option <a name="list_files_option"></a>
 Directory organization:
 ```
 .
@@ -65,20 +103,24 @@ For the other settings, please refer to the next sections.
 
 *(\*) For the default values of existing options, see interactive mode.*
 
-### Command line setup
+### Command line arguments <a name="cmd_setup"></a>
 Command line parameters are handled as "positional arguments", therefore it is necessary to write them down in a fixed order:
-``` input, internal_representation, algorithm, threads[, trials] ```.<br>
+`input, internal_representation, algorithm, threads`
+
+> NOTE: Even though "positional arguments" may be used, also the standard GNU style are anyway allowed
+
 It should be noted that in principle the corresponding options should not be written explicitly as they are "positional", but still possible:
 ``` -a 3 instead of 3 ```, and it may be useful to use them in this explicit way if we want to start the program with only some of the default parameters changed.
 
 As examples of usage:
 ```bash
-GraphColoring 0 1 2 2;                  #path predefined, number of trials remains 1 by default
-GraphColoring 1 1 1 2 5;                #path predefined
-GraphColoring -i 2 -t 5;                #path predefined, internal representation, algorithm, trials by default
-GraphColoring ../input-dir -i 2 -t 5;   #internal representation, algorithm, trials by default
+GraphColoring 0 1 2 2;                  #predefined path
+GraphColoring -i 2 -t 5;                #predefined path, internal representation, algorithm
+GraphColoring -p ../input-dir -i 2 -t 5;   #internal representation, algorithm
 GraphColoring -l;                       #to list input files in the predefined input directory
-GraphColoring ../input-directory -l;    #to list input files in the chosen input directory
+GraphColoring -p ../input-directory -l;    #to list input files in the chosen input directory
 ```
 
-# Benchmark
+---
+
+# Benchmark <a name="benchmark"></a>

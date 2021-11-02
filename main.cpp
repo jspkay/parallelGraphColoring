@@ -20,20 +20,20 @@ int main(int argc, char *argv[]) {
     cmd_options.add_options()
             ("help,h", "outputs this info message")
             ("input,i", po::value<int>(&fin)->default_value(0), "graph to read")
-            ("path,p", po::value<string>(&pathName)->default_value("../Graph/benchmark"), "path for the benchmark")
+            ("path,p", po::value<string>(&pathName)->default_value("Graph/benchmark"), "path for the benchmark")
             ("list-files,l", "list files of the path with numbers")
             ("internal-representation,r", po::value<int>(&int_rep)->default_value(0), "internal representation")
             ("algorithm,a", po::value<int>(&alg)->default_value(0), "algorithm to use")
-            ("threads,t", po::value<int>(&threads)->default_value(2), "number of threads")
-            ("trials,n", po::value<int>(&n_trials)->default_value(1), "number of trials to run");
+            ("threads,t", po::value<int>(&threads)->default_value(2), "number of threads");
+            //("trials,n", po::value<int>(&n_trials)->default_value(1), "number of trials to run");
 
     po::positional_options_description positionals;
-    positionals.add("path", 1);
+    //positionals.add("path", 1);
     positionals.add("input", 1);
     positionals.add("internal-representation", 1);
     positionals.add("algorithm", 1);
     positionals.add("threads", 1);
-    positionals.add("trials", 1);
+    //positionals.add("trials", 1);
 
     try {
         po::store(po::command_line_parser(argc, argv).options(cmd_options).positional(positionals).run(), ao);

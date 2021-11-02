@@ -34,3 +34,5 @@
 *.out
 *.app
 .vscode/settings.json
+
+./GraphColoring
