@@ -6,7 +6,7 @@
 This educational project aims to compare the performances of different multithreaded graph coloring algorithms, having as a reference point a sequential greedy algorithm, which, although trivial, can have its benefits on small graphs.
 
 ## Contents
-1. [How to build](#building)
+1. [Build instructions](#building)
    1. [Linux](#linux_build)
    2. [Windows](#windows_build)
 2. [Usage](#usage)
