@@ -25,3 +25,7 @@ add_executable(GraphColoring main.cpp
         PrintMenu.h Graph/readInput/ReadInput.cpp Graph/readInput/ReadInput.h)
 
 target_link_libraries(GraphColoring boost_program_options boost_filesystem pthread)
+
+add_custom_command(TARGET GraphColoring
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy GraphColoring ../)
