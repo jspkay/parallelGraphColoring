@@ -168,10 +168,10 @@ namespace asa {
         void sequential();
         void jonesPlassmann();
         void jonesPlassmann_old();
-        void ldf();
-        void ldf_mod();
+        void largestDegree_v3();
+        void largestDegree_v2();
         void smallest_mod();
-        void largestDegree();
+        void largestDegree_v1();
         void smallestDegree();
         /*** da specializzare in ogni rappresentazione interna ***/
         void forEachVertex(node* current_vertex, std::function<void()> f){
