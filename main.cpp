@@ -7,6 +7,7 @@
 int ntrial_running_now = 0;
 
 int main(int argc, char *argv[]) {
+    std::cout << "ciao";
     string pathName;
     credits();
     po::variables_map ao; // active options
