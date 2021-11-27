@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
                 asa::GraphAdjM myGraph(edges, V, E);
                 if (ntrial_running_now == 0) cout << "Internal representation: adjM\n";
                 myGraph.setConcurentThreadsActive(threads);
-                startGraphAlgII<asa::GraphAdjM>(myGraph);
+                //startGraphAlgII<asa::GraphAdjM>(myGraph);
                 break;
             }
             default:

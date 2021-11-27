@@ -4,9 +4,9 @@ algs=(
   "sequential", #0
   "jones plassman", #1
   "largest degree v3 (jp structure)", #2
+  "smallest degree" #3,
   "largest degree v2 (without STL)", #4
   "largest degree v1 (STL implementation, old)", #5
-  "smallest degree" #3
 )
 
 function print_res() {
@@ -40,17 +40,19 @@ nthread=$1
 nfileinput=$(./GraphColoring -p ./Graph/benchmark/ -l | grep ^[0-9] | wc -l | bc -l)
 #echo $nfileinput
 
-#sequential loop
-for ((i = 0; i < nfileinput; i++)); do
-  print_res "0" "$i" "$(./runlim.sh "./GraphColoring -a 0 -i $i" $ntrials | tail -n 2)"
+#sequential loop csr
+for ((i = 0; i < 0  ; i++)); do
+ print_res "0" "$i" "$(./runlim.sh "./GraphColoring -a 0 -i $i" $ntrials | tail -n 2)"
 done
 
-#multithreading loops
-for ((j = 1; j <= 5; j++)); do
-  for ((i = 0; i < nfileinput; i++)); do
-    for ((k = 2; k <= nthread; k++)); do #multithreading
-      echo "$k threads working..."
-      print_res "$j" "$i" "$(./runlim.sh "./GraphColoring -i $i -a $j -n $k" $ntrials | tail -n 2)"
+#multithreading loops csr
+for ((a = 1; a <= 5; a++)); do
+  for ((i = 6; i < nfileinput; i++)); do
+    for ((t = 2; t <= nthread; t++)); do #multithreading
+      echo "$t threads working..."
+      print_res "$a" "$i" "$(./runlim.sh "./GraphColoring -i $i -a $a -t $t" $ntrials | tail -n 2)"
     done
   done
 done
+
+exit 0
