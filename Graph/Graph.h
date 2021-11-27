@@ -135,7 +135,7 @@ namespace asa {
             node current_vertex;
             if(startingNode == 0){
                 forEachVertex(&current_vertex,[this,&current_vertex,&fout](){
-                    fout << "u:" << current_vertex << ", color: " <<
+                   fout << "u:" << current_vertex << ", color: " <<
                     static_cast<int>(static_cast<T&>(*this).graph[current_vertex].color) << ", rand:" << static_cast<T&>(*this).graph[current_vertex].random << ", degree:" <<
                     boost::out_degree(current_vertex, static_cast<T&>(*this).graph) << ", weight: " << static_cast<T&>(*this).graph[current_vertex].weight << ", neigh -> ";
                     node neighbor;
