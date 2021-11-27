@@ -41,13 +41,13 @@ nfileinput=$(./GraphColoring -p ./Graph/benchmark/ -l | grep ^[0-9] | wc -l | bc
 #echo $nfileinput
 
 #sequential loop csr
-for ((i = 0; i < 0  ; i++)); do
- print_res "0" "$i" "$(./runlim.sh "./GraphColoring -a 0 -i $i" $ntrials | tail -n 2)"
+for ((i = 0; i < nfileinput  ; i++)); do
+ print_res "0" "$i" "$(./runlim.sh "./GraphColoring -a 0 -i $i -r 2" $ntrials | tail -n 2)"
 done
 
 #multithreading loops csr
 for ((a = 1; a <= 5; a++)); do
-  for ((i = 6; i < nfileinput; i++)); do
+  for ((i = 0; i < nfileinput; i++)); do
     for ((t = 2; t <= nthread; t++)); do #multithreading
       echo "$t threads working..."
       print_res "$a" "$i" "$(./runlim.sh "./GraphColoring -i $i -a $a -t $t" $ntrials | tail -n 2)"
