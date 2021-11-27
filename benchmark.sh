@@ -42,7 +42,7 @@ nfileinput=$(./GraphColoring -p ./Graph/benchmark/ -l | grep ^[0-9] | wc -l | bc
 
 #sequential loop csr
 for ((i = 0; i < nfileinput  ; i++)); do
- print_res "0" "$i" "$(./runlim.sh "./GraphColoring -a 0 -i $i -r 2" $ntrials | tail -n 2)"
+ print_res "0" "$i" "$(./runlim.sh "./GraphColoring -a 0 -i $i" $ntrials | tail -n 2)"
 done
 
 #multithreading loops csr
