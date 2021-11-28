@@ -160,6 +160,8 @@ $ GraphColoring The/Powerpuff/Girls -i 1
 In this way the program will run with the default(*) settings.
 For the other settings, please refer to the next sections.
 
+> In this repository there are some benchmark files in `Graph/benchmarks`
+
 *(\*) For the default values of existing options, see interactive mode.*
 
 ### Command line arguments <a name="cmd_setup"></a>
