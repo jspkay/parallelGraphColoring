@@ -9,12 +9,17 @@ This educational project aims to compare the performances of different multithre
 1. [Build instructions](#building)
    1. [Linux](#linux_build)
    2. [Windows](#windows_build)
-2. [Usage](#usage)
+2. [Files and classes](#files_and_classes)
+   1. [main.cpp](#main_cpp)
+   2. [Graph.h](#graph_h)
+   3. [Algorithms.cpp](#algorithms_cpp)
+   4. [ReadInput](#readinput) ANDREAAAA
+3. [Usage](#usage)
    1. [Interactive Mode](#interactive_mode)
-   2. [Stand-alone Mode](#standalone_mode)
+   2. [Command-line Mode](#cmd_mode)
    3. [List-files option](#list_files_option)
    4. [Command line parameters](#cmd_setup)
-3. [Benchmark and results]()
+4. [Benchmark and results]()
 
 ---
 
@@ -39,7 +44,61 @@ $ cmake . && make
 The binary will be copied in the root directory as well, ready to execute.
 
 ### Windows
-Instructions.
+The program has not been tested on Windows, but the compilation process is similar to what's done on Linux.
+
+First, downlaod the boost library binaries from the 
+[official server](https://sourceforge.net/projects/boost/files/boost-binaries/) and install them. 
+Thanks to cmake, the binaries will automatically be located and the compilation is performed exactly as in linux:
+```cmd
+cmake .
+make
+```
+---
+
+## Files and classes <a name="files_and_classes"></a>
+The following files-structure represents the core files of the project.
+
+```bash
+.
+|-- benchmark.sh
+|-- CMakeLists.txt
+|-- Graph
+|   |-- Algorithms.cpp
+|   |-- GraphAdjL.cpp
+|   |-- GraphAdjM.cpp
+|   |-- GraphCSR.cpp
+|   |-- Graph.h
+|   `-- readInput
+|       |-- ReadInput.cpp
+|       `-- ReadInput.h
+|-- main.cpp
+|-- PrintMenu.h
+|-- README.md
+|-- runlim.sh
+```
+
+The core files are explained in the following sections.
+
+### main.cpp <a name="main_cpp"></a>
+The `main.cpp` file hold the interface for the software. Here the command line is parsed and the graph is constructed. In this section of the program, the main parameter of the colorization are chosen based on the user input. Finally, the algorithm is called n_trials times. 
+
+### Graph/Graph.h <a name="graph_h"></a>
+This file is where the magic happens. It contains the definition of a namespace ("asa" stands for Andrea, Salvo, Antonio, the authors) which was originally created to remove ambiguity between names. In later versions the ambiguity disappeared but the namespace stayed. 
+
+Inside the namespace the `Graph class` is defined. This class is the one which holds the actual graph in any representation. Originally the idea was to use an abstract class, but we decided then to use this solution due to better efficiency. 
+> Sidenote: the original version is still available in the branch "generalized_version"
+
+The actual parallel algorithms are implemented inside the `Graph class`. This way, the derived classes inherit the methods which have to be written just once, regardless of the internal representation of the graph. With this purpose in mind, some functions have to be specialized. Clearly, those functions are strictly related to different methods used for each representation and they are: `forEachNeighbor`, `forEachVertex` and `getDegree`. 
+
+The specializations of the class are declared at the end of the same file. The implementations are to be found in the related `.cpp` files, which will not be explained in details, since they are self-explanatory.
+
+### Algorithms.cpp <a name="algorithms_cpp"></a>
+This file contains the actual implementations of each algorithm. Each algorithm has its own template function. 
+
+One important aspect to underline is the presence of lines such as `template class asa::Graph<asa::GraphCSR>` in the end of the file. These are needed to the compiler so that it knows which version of the template should be compiled, since the template functions reside in a `.cpp` file.
+
+### ReadInput <a name="readinput"></a>
+ANDREA PER FAVORE SCRIVI
 
 ---
 
@@ -70,7 +129,7 @@ Note that in this case, the input folder where you can select the input file wil
 ``` float(end_alg_time - begin_alg_time) / CLOCKS_PER_SEC;  ``` <br>
 *(\*\*\*) You should choose this option only at the end, when you have already selected the necessary parameters.*<br>
 
-### Stand-alone mode <a name="standalone_mode"></a>
+### Command-line mode <a name="cmd_mode"></a>
 It is also possible to run the program through command line options. To consult the program details directly from the terminal, you can print an infos window using the -h command (or --help).
 The available options are the same as explained above, to which the command -l (--list-files) must be added.
 
