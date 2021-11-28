@@ -16,7 +16,6 @@ void asa::Graph<T>::sequential() {
     });
 };
 
-/// START JP, LDF Section
 template<typename T>
 void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
     int done = 0;
@@ -147,187 +146,7 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
 }
 
 template<typename T>
-void asa::Graph<T>::jp_structure_old(function<bool(int, node)> isMinor) {
-    int done = 0, range;
-    bool firstStepDone = false, secondStepDone = false;
-
-    int v_length = V; // No need for any vector
-    unique_ptr<int[]> toColor_set(new int[V]);
-    int tcs_length = 0;
-
-    std::function<void(int)> threadFn = [&](int id) {
-        while (done >= 0) {
-            unique_lock<shared_timed_mutex> ulk(mutex, std::defer_lock);
-            shared_lock<shared_timed_mutex> slk(mutex, std::defer_lock);
-
-            // decido quali sono i vertici assegnati al thread (bilanciamento)
-            int min = id * range, max = (id + 1) * range;
-            // l'ultimo thread prende anche l'eccesso
-            if (id == concurrentThreadsActive - 1) max = V;
-
-#ifdef MULTITHREAD_DEBUG
-            static int i=0;
-            i++;
-            cout << '[' << i << "][" << id << "]m\n";
-#endif
-            // Find the verteces to be colored
-            for (int i = min; i < max; i++) {
-                node neighbor;
-                bool major = true;
-                if (static_cast<T &>(*this).graph[i].color != -1) major = false;
-                else
-                    forEachNeighbor(i, &neighbor, [this, &neighbor, i, &major, &isMinor]() {
-                        // Non necessito lock: i thread agiscono su porzioni di
-                        // memoria disgiunte
-                        if (static_cast<T &>(*this).graph[neighbor].color == -1 &&
-                            isMinor(i, neighbor)
-                            //&&  (static_cast<T&>(*this).graph[i].random < static_cast<T&>(*this).graph[neighbor].random)
-                                )
-                            major = false;
-                    });
-                if (major) {
-                    ulk.lock();
-                    toColor_set[tcs_length++] = i;
-                    ulk.unlock();
-                }
-            }
-
-            /// SINCRONIZZAZIONE - aspetto il main thread
-            ulk.lock();
-            done++;
-            firstStepDone = false;
-            ulk.unlock();
-            cv.notify_all(); // main thread
-
-#ifdef MULTITHREAD_DEBUG
-            cout << '[' << i << "][" << id << "]w1\n";
-#endif
-            // The shared_lock is acquired before the notify in or
-            slk.lock();
-            cv.wait(slk, [&firstStepDone]() { return firstStepDone; });
-            slk.unlock();
-
-#ifdef MULTITHREAD_DEBUG
-            cout << '[' << i << "][" << id << "]a1\n";
-#endif
-
-            // inizio la colorazione
-            min = id * range;
-            max = (id + 1) * range;
-            if (id == concurrentThreadsActive - 1) max = tcs_length;
-
-#ifdef MULTITHREAD_DEBUG
-            cout << '[' << i << "]Thread " << id << "start coloring!" << endl;
-#endif
-
-            // coloro i vertici
-            for (int j = min; j < max; j++) {
-                int i = toColor_set[j];
-                int16_t color = searchColor(i);
-
-                ulk.lock();
-                static_cast<T &>(*this).graph[i].color = color;
-                ulk.unlock();
-            }
-#ifdef MULTITHREAD_DEBUG
-            cout << '[' << i << "][" << id << "]ac\n";
-#endif
-            /// SINCRONIZZAZIONE
-            ulk.lock();
-            done++;
-            secondStepDone = false;
-            ulk.unlock();
-            cv.notify_all();
-
-#ifdef MULTITHREAD_DEBUG
-            cout << '[' << i << "][ " << id << "]w2\n";
-#endif
-
-            slk.lock();
-#if MTD == 1
-            cout << id << "s\n";
-#endif
-            cv.wait(slk, [&secondStepDone]() { return secondStepDone; });
-            slk.unlock();
-        }
-        cv.notify_all(); // necessary for the other threads to finish
-#if MULTITHREAD_DEBUG || MTD == 1
-        cout << id << "r"<< secondStepDone<<'\n';
-#endif
-        return;
-    };
-
-    // attivo i threads
-    range = V / concurrentThreadsActive;
-    for (int i = 0; i < concurrentThreadsActive; i++) {
-        threads.emplace_back(threadFn, i);
-    }
-
-    unique_lock<shared_timed_mutex> ulk(mutex, std::defer_lock);
-    shared_lock<shared_timed_mutex> slk(mutex, std::defer_lock);
-
-    // main thread
-    while (v_length > 0) {
-
-#ifdef MULTITHREAD_DEBUG
-        static int i = 0;
-        cout << "[ " << ++i << "]MAIN THREAD i " << range << " = V(" << v_length << ") / t(" << concurrentThreadsActive << ")" << endl;
-        cout << "[ " << i << "]Main thread waiting for the threads" << endl;
-#endif
-
-        slk.lock();
-        cv.wait(slk, [&done, this]() { return done == concurrentThreadsActive; });
-        range = tcs_length / concurrentThreadsActive;
-        done = 0;
-        firstStepDone = true;
-        slk.unlock();
-        cv.notify_all(); // sblocco gli altri thread che iniziano la colorazione
-
-#ifdef MULTITHREAD_DEBUG
-        cout << "MAIN THREAD ii " << range << " = V(" << tcs_length << ") / t(" << concurrentThreadsActive << ")" << endl;
-        cout << "Main thread updating verteces" << endl;
-#endif
-
-        // tolgo i vertici di toColor_set da verteces
-        v_length -= tcs_length;
-
-        //cout << "Rimanenti: " << verteces.size() << endl;
-
-#ifdef MULTITHREAD_DEBUG
-        cout << "Main thread waiting for others! " << endl;
-#endif
-
-        //aspetto gli altri thread
-        slk.lock();
-        cv.wait(slk, [&done, this]() { return done == concurrentThreadsActive; });
-        tcs_length = 0;
-        secondStepDone = true;
-        range = V / concurrentThreadsActive;
-        if (v_length == 0) done = -1;
-        else done = 0;
-        slk.unlock();
-#ifdef MULTITHREAD_DEBUG
-        cout << "Rimanenti: " << v_length << endl;
-#endif
-        cv.notify_all();
-    }
-
-#ifdef MULTITHREAD_DEBUG
-    cout << "Finished!" << endl;
-#endif
-
-    for (auto &el : threads) {
-        el.join();
-#ifdef MULTITHREAD_DEBUG
-        static int i=0;
-        cout << i++ << " joined!" << endl;
-#endif
-    }
-}
-
-template<typename T>
 void asa::Graph<T>::jonesPlassmann() {
-    cout << "I am the new algorithm!" << endl;
     jp_structure([this](int i, node neighbor) {
         return static_cast<T &>(*this).graph[neighbor].color == -1 &&
                (static_cast<T &>(*this).graph[i].random < static_cast<T &>(*this).graph[neighbor].random);
@@ -335,16 +154,7 @@ void asa::Graph<T>::jonesPlassmann() {
 }
 
 template<typename T>
-void asa::Graph<T>::jonesPlassmann_old() {
-    cout << "I am the old algorithm!" << endl;
-    jp_structure_old([this](int i, node neighbor) {
-        return static_cast<T &>(*this).graph[neighbor].color == -1 &&
-               (static_cast<T &>(*this).graph[i].random < static_cast<T &>(*this).graph[neighbor].random);
-    });
-}
-
-template<typename T>
-void asa::Graph<T>::ldf() {
+void asa::Graph<T>::largestDegree_v3() {
     jp_structure([this](int i, node neighbor) {
         return getDegree(i) < getDegree(neighbor) ||
                (getDegree(i) == getDegree(neighbor) &&
@@ -352,10 +162,9 @@ void asa::Graph<T>::ldf() {
                );
     });
 }
-/// END JP, LDF Section
 
 template<typename T>
-void asa::Graph<T>::ldf_mod() {
+void asa::Graph<T>::largestDegree_v2() {
     int range = V / concurrentThreadsActive;
     ///funzione thread
     std::function<void(int)> threadFn = [&](int id) {
@@ -410,7 +219,7 @@ void asa::Graph<T>::ldf_mod() {
 }
 
 template<typename T>
-void asa::Graph<T>::largestDegree() {
+void asa::Graph<T>::largestDegree_v1() {
     fillTotalSet();
     /*** creazione thread ***/
     for (int n = 0; n < concurrentThreadsActive; n++) {
@@ -494,8 +303,6 @@ void asa::Graph<T>::largestDegree() {
         cout << i++ << " joined!" << endl;
 #endif
     }
-
-    printOutput("largestDegree-output.txt");
 };
 
 template<typename T>
@@ -583,7 +390,6 @@ void asa::Graph<T>::smallestDegree() {
         increase_numIteration = 0;
         numIteration++;
         cv.notify_all();
-        std::cout << "rimanenti: " << total_set.size() << std::endl;
     }
     /*** reset prima di colorare ***/
     total_set.clear();
@@ -659,7 +465,6 @@ void asa::Graph<T>::smallestDegree() {
     }
     std::unique_lock<std::shared_timed_mutex> ulk(mutex);
     cv.wait(ulk, [this]() { return isEnded; });
-
     for (auto &el : threads) {
         el.join();
 #ifdef MULTITHREAD_DEBUG
@@ -667,8 +472,6 @@ void asa::Graph<T>::smallestDegree() {
         cout << i++ << " joined!" << endl;
 #endif
     }
-
-    printOutput("smallestDegree-output.txt");
 }
 
 // Necessari perché i template non sono negli header

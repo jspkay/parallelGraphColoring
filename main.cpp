@@ -4,8 +4,10 @@
 #include "PrintMenu.h"
 #include "Graph/readInput/ReadInput.h"
 
+int ntrial_running_now = 0;
 
 int main(int argc, char *argv[]) {
+    std::cout << "ciao";
     string pathName;
     credits();
     po::variables_map ao; // active options
@@ -24,8 +26,8 @@ int main(int argc, char *argv[]) {
             ("list-files,l", "list files of the path with numbers")
             ("internal-representation,r", po::value<int>(&int_rep)->default_value(0), "internal representation")
             ("algorithm,a", po::value<int>(&alg)->default_value(0), "algorithm to use")
-            ("threads,t", po::value<int>(&threads)->default_value(2), "number of threads");
-            //("trials,n", po::value<int>(&n_trials)->default_value(1), "number of trials to run");
+            ("threads,t", po::value<int>(&threads)->default_value(2), "number of threads")
+            ("trials,n", po::value<int>(&n_trials)->default_value(1), "number of trials to run");
 
     po::positional_options_description positionals;
     //positionals.add("path", 1);
@@ -33,7 +35,7 @@ int main(int argc, char *argv[]) {
     positionals.add("internal-representation", 1);
     positionals.add("algorithm", 1);
     positionals.add("threads", 1);
-    //positionals.add("trials", 1);
+    positionals.add("trials", 1);
 
     try {
         po::store(po::command_line_parser(argc, argv).options(cmd_options).positional(positionals).run(), ao);
@@ -53,7 +55,7 @@ int main(int argc, char *argv[]) {
         cout << "\nDo you want to start the program in the interactive mode? Press [yes] or [no]\n";
         string in;
         cin >> in;
-        if(in.compare("y") || in.compare("yes"))
+        if (in.compare("y") == 0 || in.compare("yes") == 0)
             bootstrap();
         else
             return 0;
@@ -88,34 +90,34 @@ int main(int argc, char *argv[]) {
     std::vector<std::pair<node, node>> edges;
     fin_name = files[fin].string();
     cout << "File: " << fin_name << '\n';
-    if(alg>0)
+    if (alg > 0)
         cout << "Num threads: " << threads << '\n';
     ReadInput read(fin_name);
     V = read.getV();
     E = read.getE();
     edges = read.getEdges();
-    for (int i = 0; i < n_trials; i++) {
+    for (int i = 0; i < n_trials; i++, ntrial_running_now = i) {
         const clock_t begin_alg_time = clock();
         switch (int_rep) {
             case csr: {
                 asa::GraphCSR myGraph(edges, V, E);
-                cout << "Internal representation: CSR\n";
+                if (ntrial_running_now == 0) cout << "Internal representation: CSR\n";
                 myGraph.setConcurentThreadsActive(threads);
                 startGraphAlgII<asa::GraphCSR>(myGraph);
                 break;
             }
             case adjl: {
                 asa::GraphAdjL myGraph(edges, V, E);
-                cout << "Internal representation: adjL\n";
+                if (ntrial_running_now == 0) cout << "Internal representation: adjL\n";
                 myGraph.setConcurentThreadsActive(threads);
                 startGraphAlgII<asa::GraphAdjL>(myGraph);
                 break;
             }
             case adjm: {
                 asa::GraphAdjM myGraph(edges, V, E);
-                cout << "Internal representation: adjM\n";
+                if (ntrial_running_now == 0) cout << "Internal representation: adjM\n";
                 myGraph.setConcurentThreadsActive(threads);
-                startGraphAlgII<asa::GraphAdjM>(myGraph);
+                //startGraphAlgII<asa::GraphAdjM>(myGraph);
                 break;
             }
             default:
@@ -123,10 +125,10 @@ int main(int argc, char *argv[]) {
         }
         const clock_t end_alg_time = clock();
         float t = float(end_alg_time - begin_alg_time) / CLOCKS_PER_SEC;
-        std::cout << "Time trial " << i << ": " << t << " sec" << std::endl;
+        std::cout << "  Time trial " << i << ": " << t << " sec\n";
         totalTime += t;
     }
-    std::cout << "Average time: " << totalTime / static_cast<float>(n_trials) << std::endl;
+    std::cout << "Average time: " << totalTime / static_cast<float>(n_trials) << "!!!\n";
     EXIT_SUCCESS;
 }
 
@@ -134,43 +136,37 @@ template<typename T>
 inline void startGraphAlgII(T &myGraph) {
     switch (alg) {
         case sequential: {
-            cout << "Algo: sequential\n";
+            if (ntrial_running_now == 0) cout << "Algorithm: sequential\n";
             myGraph.sequential();
             myGraph.clearGraph();
             break;
         }
         case jones: {
-            cout << "Algo: JP_mod\n";
+            if (ntrial_running_now == 0) cout << "Algorithm: Jones Plassmann\n";
             myGraph.jonesPlassmann();
             myGraph.clearGraph();
             break;
         }
-        case jp_mod_old: {
-            cout << "Algo: JP_mod_OLD\n";
-            myGraph.jonesPlassmann_old();
+        case largest_v3: {
+            if (ntrial_running_now == 0) cout << "Algorithm: largest degree first v3 - jp structure\n";
+            myGraph.largestDegree_v3();
             myGraph.clearGraph();
             break;
         }
-        case largest: {
-            cout << "Algo: largest degree first\n";
-            myGraph.ldf();
+        case largest_v1: {
+            if (ntrial_running_now == 0) cout << "Algorithm: largest degree first v1 - STL implementation\n";
+            myGraph.largestDegree_v1();
             myGraph.clearGraph();
             break;
         }
-        case l_mod_anto: {
-            cout << "Algo: largest degree first modified_anto\n";
-            myGraph.largestDegree();
-            myGraph.clearGraph();
-            break;
-        }
-        case l_mod_salvo: {
-            cout << "Algo: largest degree first modified_salvo\n";
-            myGraph.ldf_mod();
+        case largest_v2: {
+            if (ntrial_running_now == 0) cout << "Algorithm: largest degree first v2 - without STL\n";
+            myGraph.largestDegree_v2();
             myGraph.clearGraph();
             break;
         }
         case smallest: {
-            cout << "Algo: smallest degree first\n";
+            if (ntrial_running_now == 0) cout << "Algorithm: smallest degree first\n";
             myGraph.smallestDegree();
             myGraph.clearGraph();
             break;

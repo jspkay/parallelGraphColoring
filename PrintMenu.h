@@ -20,11 +20,11 @@ int n_trials=1, int_rep = 0, alg = 0, fin = 0,
         threads = std::thread::hardware_concurrency() - LEAVE_FREE;
 std::string fin_name;
 
-enum algoritmi {sequential, jones, largest, smallest, l_mod_salvo, l_mod_anto, jp_mod_old, N_ALGO};
+enum algoritmi {sequential, jones, largest_v3, smallest, largest_v2, largest_v1, N_ALGO};
 string algo_names[] = {"Sequential", "Jones Plassmann",
-                       "Largest Degree First", "Smallest Degree First",
-                       "Largest Degree First Modified(salvo)",
-                       "Largest Degree First Modified(anto)", "jp_mod_old"};
+                       "Largest Degree First v3 - jp structure", "Smallest Degree First",
+                       "Largest Degree First v2 - without STL",
+                       "Largest Degree First v1 - STL implementation", "jp_mod_old"};
 
 enum int_rep {csr, adjl, adjm, N_REP};
 string rep_names[] = {"CSR", "Adjacency Matrix", "Adjacency List"};
@@ -84,7 +84,11 @@ static struct {
             }
             if( alg > N_ALGO )
                 cout << "Impossble choice.\n";
-        }}
+        }},
+        {"nt", [](){
+            std::cout << "\nChoose the number of trials: ";
+            std::cin >> n_trials;
+        }},
         /*** stats ***/
 };
 

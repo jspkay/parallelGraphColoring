@@ -21,7 +21,7 @@ This educational project aims to compare the performances of different multithre
 ## Build instructions <a name="building"></a>
 The project is developed using cmake. Platform specific instructions are available.
 ### Linux <a name="linux_build"></a>
-It is necessary to install the following software:
+It is necessary to install the following:
 - cmake (>=3.17),
 - make,
 - boost program-options library,
@@ -105,20 +105,21 @@ For the other settings, please refer to the next sections.
 
 ### Command line arguments <a name="cmd_setup"></a>
 Command line parameters are handled as "positional arguments", therefore it is necessary to write them down in a fixed order:
-`input, internal_representation, algorithm, threads`
+`input, internal_representation, algorithm, threads, trials`
 
 > NOTE: Even though "positional arguments" may be used, also the standard GNU style are anyway allowed
 
 It should be noted that in principle the corresponding options should not be written explicitly as they are "positional", but still possible:
 ``` -a 3 instead of 3 ```, and it may be useful to use them in this explicit way if we want to start the program with only some of the default parameters changed.
+<br> Lastly, it's possible to change the path of the input directory with the option -p. 
 
 As examples of usage:
 ```bash
-GraphColoring 0 1 2 2;                  #predefined path
-GraphColoring -i 2 -t 5;                #predefined path, internal representation, algorithm
-GraphColoring -p ../input-dir -i 2 -t 5;   #internal representation, algorithm
-GraphColoring -l;                       #to list input files in the predefined input directory
-GraphColoring -p ../input-directory -l;    #to list input files in the chosen input directory
+GraphColoring 0 1 2 2;                    #predefined path, default number of trials (=1)
+GraphColoring -i 2 -n 5;                  #predefined path, default internal representation (=CSR), default algorithm (=sequential)
+GraphColoring -p ../input-dir -i 2 -t 5;  #default internal representation, algorithm
+GraphColoring -l;                         #list input files in the predefined input directory
+GraphColoring -p ../input-directory -l;   #list input files in the chosen input directory
 ```
 
 ---
