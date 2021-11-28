@@ -66,14 +66,14 @@
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunManager">
-    <configuration name="GraphColoring" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../Graph/benchmark 2 0 1 4" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GraphColoring" TARGET_NAME="GraphColoring" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="GraphColoring" RUN_TARGET_NAME="GraphColoring">
+    <configuration name="GraphColoring" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="../Graph/benchmark 2 0 1 4" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GraphColoring" TARGET_NAME="GraphColoring" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="GraphColoring" RUN_TARGET_NAME="GraphColoring">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
