@@ -74,10 +74,12 @@ The following files-structure represents the core files of the project.
 |-- main.cpp
 |-- PrintMenu.h
 |-- README.md
-|-- runlim.sh
+`-- runlim.sh
 ```
 
 The core files are explained in the following sections.
+
+The only file which is essential for the building but not strictly related to the project is `CMakeLists.txt` which contains instructions about compilation. For further information, check [cmake system](https://en.wikipedia.org/wiki/CMake#:~:text=In%20software%20development%2C%20CMake%20is,generates%20another%20system's%20build%20files.)
 
 ### main.cpp <a name="main_cpp"></a>
 The `main.cpp` file hold the interface for the software. Here the command line is parsed and the graph is constructed. In this section of the program, the main parameter of the colorization are chosen based on the user input. Finally, the algorithm is called n_trials times. 
