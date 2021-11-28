@@ -13,7 +13,7 @@ This educational project aims to compare the performances of different multithre
    1. [main.cpp](#main_cpp)
    2. [Graph.h](#graph_h)
    3. [Algorithms.cpp](#algorithms_cpp)
-   4. [ReadInput](#readinput) ANDREAAAA
+   4. [ReadInput.cpp](#readinput_cpp)
 3. [Usage](#usage)
    1. [Interactive Mode](#interactive_mode)
    2. [Command-line Mode](#cmd_mode)
@@ -43,7 +43,7 @@ $ cmake . && make
 ```
 The binary will be copied in the root directory as well, ready to execute.
 
-### Windows
+### Windows <a name="windows_build">
 The program has not been tested on Windows, but the compilation process is similar to what's done on Linux.
 
 First, downlaod the boost library binaries from the 
@@ -99,8 +99,10 @@ This file contains the actual implementations of each algorithm. Each algorithm 
 
 One important aspect to underline is the presence of lines such as `template class asa::Graph<asa::GraphCSR>` in the end of the file. These are needed to the compiler so that it knows which version of the template should be compiled, since the template functions reside in a `.cpp` file.
 
-### ReadInput <a name="readinput"></a>
-ANDREA PER FAVORE SCRIVI
+### ReadInput/ReadInput.cpp <a name="readinput_cpp"></a>
+This file contains the `ReadInput` class and its header file is `ReadInput.h`. It consists into the set of variables and methods useful for reading two different kinds of graph input file and storing them into a vector of edges managed as a pair of nodes `std::vector<std::pair<node, node>> edges`. Then, these edges will be put on the Graph data structure.
+
+
 
 ---
 
