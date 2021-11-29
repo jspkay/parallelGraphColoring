@@ -100,7 +100,7 @@ This file contains the actual implementations of each algorithm. Each algorithm 
 One important aspect to underline is the presence of lines such as `template class asa::Graph<asa::GraphCSR>` in the end of the file. These are needed to the compiler so that it knows which version of the template should be compiled, since the template functions reside in a `.cpp` file.
 
 ### ReadInput/ReadInput.cpp <a name="readinput_cpp"></a>
-This file contains the `ReadInput` class and its header file is `ReadInput.h`. It consists into the set of variables and methods useful for reading two different kinds of graph input file and storing them into a vector of edges managed as a pair of nodes `std::vector<std::pair<node, node>> edges`. Then, these edges will be put on the Graph data structure.
+This file contains the `ReadInput` class and its header file is `ReadInput.h`. It allows to generalize the step of acquisition data and consists into the set of variables and methods useful for reading two different kinds of graph input file (.graph and .gra), in order to store their edges into a vector of edges managed as a pair of nodes `std::vector<std::pair<node, node>> edges`. Then, these edges will be passed to the Graph class.
 
 
 
