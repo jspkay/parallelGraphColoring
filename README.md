@@ -152,14 +152,14 @@ Directory organization:
 It's possibile to use the option -l (--list-files) to show a complete list of the files in the chosen path  numbered in alphabetical order. This is needed because the file is chosen through a number with the option "input" (-i)
 
 ```
-$ GraphColoring The/Powerpuff/Girls --list
+$ GraphColoring -p The/Powerpuff/Girls --list
 0 - Dolly
 1 - Lolly
 2 - Molly
 ```
 So it's possible to run the program on a specific file:
 ```
-$ GraphColoring The/Powerpuff/Girls -i 1 
+$ GraphColoring -p The/Powerpuff/Girls -i 1 
 ```
 In this way the program will run with the default(*) settings.
 For the other settings, please refer to the next sections.
@@ -190,3 +190,5 @@ GraphColoring -p ../input-directory -l;   #list input files in the chosen input 
 ---
 
 # Benchmark <a name="benchmark"></a>
+To benchmark the program as reliable as possible, we used a tool called 'runlim' which samples resource usage during the run of the former. Through the output log of the latter it's possible to know two significant aspects: **space** required by the graph representation choosen and **time** necessary to run the coloring algorithm selected. In particular runlim follows the time accumulation scheme of GNU time for multi-threaded programs (as our): time spent in each thread/child is summed up ('wall clock' or 'real time') and then printed on stdout, together with walk clock time (identified as 'time') if interested.
+   
