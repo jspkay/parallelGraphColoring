@@ -87,10 +87,10 @@ The `main.cpp` file hold the interface for the software. Here the command line i
 ### Graph/Graph.h <a name="graph_h"></a>
 This file is where the magic happens. It contains the definition of a namespace ("asa" stands for Andrea, Salvo, Antonio, the authors) which was originally created to remove ambiguity between names. In later versions the ambiguity disappeared but the namespace stayed. 
 
-Inside the namespace the `Graph class` is defined. This class implements the CRTP pattern, in order to in order to support the use of different graph representations, without duplicating the code (same basic methods). Originally the idea was to use an abstract class, but we decided then to use this solution due to better performances and readibility. 
+Inside the namespace the `Graph class` is defined. This class implements the CRTP pattern, in order to in order to support the use of different graph representations. Originally the idea was to use an abstract class, but then we decided then to use this solution due to better performances and readibility. 
 > Sidenote: the original version is still available in the branch "generalized_version"
 
-The actual parallel algorithms are implemented inside the `Graph class`. This way, the derived classes inherit the methods which have to be written just once, regardless of the internal representation of the graph. With this purpose in mind, some functions have to be specialized. Clearly, those functions are strictly related to different methods used for each representation and they are: `forEachNeighbor`, `forEachVertex` and `getDegree`. 
+The actual parallel algorithms are implemented inside the `Graph class`. Thanks to CRTP, the derived classes inherit the methods which have to be written just once, regardless of the internal representation of the graph. With this purpose in mind, some functions have to be specialized. Clearly, those functions are strictly related to different methods used for each representation and they are: `forEachNeighbor`, `forEachVertex` and `getDegree`. 
 
 The specializations of the class are declared at the end of the same file. The implementations are to be found in the related `.cpp` files, which will not be explained in details, since they are self-explanatory.
 
