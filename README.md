@@ -207,7 +207,7 @@ runlim.sh 'GraphColoring -i 2 -a 4' 10;  #10 trials
 ```
 To test a single configuration of `GraphColoring` parameters, this script would be enough. As we are lazy and do not very eager to start a thousand tests with variable number of threads, type of algorithm, type of representation, etc ..., `benchmark.sh` was created.
    
-The purpose of `benchmark.sh` bash script is to iterate on the algorithms, input files, number of threads used and mixing them. Also in this case you can choose the number of trials performed for each configuration: to do so, you have to change the value of variable `ntrials` at line 38, by default =1. 
+The purpose of `benchmark.sh` bash script is to iterate on different algorithms, input files, value of threads number used and mixing them: so execute all possible **configurations**. Also in this case you can choose the number of trials performed for each configuration: to do so, you have to change the value of variable `ntrials` at line 38, by default =1. 
 Moreover, it' is accepted a parameter from the command line, used to set the maximum number of logical threads available in the execution processor. The GraphColoring program will be started with an increasing number of threads in power of two.
    
    As examples of usage:
