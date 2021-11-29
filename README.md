@@ -87,10 +87,10 @@ The `main.cpp` file hold the interface for the software. Here the command line i
 ### Graph/Graph.h <a name="graph_h"></a>
 This file is where the magic happens. It contains the definition of a namespace ("asa" stands for Andrea, Salvo, Antonio, the authors) which was originally created to remove ambiguity between names. In later versions the ambiguity disappeared but the namespace stayed. 
 
-Inside the namespace the `Graph class` is defined. This class is the one which holds the actual graph in any representation. Originally the idea was to use an abstract class, but we decided then to use this solution due to better efficiency. 
+Inside the namespace the `Graph class` is defined. This class implements the CRTP pattern, in order to in order to support the use of different graph representations. Originally the idea was to use an abstract class, but then we decided then to use this solution due to better performances and readibility. 
 > Sidenote: the original version is still available in the branch "generalized_version"
 
-The actual parallel algorithms are implemented inside the `Graph class`. This way, the derived classes inherit the methods which have to be written just once, regardless of the internal representation of the graph. With this purpose in mind, some functions have to be specialized. Clearly, those functions are strictly related to different methods used for each representation and they are: `forEachNeighbor`, `forEachVertex` and `getDegree`. 
+The actual parallel algorithms are implemented inside the `Graph class`. Thanks to CRTP, the derived classes inherit the methods which have to be written just once, regardless of the internal representation of the graph. With this purpose in mind, some functions have to be specialized. Clearly, those functions are strictly related to different methods used for each representation and they are: `forEachNeighbor`, `forEachVertex` and `getDegree`. 
 
 The specializations of the class are declared at the end of the same file. The implementations are to be found in the related `.cpp` files, which will not be explained in details, since they are self-explanatory.
 
@@ -100,7 +100,7 @@ This file contains the actual implementations of each algorithm. Each algorithm 
 One important aspect to underline is the presence of lines such as `template class asa::Graph<asa::GraphCSR>` in the end of the file. These are needed to the compiler so that it knows which version of the template should be compiled, since the template functions reside in a `.cpp` file.
 
 ### ReadInput/ReadInput.cpp <a name="readinput_cpp"></a>
-This file contains the `ReadInput` class and its header file is `ReadInput.h`. It consists into the set of variables and methods useful for reading two different kinds of graph input file and storing them into a vector of edges managed as a pair of nodes `std::vector<std::pair<node, node>> edges`. Then, these edges will be put on the Graph data structure.
+This file contains the `ReadInput` class and its header file is `ReadInput.h`. It allows to generalize the step of acquisition data and consists into the set of variables and methods useful for reading two different kinds of graph input file (.graph and .gra), in order to store their edges into a vector of edges managed as a pair of nodes `std::vector<std::pair<node, node>> edges`. Then, these edges will be passed to the Graph class.
 
 
 
@@ -110,7 +110,7 @@ This file contains the `ReadInput` class and its header file is `ReadInput.h`. I
 The program can be run both in interactive mode and in "stand-alone" mode, ie by entering the necessary parameters from the command line. 
 
 ### Interactive mode <a name="interactive_mode"></a>
-To start the program in interactive mode, i.e. without selecting the desired options from the command line, but through a stdin and stdout, you must select the help option and then press yes.
+To start the program in interactive mode, i.e. without selecting the desired options from the command line, but through a stdin and stdout, you must select the *help* option `GraphColoring --help` and then digit 'yes'.
 The program will prompt a simple interactive interface to choose the input graph, the algorithm and so on.
 Note that in this case, the input folder where you can select the input file will be "./Graph/benchmark", **fixed**.
 <br>The following commands are available:
@@ -152,14 +152,14 @@ Directory organization:
 It's possibile to use the option -l (--list-files) to show a complete list of the files in the chosen path  numbered in alphabetical order. This is needed because the file is chosen through a number with the option "input" (-i)
 
 ```
-$ GraphColoring The/Powerpuff/Girls --list
+$ GraphColoring -p The/Powerpuff/Girls --list
 0 - Dolly
 1 - Lolly
 2 - Molly
 ```
 So it's possible to run the program on a specific file:
 ```
-$ GraphColoring The/Powerpuff/Girls -i 1 
+$ GraphColoring -p The/Powerpuff/Girls -i 1 
 ```
 In this way the program will run with the default(*) settings.
 For the other settings, please refer to the next sections.
@@ -190,3 +190,30 @@ GraphColoring -p ../input-directory -l;   #list input files in the chosen input 
 ---
 
 # Benchmark <a name="benchmark"></a>
+To benchmark the program as reliable as possible, we used a tool called 'runlim' which samples resource usage during the run of the former. Through the output log of the latter it's possible to know two significant aspects: 
+   * **space** required by the graph representation choosen
+   * **time** necessary to run the coloring algorithm selected <br>
+      * In particular runlim follows the time accumulation scheme of GNU time for multi-threaded programs (as ours): time spent in each thread/child is summed up ('wall clock' or 'real time') and then printed on stdout, together with walk clock time (identified as 'time') if interested.<br>
+   
+In order to run multiple times runlim on `GraphColoring` and compute consequently the average time and space spent by this, `runlim.sh` has been written.
+It takes as arguments:
+   * the enquoted string which need to be passed to the `runlim.obj` (previously compiled)
+   * the number of trials to be executed
+
+As examples of usage:
+```bash
+runlim.sh 'GraphColoring 0 1 2 2' 5;   #5 trials                   
+runlim.sh 'GraphColoring -i 2 -a 4' 10;  #10 trials                
+```
+To test a single configuration of `GraphColoring` parameters, this script would be enough. As we are lazy and do not very eager to start a thousand tests with variable number of threads, type of algorithm, type of representation, etc ..., `benchmark.sh` was created.
+   
+The purpose of `benchmark.sh` bash script is to iterate on different algorithms, input files, value of threads number used and mixing them: so execute all possible **configurations**. Also in this case you can choose the number of trials performed for each configuration: to do so, you have to change the value of variable `ntrials` at line 38, by default =1. 
+Moreover, it' is accepted a parameter from the command line, used to set the maximum number of logical threads available in the execution processor. The GraphColoring program will be started with an increasing number of threads in power of two.
+   
+   As examples of usage:
+```bash
+benchmark.sh 4; #max 4 logical threads               
+benchmark.sh 8; #max 8 logical threads                    
+```
+   
+
