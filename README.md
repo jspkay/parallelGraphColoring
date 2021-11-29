@@ -110,7 +110,7 @@ This file contains the `ReadInput` class and its header file is `ReadInput.h`. I
 The program can be run both in interactive mode and in "stand-alone" mode, ie by entering the necessary parameters from the command line. 
 
 ### Interactive mode <a name="interactive_mode"></a>
-To start the program in interactive mode, i.e. without selecting the desired options from the command line, but through a stdin and stdout, you must select the help option and then press yes.
+To start the program in interactive mode, i.e. without selecting the desired options from the command line, but through a stdin and stdout, you must select the *help* option `GraphColoring --help` and then digit 'yes'.
 The program will prompt a simple interactive interface to choose the input graph, the algorithm and so on.
 Note that in this case, the input folder where you can select the input file will be "./Graph/benchmark", **fixed**.
 <br>The following commands are available:
