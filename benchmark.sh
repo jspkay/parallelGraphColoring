@@ -37,20 +37,21 @@ echo "- default number trials equals to 1"
 echo ""
 ntrials=1
 nthread=$1
+internal_representation=0
 nfileinput=$(./GraphColoring -p ./Graph/benchmark/ -l | grep ^[0-9] | wc -l | bc -l)
 #echo $nfileinput
 
 #sequential loop csr
 for ((i = 0; i < nfileinput  ; i++)); do
- print_res "0" "$i" "$(./runlim.sh "./GraphColoring -a 0 -i $i" $ntrials | tail -n 2)"
+ print_res "0" "$i" "$(./runlim.sh "./GraphColoring -i $i -r $internal_representation" $ntrials | tail -n 2)"
 done
 
 #multithreading loops csr
 for ((a = 1; a <= 5; a++)); do
   for ((i = 0; i < nfileinput; i++)); do
-    for ((t = 2; t <= nthread; t++)); do #multithreading
+    for ((t = 2; t <= nthread; t=t*2)); do #multithreading
       echo "$t threads working..."
-      print_res "$a" "$i" "$(./runlim.sh "./GraphColoring -i $i -a $a -t $t" $ntrials | tail -n 2)"
+      print_res "$a" "$i" "$(./runlim.sh "./GraphColoring -i $i -a $a -t $t -r $internal_representation" $ntrials | tail -n 2)"
     done
   done
 done
