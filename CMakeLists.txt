@@ -14,8 +14,8 @@ message(${Boost_INCLUDE_DIR})
 include_directories(${Boost_INCLUDE_DIR})
 
 ########## COMPILE MACRO DEBUG
-add_definitions(-DMULTITHREAD_DEBUG)
-add_definitions(-DMTD=1)
+#add_definitions(-DMULTITHREAD_DEBUG)
+#add_definitions(-DMTD=1)
 
 ########## COMPILE libraries
 add_executable(GraphColoring main.cpp

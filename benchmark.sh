@@ -17,6 +17,8 @@ file_list=$(seq 0 $nfileinput) # list of the indeces of the files used for the b
 
 algorithms=(1 2 3 4 5) # list of algorithms to be benchmarked
 
+log_file="output_results.txt"
+
 # main script
 function print_res() {
   t=$1
@@ -26,6 +28,16 @@ function print_res() {
   echo "$t threads working...";
   echo "input: #$input",
   echo "algorithm: ${algs[$alg]}"
+
+  write_on_file ""
+  write_on_file "$t threads working...";
+  write_on_file "input: #$input",
+  write_on_file "algorithm: ${algs[$alg]}"
+  
+}
+
+function write_on_file(){
+	echo "$1" >> $log_file
 }
 
 if [[ $# -eq 0 ]]; then
@@ -65,6 +77,8 @@ internal_representation=0
 echo "*** GRAPHCOLORING FINAL BENCHMARK ***"
 echo "- default number trials equals to 1"
 
+
+echo "" > output_results.txt
 #multithreading loops csr
 for i in ${file_list[@]}; do
   print_res "1" "0" "$i"
@@ -75,6 +89,7 @@ for i in ${file_list[@]}; do
       print_res "$t" "$a" "$i"
       res="$(./runlim.sh "./GraphColoring -i $i -a $a -t $t -r $internal_representation" $ntrials | tail -n 2)"
       echo "$res"
+	  write_on_file "$res"
     done
   done
 done
