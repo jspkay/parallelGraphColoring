@@ -1,4 +1,0 @@
-*** GRAPHCOLORING FINAL BENCHMARK *** - default number trials equal to 1 2 threads working... input: #0, algorithm: jones plassman, Avg time: 1.950 s space: 23.2 MB 2 threads working... input: 
-#1,
-algorithm: jones plassman, Avg time: 3.790 s space: 43.7 MB 2 threads working... input: #2, algorithm: jones plassman, Avg time: 6.920 s space: 87.5 MB 2 threads working... input: #3, algorithm: 
-jones plassman, Avg time: 14.37 s space: 180.1 MB 2 threads working...

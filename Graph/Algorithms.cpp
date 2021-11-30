@@ -85,17 +85,24 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
             cout << '[' << round << "][ " << id << "]w2\n";
 #endif
 
-            slk.lock();
+            ulk.lock();
 #if MTD == 1
-            cout << id << "s\n";
+            cout << id << " lock acquired before waiting, actual round: " << round << "\n";
 #endif
-            cv.wait(slk, [&roundMain, &round]() { return round < roundMain; });
+            cv.wait(ulk, [&roundMain, &round, id]() { {
+
+#ifdef MTD
+                cout << id << ": " << round << "<" << roundMain << "?\n";
+#endif
+                return round < roundMain;
+            }
+            });
             round++;
-            slk.unlock();
+            ulk.unlock();
         }
         cv.notify_all(); // necessary for the other threads to finish
 #if MULTITHREAD_DEBUG || MTD == 1
-        cout << id ;
+        cout << id << " terminated!\n" ;
 #endif
     };
 
@@ -119,18 +126,20 @@ void asa::Graph<T>::jp_structure(function<bool(int, node)> isMinor) {
         slk.lock();
         cv.wait(slk, [&done, this]() { return done == concurrentThreadsActive; });
         // tolgo i vertici di toColor_set da verteces
-        for (int i = 0; i < concurrentThreadsActive; i++)
+        for (int i = 0; i < concurrentThreadsActive; i++) {
             v_length -= tcs_length[i];
-        if (v_length == 0)
+        }
+        if (v_length == 0) {
             toTerminate = true;
+        }
         roundMain++;
         done = 0;
-        slk.unlock();
 
 #ifdef MULTITHREAD_DEBUG
         cout << "Rimanenti: " << v_length << endl;
 #endif
         cv.notify_all();
+        slk.unlock();
     }
 
 #ifdef MULTITHREAD_DEBUG
