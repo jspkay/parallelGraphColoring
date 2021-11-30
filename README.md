@@ -197,8 +197,8 @@ To test program performanes as best as possible, we used a tool called 'runlim' 
    
 In order to run multiple times runlim on `GraphColoring` and compute consequently the average time and space spent by this, `runlim.sh` has been written.
 It takes as arguments:
-   * the enquoted string which need to be passed to the `runlim executable
-   * the number of trials to be executed
+   * `PROGRAM_STRING` - the enquoted string which need to be passed to the `runlim executable
+   * `nTrials` - the number of trials to be executed
 
 As examples of usage:
 ```bash
