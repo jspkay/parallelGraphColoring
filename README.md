@@ -193,7 +193,7 @@ GraphColoring -p ../input-directory -l;   #list input files in the chosen input 
 To test program performanes as best as possible, we used a tool called 'runlim' which samples resources usage during the run of the program. Through the output log of the tool it's possible to know two significant aspects: 
    * the **space** required by the program to run
    * **time** necessary to run the coloring algorithm selected
-      * In particular runlim follows the time accumulation scheme of GNU time for multi-threaded programs (as ours): time spent in each thread/child is summed up ('wall clock' or 'real time') and then printed on stdout, together with walk clock time (identified as 'time') if interested.<br>
+      * cfr *wall time* and *cpu time* on report document  
    
 In order to run multiple times runlim on `GraphColoring` and compute consequently the average time and space spent by this, `runlim.sh` has been written.
 It takes as arguments:
@@ -215,7 +215,6 @@ The purpose of `benchmark.sh` bash script is to iterate on different algorithms,
 The script accepts two different parameters:
 1. nThreads - the maximum number of logical threads the program has to create. The program will be executed log2(nThreads) times, because it will be run with an increasing number of threads in powers of 2 starting exaclty from 2.
 2. nTrials - the number of trials to be executed per configuration.
-Also in this case you can choose the number of trials performed for each configuration through parameters 
 
 Examples:
 ```bash
