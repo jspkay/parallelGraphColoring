@@ -87,7 +87,7 @@ The `main.cpp` file hold the interface for the software. Here the command line i
 ### Graph/Graph.h <a name="graph_h"></a>
 This file is where the magic happens. It contains the definition of a namespace ("asa" stands for Andrea, Salvo, Antonio, the authors) which was originally created to remove ambiguity between names. In later versions the ambiguity disappeared but the namespace stayed. 
 
-Inside the namespace the `Graph class` is defined. This class implements the CRTP pattern, in order to in order to support the use of different graph representations. Originally the idea was to use an abstract class, but then we decided then to use this solution due to better performances and readibility. 
+The `Graph class` is defined inside the namespace . This class implements the CRT Pattern, in order to in order to support the use of different graph's representations. Originally the idea was to use an abstract class, but then we decided then to use this solution due to better performances and readibility. 
 > Sidenote: the original version is still available in the branch "generalized_version"
 
 The actual parallel algorithms are implemented inside the `Graph class`. Thanks to CRTP, the derived classes inherit the methods which have to be written just once, regardless of the internal representation of the graph. With this purpose in mind, some functions have to be specialized. Clearly, those functions are strictly related to different methods used for each representation and they are: `forEachNeighbor`, `forEachVertex` and `getDegree`. 
@@ -100,7 +100,7 @@ This file contains the actual implementations of each algorithm. Each algorithm 
 One important aspect to underline is the presence of lines such as `template class asa::Graph<asa::GraphCSR>` in the end of the file. These are needed to the compiler so that it knows which version of the template should be compiled, since the template functions reside in a `.cpp` file.
 
 ### ReadInput/ReadInput.cpp <a name="readinput_cpp"></a>
-This file contains the `ReadInput` class and its header file is `ReadInput.h`. It allows to generalize the step of acquisition data and consists into the set of variables and methods useful for reading two different kinds of graph input file (.graph and .gra), in order to store their edges into a vector of edges managed as a pair of nodes `std::vector<std::pair<node, node>> edges`. Then, these edges will be passed to the Graph class.
+This file contains the `ReadInput` class and its header file is `ReadInput.h`. It allows to generalize the step of acquisition data and consists into the set of variables and methods useful for reading two different kinds of graph input file (.graph and .gra), in order to store their edges into a vector of edges managed as a pair of nodes `std::vector<std::pair<node, node>> edges`. Then, these edges will be passed to the Graph class which construct the actual graph inside the program.
 
 
 
@@ -190,14 +190,14 @@ GraphColoring -p ../input-directory -l;   #list input files in the chosen input 
 ---
 
 # Benchmark <a name="benchmark"></a>
-To benchmark the program as reliable as possible, we used a tool called 'runlim' which samples resource usage during the run of the former. Through the output log of the latter it's possible to know two significant aspects: 
-   * **space** required by the graph representation choosen
-   * **time** necessary to run the coloring algorithm selected <br>
+To test program performanes as best as possible, we used a tool called 'runlim' which samples resources usage during the run of the program. Through the output log of the tool it's possible to know two significant aspects: 
+   * the **space** required by the program to run
+   * **time** necessary to run the coloring algorithm selected
       * In particular runlim follows the time accumulation scheme of GNU time for multi-threaded programs (as ours): time spent in each thread/child is summed up ('wall clock' or 'real time') and then printed on stdout, together with walk clock time (identified as 'time') if interested.<br>
    
 In order to run multiple times runlim on `GraphColoring` and compute consequently the average time and space spent by this, `runlim.sh` has been written.
 It takes as arguments:
-   * the enquoted string which need to be passed to the `runlim.obj` (previously compiled)
+   * the enquoted string which need to be passed to the `runlim executable
    * the number of trials to be executed
 
 As examples of usage:
@@ -205,15 +205,22 @@ As examples of usage:
 runlim.sh 'GraphColoring 0 1 2 2' 5;   #5 trials                   
 runlim.sh 'GraphColoring -i 2 -a 4' 10;  #10 trials                
 ```
-To test a single configuration of `GraphColoring` parameters, this script would be enough. As we are lazy and do not very eager to start a thousand tests with variable number of threads, type of algorithm, type of representation, etc ..., `benchmark.sh` was created.
+
+The string parameter is the exact program which runlim will execute. In this example, runlim will execute `GraphColoring -i 2 -a 4` as it were executed in the shell on its own. 
+
+To test a single configuration of `GraphColoring` parameters, this script would be enough. As we are lazy and not very eager to start a thousand tests with variable parameters, `benchmark.sh` was created.
    
-The purpose of `benchmark.sh` bash script is to iterate on different algorithms, input files, value of threads number used and mixing them: so execute all possible **configurations**. Also in this case you can choose the number of trials performed for each configuration: to do so, you have to change the value of variable `ntrials` at line 38, by default =1. 
-Moreover, it' is accepted a parameter from the command line, used to set the maximum number of logical threads available in the execution processor. The GraphColoring program will be started with an increasing number of threads in power of two.
-   
-   As examples of usage:
+The purpose of `benchmark.sh` bash script is to iterate on different algorithms, input files, value of threads number used and mixing them: so execute all possible **configurations**. 
+
+The script accepts two different parameters:
+1. nThreads - the maximum number of logical threads the program has to create. The program will be executed log2(nThreads) times, because it will be run with an increasing number of threads in powers of 2 starting exaclty from 2.
+2. nTrials - the number of trials to be executed per configuration.
+Also in this case you can choose the number of trials performed for each configuration through parameters 
+
+Examples:
 ```bash
-benchmark.sh 4; #max 4 logical threads               
-benchmark.sh 8; #max 8 logical threads                    
+benchmark.sh 4; #max 4 threads and only one trial per configuration
+benchmark.sh 8 3; #max 8 threads and 3 trials per configurations with average time computation.
 ```
    
 
