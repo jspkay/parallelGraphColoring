@@ -197,8 +197,8 @@ To test program performanes as best as possible, we used a tool called 'runlim' 
    
 In order to run multiple times runlim on `GraphColoring` and compute consequently the average time and space spent by this, `runlim.sh` has been written.
 It takes as arguments:
-   * `PROGRAM_STRING` - the enquoted string which need to be passed to the `runlim executable
-   * `nTrials` - the number of trials to be executed
+   1. `PROGRAM_STRING` - the enquoted string which need to be passed to the `runlim executable
+   2. `nTrials` - the number of trials to be executed
 
 As examples of usage:
 ```bash
@@ -214,12 +214,12 @@ The purpose of `benchmark.sh` bash script is to iterate on different algorithms,
 
 The script accepts two different parameters:
 1. `nThreads` - the maximum number of logical threads the program has to create. The program will be executed log2(nThreads) times, because it will be run with an increasing number of threads in powers of 2 starting exaclty from 2.
-2. `nTrials` - the number of trials to be executed per configuration.
-
+2. `nTrials` - the number of trials to be executed per configuration. Note that this parameter will be passed to `runlim.sh`
+   
 Examples:
 ```bash
 benchmark.sh 4; #max 4 threads and only one trial per configuration
 benchmark.sh 8 3; #max 8 threads and 3 trials per configurations with average time computation.
 ```
-   
+Results obtained can be read in the report.
 
