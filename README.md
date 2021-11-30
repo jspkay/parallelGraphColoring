@@ -213,8 +213,8 @@ To test a single configuration of `GraphColoring` parameters, this script would 
 The purpose of `benchmark.sh` bash script is to iterate on different algorithms, input files, value of threads number used and mixing them: so execute all possible **configurations**. 
 
 The script accepts two different parameters:
-1. nThreads - the maximum number of logical threads the program has to create. The program will be executed log2(nThreads) times, because it will be run with an increasing number of threads in powers of 2 starting exaclty from 2.
-2. nTrials - the number of trials to be executed per configuration.
+1. `nThreads` - the maximum number of logical threads the program has to create. The program will be executed log2(nThreads) times, because it will be run with an increasing number of threads in powers of 2 starting exaclty from 2.
+2. `nTrials` - the number of trials to be executed per configuration.
 
 Examples:
 ```bash
