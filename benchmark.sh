@@ -13,9 +13,9 @@ nfileinput=$(./GraphColoring -p ./Graph/benchmark/ -l | grep ^[0-9] | wc -l | bc
 ###### Editable parameters
 
 # file indices are the same as shown when running GraphColoring -p path/to/benchmark -l
-file_list=$(seq 0 $nfileinput) # list of the indeces of the files used for the benchmark
+file_list=$(seq 0 5) # list of the indeces of the files used for the benchmark
 
-algorithms=(1 2 3 4 5) # list of algorithms to be benchmarked
+algorithms=() # list of algorithms to be benchmarked
 
 log_file="output_results.txt"
 
@@ -84,6 +84,7 @@ for i in ${file_list[@]}; do
   print_res "1" "0" "$i"
   res="$(./runlim.sh "./GraphColoring -i $i -r $internal_representation" $ntrials | tail -n 2)" #sequential run
   echo "$res"
+  write_on_file "$res"
   for ((t = 2; t <= nthread; t=t*2)); do #multithreading
     for a in ${algorithms[@]}; do
       print_res "$t" "$a" "$i"

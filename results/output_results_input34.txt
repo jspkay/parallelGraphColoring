@@ -1,0 +1,233 @@
+
+
+1 threads working...
+input: #3,
+algorithm: sequential,
+Avg time: 4.250 s
+space: 179.4 MB
+
+2 threads working...
+input: #3,
+algorithm: jones plassman,
+Avg time: 5.804 s
+space: 179.4 MB
+
+2 threads working...
+input: #3,
+algorithm: largest degree v3 (jp structure),
+Avg time: 6.950 s
+space: 179.7 MB
+
+2 threads working...
+input: #3,
+algorithm: largest degree v2 (without STL),
+Avg time: 5.384 s
+space: 179.7 MB
+
+2 threads working...
+input: #3,
+algorithm: largest degree v1 (STL implementation, old),
+Avg time: 25.88 s
+space: 179.9 MB
+
+4 threads working...
+input: #3,
+algorithm: jones plassman,
+Avg time: 4.914 s
+space: 179.7 MB
+
+4 threads working...
+input: #3,
+algorithm: largest degree v3 (jp structure),
+Avg time: 5.628 s
+space: 179.9 MB
+
+4 threads working...
+input: #3,
+algorithm: largest degree v2 (without STL),
+Avg time: 4.576 s
+space: 179.9 MB
+
+4 threads working...
+input: #3,
+algorithm: largest degree v1 (STL implementation, old),
+Avg time: 28.11 s
+space: 180.0 MB
+
+8 threads working...
+input: #3,
+algorithm: jones plassman,
+Avg time: 4.662 s
+space: 179.7 MB
+
+8 threads working...
+input: #3,
+algorithm: largest degree v3 (jp structure),
+Avg time: 5.218 s
+space: 179.7 MB
+
+8 threads working...
+input: #3,
+algorithm: largest degree v2 (without STL),
+Avg time: 4.768 s
+space: 179.4 MB
+
+8 threads working...
+input: #3,
+algorithm: largest degree v1 (STL implementation, old),
+Avg time: 27.74 s
+space: 179.9 MB
+
+16 threads working...
+input: #3,
+algorithm: jones plassman,
+Avg time: 4.778 s
+space: 179.9 MB
+
+16 threads working...
+input: #3,
+algorithm: largest degree v3 (jp structure),
+Avg time: 5.292 s
+space: 179.9 MB
+
+16 threads working...
+input: #3,
+algorithm: largest degree v2 (without STL),
+Avg time: 4.584 s
+space: 180.1 MB
+
+16 threads working...
+input: #3,
+algorithm: largest degree v1 (STL implementation, old),
+Avg time: 26.01 s
+space: 179.9 MB
+
+1 threads working...
+input: #4,
+algorithm: sequential,
+Avg time: 8.330 s
+space: 373.7 MB
+
+2 threads working...
+input: #4,
+algorithm: jones plassman,
+Avg time: 11.41 s
+space: 373.9 MB
+
+2 threads working...
+input: #4,
+algorithm: largest degree v3 (jp structure),
+Avg time: 14.54 s
+space: 374.1 MB
+
+2 threads working...
+input: #4,
+algorithm: largest degree v2 (without STL),
+Avg time: 10.59 s
+space: 373.9 MB
+
+2 threads working...
+input: #4,
+algorithm: largest degree v1 (STL implementation, old),
+Avg time: 55.28 s
+space: 374.6 MB
+
+4 threads working...
+input: #4,
+algorithm: jones plassman,
+Avg time: 9.718 s
+space: 374.2 MB
+
+4 threads working...
+input: #4,
+algorithm: largest degree v3 (jp structure),
+Avg time: 11.79 s
+space: 374.1 MB
+
+4 threads working...
+input: #4,
+algorithm: largest degree v2 (without STL),
+Avg time: 9.250 s
+space: 373.9 MB
+
+4 threads working...
+input: #4,
+algorithm: largest degree v1 (STL implementation, old),
+Avg time: 59.58 s
+space: 375.1 MB
+
+8 threads working...
+input: #4,
+algorithm: jones plassman,
+Avg time: 9.278 s
+space: 373.8 MB
+
+8 threads working...
+input: #4,
+algorithm: largest degree v3 (jp structure),
+Avg time: 10.96 s
+space: 374.2 MB
+
+8 threads working...
+input: #4,
+algorithm: largest degree v2 (without STL),
+Avg time: 9.182 s
+space: 374.1 MB
+
+8 threads working...
+input: #4,
+algorithm: largest degree v1 (STL implementation, old),
+Avg time: 59.48 s
+space: 374.1 MB
+
+16 threads working...
+input: #4,
+algorithm: jones plassman,
+Avg time: 9.804 s
+space: 374.3 MB
+
+16 threads working...
+input: #4,
+algorithm: largest degree v3 (jp structure),
+Avg time: 11.09 s
+space: 373.8 MB
+
+16 threads working...
+input: #4,
+algorithm: largest degree v2 (without STL),
+Avg time: 9.166 s
+space: 374.1 MB
+
+16 threads working...
+input: #4,
+algorithm: largest degree v1 (STL implementation, old),
+Avg time: 53.84 s
+space: 375.7 MB
+
+1 threads working...
+input: #5,
+algorithm: sequential,
+Avg time: 16.91 s
+space: 780.5 MB
+
+2 threads working...
+input: #5,
+algorithm: jones plassman,
+Avg time: 23.72 s
+space: 780.7 MB
+
+2 threads working...
+input: #5,
+algorithm: largest degree v3 (jp structure),
+Avg time: 30.28 s
+space: 780.5 MB
+
+2 threads working...
+input: #5,
+algorithm: largest degree v2 (without STL),
+Avg time: 21.83 s
+space: 780.7 MB
+
+2 threads working...
+input: #5,
+algorithm: largest degree v1 (STL implementation, old),
