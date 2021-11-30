@@ -221,5 +221,10 @@ Examples:
 benchmark.sh 4; #max 4 threads and only one trial per configuration
 benchmark.sh 8 3; #max 8 threads and 3 trials per configurations with average time computation.
 ```
+
+Last thing to be said is that some parameters are of the `benchmark.sh` script can be modified editing the script itself. In the first part of the file a section `Editable parameters` can be found. At the present it's possibile to edit the following:
+- `file_list` - this is an array containing the indices of the used file as specified by `./GraphColoring -p /path/to/benchmarks -l`
+- `algorithms` - similarly, it's the list of the indices of the algorithms to benchmark. The correspondance between indices and algorithms it's shown at the top of the script `benchmark.sh`
+
 Results obtained can be read in the report.
 

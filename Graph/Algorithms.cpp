@@ -305,11 +305,15 @@ void asa::Graph<T>::largestDegree_v1() {
     //aspetto termini algoritmo
     cv.wait(ulk, [this]() { return isEnded; });
 
+
+#ifdef MULTITHREAD_DEBUG
+    cout << "Finished!" << endl;
+    int j=0;
+#endif
     for (auto &el : threads) {
         el.join();
 #ifdef MULTITHREAD_DEBUG
-        static int i=0;
-        cout << i++ << " joined!" << endl;
+        cout << j++ << " joined!" << endl;
 #endif
     }
 };
@@ -474,11 +478,14 @@ void asa::Graph<T>::smallestDegree() {
     }
     std::unique_lock<std::shared_timed_mutex> ulk(mutex);
     cv.wait(ulk, [this]() { return isEnded; });
+#ifdef MULTITHREAD_DEBUG
+    cout << "Finished!" << endl;
+    int j=0;
+#endif
     for (auto &el : threads) {
         el.join();
 #ifdef MULTITHREAD_DEBUG
-        static int i=0;
-        cout << i++ << " joined!" << endl;
+        cout << j++ << " joined!" << endl;
 #endif
     }
 }
