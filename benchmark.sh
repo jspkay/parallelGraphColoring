@@ -13,9 +13,9 @@ nfileinput=$(./GraphColoring -p ./Graph/benchmark/ -l | grep ^[0-9] | wc -l | bc
 ###### Editable parameters
 
 # file indices are the same as shown when running GraphColoring -p path/to/benchmark -l
-file_list=$(seq 0 5) # list of the indeces of the files used for the benchmark
+file_list=$(seq 5 $nfileinput) # list of the indeces of the files used for the benchmark
 
-algorithms=() # list of algorithms to be benchmarked
+algorithms=(1 2 4) # list of algorithms to be benchmarked
 
 log_file="output_results.txt"
 

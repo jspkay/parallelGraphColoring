@@ -4,10 +4,22 @@
 #include "PrintMenu.h"
 #include "Graph/readInput/ReadInput.h"
 
+#include <sched.h>
+
 int ntrial_running_now = 0;
 
 int main(int argc, char *argv[]) {
-    std::cout << "ciao";
+    //setting linux scheduler
+    {
+        struct sched_param sp;
+        sp.sched_priority = sched_get_priority_max(SCHED_RR);
+
+        int res = sched_setscheduler(0, SCHED_RR, &sp);
+        if(res != 0){
+            cout << "Please, run the program as root for best performances\n";
+        }
+    }
+
     string pathName;
     credits();
     po::variables_map ao; // active options
