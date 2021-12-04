@@ -41,9 +41,9 @@ GraphAdjL::GraphAdjL(vector<std::pair<node, node>>& edges, int V, int E){
     increase_numIteration = 0;
     //concurrentThreadsActive = std::thread::hardware_concurrency() - LEAVE_FREE;
     //active_threads = concurrentThreadsActive;
-    cout << "Fine costruzione grafo in formato ADJ LIST!\n";
-    cout << "******************\n";
-    cout << "V:" << V << ", E:" << E;
-    cout << "\n******************\n";
+    //cout << "Fine costruzione grafo in formato ADJ LIST!\n";
+    //cout << "******************\n";
+    //cout << "V:" << V << ", E:" << E;
+    //cout << "\n******************\n";
     //cout << concurrentThreadsActive << " core available" << std::endl;
 }
