@@ -44,10 +44,8 @@ namespace asa {
         unsigned long V = 0;
         unsigned long E = 0;
         int startingNode;
-        int doColor = 0; //semaforo
         unsigned concurrentThreadsActive;
 
-    protected:
         /*** variabili per algoritmi di colorazione ***/
         std::shared_timed_mutex mutex;
         std::condition_variable_any cv;
@@ -57,10 +55,10 @@ namespace asa {
         int numIteration, increase_numIteration;
         bool isEnded = false;
 
+        /*** scheletro jp ***/
         void jp_structure(std::function<bool(int,node)>);
-        void jp_structure_old(std::function<bool(int,node)>);
-
     public:
+        int numColorsUsed = 0;
         int searchColor(node u){
             //seleziona il colore minimo e non usato dai nodi vicini al nodo scelto u
             int i,lastColorFound=0;
@@ -81,6 +79,8 @@ namespace asa {
                 else
                     C[i]=0; //reset colori per il prossimo ciclo
             }
+            if(color > numColorsUsed)
+                numColorsUsed = color;
             return color;
         };
         void clearGraph(){
@@ -167,11 +167,9 @@ namespace asa {
         /*** algoritmi colorazione ***/
         void sequential();
         void jonesPlassmann();
-        void jonesPlassmann_old();
-        void largestDegree_v3();
-        void largestDegree_v2();
-        void smallest_mod();
-        void largestDegree_v1();
+        void largestDegree_v3(); //jp structure
+        void largestDegree_v2(); //without STL
+        void largestDegree_v1(); //STL implementation
         void smallestDegree();
         /*** da specializzare in ogni rappresentazione interna ***/
         void forEachVertex(node* current_vertex, std::function<void()> f){

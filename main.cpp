@@ -11,6 +11,7 @@ int ntrial_running_now = 0;
 int main(int argc, char *argv[]) {
     //setting linux scheduler
     {
+        pid_t pid = getpid();
         struct sched_param sp;
         sp.sched_priority = sched_get_priority_max(SCHED_RR);
 
@@ -108,6 +109,7 @@ int main(int argc, char *argv[]) {
     V = read.getV();
     E = read.getE();
     edges = read.getEdges();
+    int numColorsUsed = 0;
     for (int i = 0; i < n_trials; i++, ntrial_running_now = i) {
         const clock_t begin_alg_time = clock();
         switch (int_rep) {
@@ -116,6 +118,7 @@ int main(int argc, char *argv[]) {
                 if (ntrial_running_now == 0) cout << "Internal representation: CSR\n";
                 myGraph.setConcurentThreadsActive(threads);
                 startGraphAlgII<asa::GraphCSR>(myGraph);
+                numColorsUsed = myGraph.numColorsUsed;
                 break;
             }
             case adjl: {
@@ -123,13 +126,15 @@ int main(int argc, char *argv[]) {
                 if (ntrial_running_now == 0) cout << "Internal representation: adjL\n";
                 myGraph.setConcurentThreadsActive(threads);
                 startGraphAlgII<asa::GraphAdjL>(myGraph);
+                numColorsUsed = myGraph.numColorsUsed;
                 break;
             }
             case adjm: {
                 asa::GraphAdjM myGraph(edges, V, E);
                 if (ntrial_running_now == 0) cout << "Internal representation: adjM\n";
                 myGraph.setConcurentThreadsActive(threads);
-                //startGraphAlgII<asa::GraphAdjM>(myGraph);
+                numColorsUsed = myGraph.numColorsUsed;
+                startGraphAlgII<asa::GraphAdjM>(myGraph);
                 break;
             }
             default:
@@ -141,6 +146,7 @@ int main(int argc, char *argv[]) {
         totalTime += t;
     }
     std::cout << "Average time: " << totalTime / static_cast<float>(n_trials) << "!!!\n";
+    std::cout << "Number of colors used: " <<  numColorsUsed << "!!!\n";
     EXIT_SUCCESS;
 }
 
