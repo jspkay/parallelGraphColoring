@@ -27,6 +27,8 @@ ReadInput::ReadInput(string &fname) {
     if(ext == ".graph" || ext == ".txt"){
         startingNode = 1;
         readInputGraph(fname);
+        //inefficiente
+        //readInputParallel(fname);
     }
     else
         cerr << "Wrong input format" << endl;
@@ -107,27 +109,68 @@ void ReadInput::readInputGra(string &fname) {
     }
     fin.close();
 }
-
-/*void readInput(std::string&& fname){
-        std::fstream fin(fname, std::ios::in);
-        if(!fin.is_open()) {
-            std::cerr << "errore apertura file fin" << std::endl;
+void ReadInput::readInputParallel(string &fname) {
+    string line;
+    string buffer;
+    stringstream lineStream;
+    fstream fin(fname, ios::in);
+    if(!fin.is_open()) {
+        cout << "errore apertura file fin" << endl;
+    }
+    auto file_size = std::filesystem::file_size(fname);
+    buffer.resize(file_size);
+    fin.read(buffer.data(),buffer.size());
+    istringstream f(buffer);
+    getline(f, line);
+    lineStream = stringstream(line);
+    lineStream >> V >> E;
+    if(!f.good()) {
+        cout << "errore lettura" << endl;
+    }
+    this->edges.reserve(E);
+    std::queue<string> q;
+    mutex mq;
+    condition_variable cv;
+    //producer
+    auto pro = [&mq, &q, &f, &cv, this](){
+        string line;
+        for(int i=0; i<V; i++){
+            getline(f, line);
+            lock_guard<mutex> lk(mq);
+            q.emplace(std::to_string(i) + " " + line);
+            cv.notify_one();
         }
-        fin >> V >> E;
-        if(!fin.good()) {
-           std::cerr << "errore lettura" << std::endl;
-        }
-        std::string line;
-        std::stringstream lineStream;
-        int neighbour;
-        // evito riallocazioni dinamiche multiple ... nb: per deque è inutile una funzione reserve
-        edges.reserve(E); //riservo E posti,
-        for(int i=0; i <= V; i++){
-            getline(fin, line);
-            lineStream = std::stringstream(line);
-            while(lineStream >> neighbour)
-                edges.emplace_back(std::pair<int, int>(i,neighbour));
-        }
-        fin.close();
+        lock_guard<mutex> lk(mq);
+        q.emplace("stop");
+        cv.notify_one();
     };
-*/
+    //consumer
+    auto cons = [&mq, &q, &cv, this](){
+        string line;
+        stringstream lineStream;
+        int neighbour;
+        int i;
+        while(true){
+            unique_lock<mutex> lk(mq);
+            cv.wait(lk, [&q](){return !q.empty();});
+            line = q.front();
+            if(line == "stop"){
+                lk.unlock();
+                return;
+            }
+            q.pop();
+            lk.unlock();
+            lineStream = stringstream(line);
+            lineStream >> i;
+            while(lineStream >> neighbour)
+                edges.emplace_back(std::pair<int, int>(i,neighbour-1));
+        }
+    };
+    //start producer
+    thread proT(pro);
+    //start consumer
+    thread consT(cons);
+    fin.close();
+    proT.join();
+    consT.join();
+}

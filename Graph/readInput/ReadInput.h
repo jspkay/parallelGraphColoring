@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <string>
+#include <queue>
 #include <deque>
 #include <forward_list>
 #include <vector>
@@ -43,6 +44,8 @@ public:
     int getE() const;
 
     const vector<std::pair<node, node>> &getEdges() const;
+
+    void readInputParallel(string &fname);
 };
 
 
