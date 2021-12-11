@@ -19,7 +19,8 @@ This educational project aims to compare the performances of different multithre
    2. [Command-line Mode](#cmd_mode)
    3. [List-files option](#list_files_option)
    4. [Command line parameters](#cmd_setup)
-4. [Benchmark and results]()
+4. [Benchmark](#benchmark)
+5. [Results](#results)
 
 ---
 
@@ -107,7 +108,7 @@ This file contains the `ReadInput` class and its header file is `ReadInput.h`. I
 ---
 
 ## Usage <a name="usage"></a>
-The program can be run both in interactive mode and in "stand-alone" mode, ie by entering the necessary parameters from the command line. 
+The program can be run both in interactive mode and in command line mode, ie by entering the necessary parameters from the command line. 
 
 ### Interactive mode <a name="interactive_mode"></a>
 To start the program in interactive mode, i.e. without selecting the desired options from the command line, but through a stdin and stdout, you must select the *help* option `GraphColoring --help` and then digit 'yes'.
@@ -231,3 +232,7 @@ Last thing to be said is that some parameters are of the `benchmark.sh` script c
 
 Results obtained can be read in the report.
 
+# Results <a name="update"></a>
+For a comprehensive overview of the results, please consult the document (`Parallel_graph_coloring.pdf`) in this repository.
+
+What we noticed is an impairment between performances and expectations. The resulsts show that our parallel algorithms are much slower than the greedy sequential one. This is most likley due to the OS resources management, which tries to optimize the distribuion instead of giving every thread to the same process.

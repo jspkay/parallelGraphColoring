@@ -11,7 +11,7 @@ int ntrial_running_now = 0;
 int main(int argc, char *argv[]) {
     //setting linux scheduler
     {
-        pid_t pid = getpid();
+
         struct sched_param sp;
         sp.sched_priority = sched_get_priority_max(SCHED_RR);
 
